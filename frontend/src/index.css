@@ -1,0 +1,142 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    @apply bg-white text-primary font-body;
+  }
+
+  h1, h2, h3, h4 {
+    @apply font-headline tracking-tight;
+  }
+}
+
+@layer components {
+
+  /* ── Buttons ─────────────────────────────────────── */
+
+  /* Dark → silver hover (main CTA) */
+  .btn-primary {
+    @apply inline-flex items-center justify-center
+           bg-primary text-white font-medium text-sm
+           px-8 py-3 min-h-[44px]
+           tracking-wide
+           transition-all duration-250 ease-out;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(34,34,34,0.18);
+  }
+  .btn-primary:hover {
+    background: #C0C0C0;
+    color: #222222;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(192,192,192,0.45);
+  }
+
+  /* Ghost outline → silver fill on hover */
+  .btn-outline {
+    @apply inline-flex items-center justify-center
+           border text-primary font-medium text-sm
+           px-8 py-3 min-h-[44px]
+           tracking-wide
+           transition-all duration-250 ease-out;
+    border-color: #d1d5db;
+    border-radius: 10px;
+  }
+  .btn-outline:hover {
+    border-color: #C0C0C0;
+    background: rgba(192,192,192,0.12);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(192,192,192,0.25);
+  }
+
+  /* White button on dark backgrounds */
+  .btn-silver {
+    @apply inline-flex items-center justify-center
+           bg-white text-primary font-medium text-sm
+           px-8 py-3 min-h-[44px]
+           tracking-wide
+           transition-all duration-250 ease-out;
+    border-radius: 10px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.10);
+  }
+  .btn-silver:hover {
+    background: #F5F5F5;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.14);
+  }
+
+  /* ── Layout ──────────────────────────────────────── */
+
+  .section-padding {
+    @apply py-24 px-4 sm:px-6 lg:px-8;
+  }
+
+  .container-max {
+    @apply max-w-6xl mx-auto;
+  }
+
+  /* ── Cards ───────────────────────────────────────── */
+
+  /* 3D card with hover-lift */
+  .card-3d {
+    @apply bg-white;
+    border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+  }
+  .card-3d:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 16px 40px rgba(0,0,0,0.10);
+  }
+
+  /* Glassmorphism card */
+  .glass-card {
+    background: rgba(255,255,255,0.80);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255,255,255,0.45);
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.08);
+  }
+
+  /* ── Inputs ──────────────────────────────────────── */
+
+  .input-apple {
+    @apply w-full bg-white text-primary text-sm placeholder-gray-300
+           transition-all duration-200;
+    border: 1.5px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    outline: none;
+  }
+  .input-apple:focus {
+    border-color: #C0C0C0;
+    box-shadow: 0 0 0 3px rgba(192,192,192,0.20);
+  }
+  .input-apple-error {
+    border-color: #fca5a5;
+    background: #fff5f5;
+  }
+  .input-apple-error:focus {
+    border-color: #f87171;
+    box-shadow: 0 0 0 3px rgba(248,113,113,0.15);
+  }
+
+  /* ── Page section headers (Leistungen, Referenzen…) */
+  .page-hero {
+    @apply bg-white pt-36 pb-20 px-4 sm:px-6 lg:px-8;
+    border-bottom: 1px solid #f0f0f0;
+  }
+}
+
+/* ── Utility: smooth 250ms ───────────────────────── */
+.duration-250 {
+  transition-duration: 250ms;
+}
