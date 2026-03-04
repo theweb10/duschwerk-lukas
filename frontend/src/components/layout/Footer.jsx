@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import RegensburgSilhouette from '../sections/RegensburgSilhouette'
+import DomIcon from '../icons/DomIcon'
 
 export default function Footer() {
   const year = new Date().getFullYear()
@@ -21,16 +22,14 @@ export default function Footer() {
           <div>
             <div className="flex items-center gap-2.5 mb-4">
               <div
-                className="w-7 h-7 flex items-center justify-center flex-shrink-0"
+                className="w-8 h-8 flex items-center justify-center flex-shrink-0"
                 style={{
-                  background: 'rgba(255,255,255,0.12)',
-                  borderRadius: '7px',
-                  border: '1px solid rgba(255,255,255,0.1)',
+                  background: 'rgba(255,255,255,0.10)',
+                  borderRadius: '8px',
+                  border: '1px solid rgba(255,255,255,0.12)',
                 }}
               >
-                <svg className="w-4 h-4 text-white/70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 10h16M4 14h16" />
-                </svg>
+                <DomIcon className="w-4 h-[18px] text-white/70" />
               </div>
               <span className="font-headline text-white/90 text-sm font-semibold tracking-tight">
                 Duschwerk Bayern

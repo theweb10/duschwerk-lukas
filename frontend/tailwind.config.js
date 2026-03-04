@@ -14,8 +14,8 @@ export default {
         text:       '#222222',
       },
       fontFamily: {
-        headline: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'Helvetica Neue', 'sans-serif'],
-        body:     ['Inter', '-apple-system', 'BlinkMacSystemFont', 'Helvetica Neue', 'sans-serif'],
+        headline: ['Syne', '-apple-system', 'BlinkMacSystemFont', 'Helvetica Neue', 'sans-serif'],
+        body:     ['DM Sans', '-apple-system', 'BlinkMacSystemFont', 'Helvetica Neue', 'sans-serif'],
       },
       letterSpacing: {
         tighter: '-0.04em',

@@ -1,4 +1,5 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom'
+import { useEffect } from 'react'
 import CookieConsent from 'react-cookie-consent'
 import Header from './components/layout/Header'
 import Footer from './components/layout/Footer'
@@ -8,9 +9,16 @@ import References from './pages/References'
 import About from './pages/About'
 import Contact from './pages/Contact'
 
+function ScrollToTop() {
+  const { pathname } = useLocation()
+  useEffect(() => { window.scrollTo(0, 0) }, [pathname])
+  return null
+}
+
 export default function App() {
   return (
     <BrowserRouter>
+      <ScrollToTop />
       <div className="flex flex-col min-h-screen">
         <Header />
         <main className="flex-grow">

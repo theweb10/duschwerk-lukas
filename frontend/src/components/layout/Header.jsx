@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Link, NavLink, useLocation } from 'react-router-dom'
+import DomIcon from '../icons/DomIcon'
 
 const navLinks = [
   { to: '/leistungen', label: 'Leistungen' },
@@ -40,16 +41,14 @@ export default function Header() {
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2.5" aria-label="Startseite">
             <div
-              className="w-7 h-7 flex items-center justify-center flex-shrink-0"
+              className="w-8 h-8 flex items-center justify-center flex-shrink-0"
               style={{
                 background: 'linear-gradient(135deg, #222222 0%, #444444 100%)',
-                borderRadius: '7px',
+                borderRadius: '8px',
                 boxShadow: '0 2px 6px rgba(0,0,0,0.18)',
               }}
             >
-              <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 10h16M4 14h16" />
-              </svg>
+              <DomIcon className="w-4 h-[18px] text-white" />
             </div>
             <div>
               <span className="font-headline text-primary text-sm font-semibold tracking-tight block leading-none">

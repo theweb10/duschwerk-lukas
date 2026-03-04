@@ -48,7 +48,7 @@ export default function ServicesPreview() {
     <section className="section-padding" style={{ background: '#F5F5F5' }}>
       <div className="container-max">
 
-        <header className="mb-14">
+        <header className="mb-14 text-center">
           <p className="text-gray-400 text-xs uppercase tracking-widest font-medium mb-3">Leistungen</p>
           <h2
             className="font-headline text-3xl sm:text-4xl text-primary"
@@ -84,9 +84,11 @@ export default function ServicesPreview() {
           ))}
         </div>
 
-        <Link to="/leistungen" className="btn-outline text-xs px-6 py-2.5">
-          Alle Leistungen ansehen →
-        </Link>
+        <div className="text-center mt-10">
+          <Link to="/leistungen" className="btn-outline text-xs px-6 py-2.5">
+            Alle Leistungen ansehen →
+          </Link>
+        </div>
       </div>
     </section>
   )
