@@ -1,6 +1,7 @@
 import { Helmet } from 'react-helmet-async'
 import { Link } from 'react-router-dom'
 import Hero from '../components/sections/Hero'
+import ScrollCinematic from '../components/sections/ScrollCinematic'
 import ServicesPreview from '../components/sections/ServicesPreview'
 import Testimonials from '../components/sections/Testimonials'
 
@@ -53,6 +54,7 @@ export default function Home() {
       </Helmet>
 
       <Hero />
+      <ScrollCinematic />
       <ServicesPreview />
 
       {/* USP Section */}
@@ -78,7 +80,7 @@ export default function Home() {
                   >
                     <div
                       className="w-9 h-9 flex items-center justify-center mb-3 text-gray-400 group-hover:text-primary transition-colors duration-200"
-                      style={{ background: '#F5F5F5', borderRadius: '8px' }}
+                      style={{ background: '#EEF1F6', borderRadius: '8px' }}
                     >
                       {icon}
                     </div>
@@ -112,7 +114,7 @@ export default function Home() {
       {/* CTA Banner */}
       <section
         className="section-padding relative overflow-hidden"
-        style={{ background: 'linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%)' }}
+        style={{ background: 'linear-gradient(135deg, #1F2E4A 0%, #2E4C7D 100%)' }}
       >
         {/* Subtle silhouette in CTA too */}
         <div className="absolute bottom-0 left-0 right-0 pointer-events-none opacity-10">

@@ -61,7 +61,7 @@ export default function Services() {
         </div>
       </div>
 
-      <main className="section-padding" style={{ background: '#F5F5F5' }}>
+      <main className="section-padding" style={{ background: '#F2F2F2' }}>
         <div className="container-max">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {services.map(({ id, title, description, features, icon }, index) => (
@@ -87,7 +87,7 @@ export default function Services() {
                       <li
                         key={feature}
                         className="text-xs text-gray-500 font-light px-3 py-1"
-                        style={{ background: '#F0F0F0', borderRadius: '100px' }}
+                        style={{ background: '#EEF1F6', borderRadius: '100px' }}
                       >
                         {feature}
                       </li>
@@ -105,7 +105,7 @@ export default function Services() {
         </div>
       </main>
 
-      <section className="section-padding" style={{ background: 'linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%)' }}>
+      <section className="section-padding" style={{ background: 'linear-gradient(135deg, #1F2E4A 0%, #2E4C7D 100%)' }}>
         <div className="container-max text-center">
           <p className="text-white/40 text-xs uppercase tracking-widest font-medium mb-3">Beratung</p>
           <h2 className="font-headline text-3xl text-white mb-4" style={{ letterSpacing: '-0.03em' }}>

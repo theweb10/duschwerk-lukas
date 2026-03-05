@@ -45,10 +45,10 @@ const services = [
 
 export default function ServicesPreview() {
   return (
-    <section className="section-padding" style={{ background: '#F5F5F5' }}>
+    <section className="section-padding" style={{ background: '#F2F2F2' }}>
       <div className="container-max">
 
-        <header className="mb-14 text-center">
+        <header className="mb-14 text-center" data-reveal>
           <p className="text-gray-400 text-xs uppercase tracking-widest font-medium mb-3">Leistungen</p>
           <h2
             className="font-headline text-3xl sm:text-4xl text-primary"
@@ -58,14 +58,14 @@ export default function ServicesPreview() {
           </h2>
         </header>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-10">
-          {services.map(({ number, icon, title, description }) => (
-            <article key={number} className="card-3d p-7 group cursor-default">
+        <div className="cards-group grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-10">
+          {services.map(({ number, icon, title, description }, i) => (
+            <article key={number} data-reveal data-reveal-delay={i * 80} className="card-3d p-7 group cursor-default">
               {/* Icon */}
               <div
                 className="w-10 h-10 flex items-center justify-center mb-5 text-gray-400 group-hover:text-primary transition-colors duration-200"
                 style={{
-                  background: '#F5F5F5',
+                  background: '#EEF1F6',
                   borderRadius: '8px',
                 }}
               >

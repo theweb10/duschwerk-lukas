@@ -7,15 +7,16 @@ export default {
   theme: {
     extend: {
       colors: {
-        primary:    '#222222',
-        accent:     '#C0C0C0',
-        silver:     '#C0C0C0',
-        background: '#F5F5F5',
-        text:       '#222222',
+        primary:    '#1F2E4A',
+        navy:       '#2E4C7D',
+        accent:     '#C62828',
+        background: '#F2F2F2',
+        text:       '#333333',
+        silver:     '#DDDDDD',
       },
       fontFamily: {
-        headline: ['Syne', '-apple-system', 'BlinkMacSystemFont', 'Helvetica Neue', 'sans-serif'],
-        body:     ['DM Sans', '-apple-system', 'BlinkMacSystemFont', 'Helvetica Neue', 'sans-serif'],
+        headline: ['-apple-system', 'BlinkMacSystemFont', 'SF Pro Display', 'Helvetica Neue', 'Arial', 'sans-serif'],
+        body:     ['-apple-system', 'BlinkMacSystemFont', 'SF Pro Text', 'Helvetica Neue', 'Arial', 'sans-serif'],
       },
       letterSpacing: {
         tighter: '-0.04em',

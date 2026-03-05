@@ -8,7 +8,7 @@ export default function Footer() {
   return (
     <footer
       className="relative overflow-hidden"
-      style={{ background: 'linear-gradient(180deg, #1a1a1a 0%, #111111 100%)' }}
+      style={{ background: 'linear-gradient(180deg, #1F2E4A 0%, #162338 100%)' }}
     >
       {/* Regensburg silhouette inside footer */}
       <div className="absolute top-0 left-0 right-0 pointer-events-none select-none">
@@ -20,20 +20,24 @@ export default function Footer() {
 
           {/* Brand */}
           <div>
-            <div className="flex items-center gap-2.5 mb-4">
-              <div
-                className="w-8 h-8 flex items-center justify-center flex-shrink-0"
-                style={{
-                  background: 'rgba(255,255,255,0.10)',
-                  borderRadius: '8px',
-                  border: '1px solid rgba(255,255,255,0.12)',
-                }}
-              >
-                <DomIcon className="w-4 h-[18px] text-white/70" />
+            <div className="flex items-center gap-3 mb-4">
+              {/* Logo Mark – auf dunklem Hintergrund */}
+              <div className="flex-shrink-0 opacity-90">
+                <DomIcon size={32} />
               </div>
-              <span className="font-headline text-white/90 text-sm font-semibold tracking-tight">
-                Duschwerk Bayern
-              </span>
+              <div className="flex flex-col leading-none">
+                <div className="flex items-baseline gap-[5px]" style={{ marginBottom: '2px' }}>
+                  <span className="font-headline font-bold text-white/90 tracking-tight" style={{ fontSize: '14px', letterSpacing: '-0.02em' }}>
+                    Duschwerk
+                  </span>
+                  <span className="font-body font-light text-white/60" style={{ fontSize: '14px', letterSpacing: '0.01em' }}>
+                    Bayern
+                  </span>
+                </div>
+                <span className="font-body text-white/30 uppercase tracking-[0.18em]" style={{ fontSize: '8px' }}>
+                  Regensburg
+                </span>
+              </div>
             </div>
             <p className="text-white/35 text-sm leading-relaxed font-light max-w-xs">
               Maßgeschneiderte Duschabtrennungen.<br />

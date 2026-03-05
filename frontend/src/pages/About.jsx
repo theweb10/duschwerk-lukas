@@ -156,7 +156,7 @@ export default function About() {
                 <div key={title} className="card-3d p-7">
                   <div
                     className="w-8 h-8 flex items-center justify-center mb-4"
-                    style={{ background: '#F5F5F5', borderRadius: '8px' }}
+                    style={{ background: '#EEF1F6', borderRadius: '8px' }}
                   >
                     <span className="font-headline text-sm text-gray-400 font-semibold">{title[0]}</span>
                   </div>
@@ -171,7 +171,7 @@ export default function About() {
 
       <section
         className="section-padding text-center"
-        style={{ background: 'linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%)' }}
+        style={{ background: 'linear-gradient(135deg, #1F2E4A 0%, #2E4C7D 100%)' }}
       >
         <div className="container-max">
           <p className="text-white/40 text-xs uppercase tracking-widest font-medium mb-3">Kontakt</p>

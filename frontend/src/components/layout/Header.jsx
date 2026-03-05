@@ -6,6 +6,7 @@ const navLinks = [
   { to: '/leistungen', label: 'Leistungen' },
   { to: '/referenzen', label: 'Referenzen' },
   { to: '/ueber-uns', label: 'Über uns' },
+  { to: '/konfigurator', label: 'Konfigurator' },
   { to: '/kontakt', label: 'Kontakt' },
 ]
 
@@ -17,7 +18,7 @@ export default function Header() {
   useEffect(() => { setMenuOpen(false) }, [location])
 
   useEffect(() => {
-    const handler = () => setScrolled(window.scrollY > 12)
+    const handler = () => setScrolled(window.scrollY > 20)
     window.addEventListener('scroll', handler, { passive: true })
     return () => window.removeEventListener('scroll', handler)
   }, [])
@@ -27,40 +28,108 @@ export default function Header() {
       className="fixed top-0 left-0 right-0 z-50 transition-all duration-300"
       style={{
         background: scrolled
-          ? 'rgba(255,255,255,0.92)'
-          : 'rgba(255,255,255,0.75)',
-        backdropFilter: 'blur(20px)',
-        WebkitBackdropFilter: 'blur(20px)',
-        boxShadow: scrolled ? '0 1px 0 rgba(0,0,0,0.08), 0 4px 16px rgba(0,0,0,0.04)' : 'none',
-        borderBottom: scrolled ? '1px solid rgba(0,0,0,0.06)' : '1px solid transparent',
+          ? 'rgba(255,255,255,0.95)'
+          : 'rgba(255,255,255,0.80)',
+        backdropFilter: 'blur(24px)',
+        WebkitBackdropFilter: 'blur(24px)',
+        boxShadow: scrolled
+          ? '0 1px 0 rgba(0,0,0,0.07), 0 6px 24px rgba(0,0,0,0.05)'
+          : 'none',
+        borderBottom: scrolled
+          ? '1px solid rgba(0,0,0,0.06)'
+          : '1px solid transparent',
       }}
     >
       <div className="container-max px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
+        <div
+          className="flex items-center justify-between transition-all duration-300"
+          style={{ height: scrolled ? '60px' : '72px' }}
+        >
 
-          {/* Logo */}
-          <Link to="/" className="flex items-center gap-2.5" aria-label="Startseite">
+          {/* ── Logo Mark + Wordmark ──────────────────── */}
+          <Link
+            to="/"
+            className="flex items-center gap-4 group"
+            aria-label="Duschwerk Bayern – Startseite"
+          >
+            {/* SVG Logo Mark – shrinks on scroll + glass shine */}
             <div
-              className="w-8 h-8 flex items-center justify-center flex-shrink-0"
+              className="glass-shine transition-all duration-300 flex-shrink-0"
               style={{
-                background: 'linear-gradient(135deg, #222222 0%, #444444 100%)',
-                borderRadius: '8px',
-                boxShadow: '0 2px 6px rgba(0,0,0,0.18)',
+                transform: scrolled ? 'scale(0.80)' : 'scale(1)',
+                transformOrigin: 'left center',
+                borderRadius: '6px',
               }}
             >
-              <DomIcon className="w-4 h-[18px] text-white" />
+              <DomIcon size={42} />
             </div>
-            <div>
-              <span className="font-headline text-primary text-sm font-semibold tracking-tight block leading-none">
-                Duschwerk Bayern
-              </span>
-              <span className="text-gray-400 text-[10px] tracking-widest uppercase leading-none">
+
+            {/* Wordmark */}
+            <div className="flex flex-col justify-center leading-none">
+              <div
+                className="flex items-center gap-[7px] transition-all duration-300"
+                style={{ marginBottom: '4px' }}
+              >
+                {/* Duschwerk – SF Pro Bold, optisches Kerning */}
+                <span
+                  style={{
+                    color: '#1F2E4A',
+                    fontSize: scrolled ? '15px' : '19px',
+                    fontWeight: 700,
+                    letterSpacing: '-0.04em',
+                    lineHeight: 1,
+                    transition: 'font-size 0.3s ease',
+                  }}
+                >
+                  Duschwerk
+                </span>
+
+                {/* Vertikaler Separator */}
+                <span
+                  style={{
+                    display: 'inline-block',
+                    width: '1px',
+                    height: scrolled ? '12px' : '15px',
+                    background: 'rgba(46,76,125,0.22)',
+                    borderRadius: '1px',
+                    flexShrink: 0,
+                    transition: 'height 0.3s ease',
+                  }}
+                />
+
+                {/* Bayern – SF Pro Light, offenes Tracking */}
+                <span
+                  style={{
+                    color: '#2E4C7D',
+                    fontSize: scrolled ? '15px' : '19px',
+                    fontWeight: 300,
+                    letterSpacing: '0.07em',
+                    lineHeight: 1,
+                    transition: 'font-size 0.3s ease',
+                  }}
+                >
+                  Bayern
+                </span>
+              </div>
+
+              {/* Tagline */}
+              <span
+                style={{
+                  color: '#9CA3AF',
+                  fontSize: scrolled ? '8px' : '9.5px',
+                  fontWeight: 400,
+                  letterSpacing: '0.24em',
+                  textTransform: 'uppercase',
+                  transition: 'font-size 0.3s ease',
+                  lineHeight: 1,
+                }}
+              >
                 Regensburg
               </span>
             </div>
           </Link>
 
-          {/* Desktop Nav */}
+          {/* ── Desktop Nav ───────────────────────────── */}
           <nav className="hidden md:flex items-center gap-7" aria-label="Hauptnavigation">
             {navLinks.map(({ to, label }) => (
               <NavLink
@@ -70,7 +139,7 @@ export default function Header() {
                   `text-sm transition-colors duration-200 ${
                     isActive
                       ? 'text-primary font-medium'
-                      : 'text-gray-500 hover:text-primary font-normal'
+                      : 'text-gray-400 hover:text-primary font-normal'
                   }`
                 }
               >
@@ -82,41 +151,33 @@ export default function Header() {
             </Link>
           </nav>
 
-          {/* Mobile burger */}
+          {/* ── Mobile Burger ─────────────────────────── */}
           <button
             className="md:hidden text-primary p-2 min-h-[44px] min-w-[44px] flex items-center justify-center"
             onClick={() => setMenuOpen(!menuOpen)}
             aria-expanded={menuOpen}
             aria-label={menuOpen ? 'Menü schließen' : 'Menü öffnen'}
           >
-            <span
-              className="block w-5 transition-all duration-200"
-              style={{
-                '--bars-opacity': menuOpen ? '0' : '1',
-                '--cross-opacity': menuOpen ? '1' : '0',
-              }}
-            >
-              {menuOpen ? (
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              ) : (
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 7h16M4 12h16M4 17h16" />
-                </svg>
-              )}
-            </span>
+            {menuOpen ? (
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            ) : (
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 7h16M4 12h16M4 17h16" />
+              </svg>
+            )}
           </button>
         </div>
       </div>
 
-      {/* Mobile Menu */}
+      {/* ── Mobile Menu ───────────────────────────────── */}
       {menuOpen && (
         <div
           className="md:hidden"
           style={{
             background: 'rgba(255,255,255,0.97)',
-            backdropFilter: 'blur(20px)',
+            backdropFilter: 'blur(24px)',
             borderTop: '1px solid rgba(0,0,0,0.06)',
           }}
         >

@@ -2,6 +2,18 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ── Corporate Color System ──────────────────────── */
+:root {
+  --color-primary:      #1F2E4A;
+  --color-navy:         #2E4C7D;
+  --color-accent:       #C62828;
+  --color-accent-hover: #A61E1E;
+  --color-white:        #FFFFFF;
+  --color-bg:           #F2F2F2;
+  --color-border:       #DDDDDD;
+  --color-text:         #333333;
+}
+
 @layer base {
   html {
     scroll-behavior: smooth;
@@ -10,11 +22,13 @@
   }
 
   body {
-    @apply bg-white text-primary font-body;
+    @apply bg-white font-body;
+    color: var(--color-text);
   }
 
   h1, h2, h3, h4 {
     @apply font-headline tracking-tight;
+    color: var(--color-primary);
   }
 }
 
@@ -22,54 +36,72 @@
 
   /* ── Buttons ─────────────────────────────────────── */
 
-  /* Dark → silver hover (main CTA) */
+  /* Dunkelblau → Rot hover (Haupt-CTA) */
   .btn-primary {
     @apply inline-flex items-center justify-center
-           bg-primary text-white font-medium text-sm
+           font-medium text-sm text-white
            px-8 py-3 min-h-[44px]
            tracking-wide
            transition-all duration-250 ease-out;
+    background: var(--color-primary);
     border-radius: 10px;
-    box-shadow: 0 2px 8px rgba(34,34,34,0.18);
+    box-shadow: 0 2px 8px rgba(31,46,74,0.22);
+    position: relative;
+    overflow: hidden;
   }
   .btn-primary:hover {
-    background: #C0C0C0;
-    color: #222222;
+    background: var(--color-accent);
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(192,192,192,0.45);
+    box-shadow: 0 6px 20px rgba(198,40,40,0.35);
+  }
+  .btn-primary:active {
+    transform: translateY(0px) scale(0.97) !important;
+    box-shadow: 0 1px 4px rgba(31,46,74,0.18) !important;
+    transition: transform 70ms ease, box-shadow 70ms ease !important;
   }
 
-  /* Ghost outline → silver fill on hover */
+  /* Ghost outline → Rot fill on hover */
   .btn-outline {
     @apply inline-flex items-center justify-center
-           border text-primary font-medium text-sm
+           border font-medium text-sm
            px-8 py-3 min-h-[44px]
            tracking-wide
            transition-all duration-250 ease-out;
-    border-color: #d1d5db;
+    color: var(--color-primary);
+    border-color: var(--color-border);
     border-radius: 10px;
   }
   .btn-outline:hover {
-    border-color: #C0C0C0;
-    background: rgba(192,192,192,0.12);
+    border-color: var(--color-accent);
+    background: rgba(198,40,40,0.06);
+    color: var(--color-accent);
     transform: translateY(-2px);
-    box-shadow: 0 4px 16px rgba(192,192,192,0.25);
+    box-shadow: 0 4px 16px rgba(198,40,40,0.15);
   }
 
-  /* White button on dark backgrounds */
+  /* Weißer Button auf dunklem Hintergrund */
   .btn-silver {
     @apply inline-flex items-center justify-center
-           bg-white text-primary font-medium text-sm
+           bg-white font-medium text-sm
            px-8 py-3 min-h-[44px]
            tracking-wide
            transition-all duration-250 ease-out;
+    color: var(--color-primary);
     border-radius: 10px;
-    box-shadow: 0 2px 12px rgba(0,0,0,0.10);
+    box-shadow: 0 2px 12px rgba(0,0,0,0.12);
+    position: relative;
+    overflow: hidden;
   }
   .btn-silver:hover {
-    background: #F5F5F5;
+    background: var(--color-accent);
+    color: #fff;
     transform: translateY(-2px);
-    box-shadow: 0 8px 24px rgba(0,0,0,0.14);
+    box-shadow: 0 8px 24px rgba(198,40,40,0.30);
+  }
+  .btn-silver:active {
+    transform: translateY(0px) scale(0.97) !important;
+    box-shadow: 0 1px 6px rgba(0,0,0,0.10) !important;
+    transition: transform 70ms ease, box-shadow 70ms ease !important;
   }
 
   /* ── Layout ──────────────────────────────────────── */
@@ -84,7 +116,6 @@
 
   /* ── Cards ───────────────────────────────────────── */
 
-  /* 3D card with hover-lift */
   .card-3d {
     @apply bg-white;
     border-radius: 12px;
@@ -96,7 +127,6 @@
     box-shadow: 0 16px 40px rgba(0,0,0,0.10);
   }
 
-  /* Glassmorphism card */
   .glass-card {
     background: rgba(255,255,255,0.80);
     backdrop-filter: blur(20px);
@@ -109,34 +139,339 @@
   /* ── Inputs ──────────────────────────────────────── */
 
   .input-apple {
-    @apply w-full bg-white text-primary text-sm placeholder-gray-300
+    @apply w-full bg-white text-sm placeholder-gray-300
            transition-all duration-200;
+    color: var(--color-text);
     border: 1.5px solid #e5e7eb;
     border-radius: 8px;
     padding: 0.75rem 1rem;
     outline: none;
   }
   .input-apple:focus {
-    border-color: #C0C0C0;
-    box-shadow: 0 0 0 3px rgba(192,192,192,0.20);
+    border-color: var(--color-navy);
+    box-shadow: 0 0 0 3px rgba(46,76,125,0.15);
   }
   .input-apple-error {
-    border-color: #fca5a5;
-    background: #fff5f5;
+    border-color: var(--color-accent);
+    background: #fff8f8;
   }
   .input-apple-error:focus {
-    border-color: #f87171;
-    box-shadow: 0 0 0 3px rgba(248,113,113,0.15);
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 3px rgba(198,40,40,0.12);
   }
 
-  /* ── Page section headers (Leistungen, Referenzen…) */
+  /* ── Page Hero ───────────────────────────────────── */
   .page-hero {
     @apply bg-white pt-36 pb-20 px-4 sm:px-6 lg:px-8;
-    border-bottom: 1px solid #f0f0f0;
+    border-bottom: 1px solid #EEEEEE;
   }
+}
+
+/* ── Scroll hint pulse ───────────────────────────── */
+@keyframes scroll-hint {
+  0%, 100% { transform: scaleY(1);   opacity: 0.25; }
+  50%       { transform: scaleY(1.6); opacity: 0.5;  }
 }
 
 /* ── Utility: smooth 250ms ───────────────────────── */
 .duration-250 {
   transition-duration: 250ms;
+}
+
+/* ══════════════════════════════════════════════════
+   SCROLL REVEAL
+   Elements start invisible + shifted down 18px.
+   .revealed = final visible state.
+   ══════════════════════════════════════════════════ */
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 0.55s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.55s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+[data-reveal].revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ══════════════════════════════════════════════════
+   CARD GROUP DIMMING
+   When any card in a .cards-group is hovered,
+   the others get slightly faded + desaturated.
+   ══════════════════════════════════════════════════ */
+.cards-group:has(.card-3d:hover) .card-3d:not(:hover) {
+  opacity: 0.55;
+  filter: saturate(0.6);
+  transform: translateY(0) scale(0.99);
+  transition: opacity 0.3s ease, filter 0.3s ease,
+              transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* ══════════════════════════════════════════════════
+   HERO MOUSE GLOW
+   Radial light spot that follows the cursor inside
+   the hero section. Uses CSS custom props --gx/--gy
+   updated via JS in Hero.jsx.
+   ══════════════════════════════════════════════════ */
+.hero-glow::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    circle 420px at var(--gx, 50%) var(--gy, 50%),
+    rgba(255, 255, 255, 0.07) 0%,
+    transparent 65%
+  );
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  border-radius: inherit;
+}
+.hero-glow:hover::after {
+  opacity: 1;
+}
+
+/* ══════════════════════════════════════════════════
+   CARD MOUSE GLOW (per-card)
+   Same technique: CSS props --cx/--cy set via JS
+   in a delegated mousemove listener.
+   ══════════════════════════════════════════════════ */
+.card-3d {
+  position: relative;
+  overflow: hidden;
+}
+.card-3d::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    circle 200px at var(--cx, 50%) var(--cy, 50%),
+    rgba(46, 76, 125, 0.07) 0%,
+    transparent 70%
+  );
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  z-index: 0;
+  border-radius: inherit;
+}
+.card-3d:hover::before {
+  opacity: 1;
+}
+/* Ensure card content sits above the glow layer */
+.card-3d > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* ══════════════════════════════════════════════════
+   3D PAGE TRANSITIONS  (View Transitions API)
+
+   Old page recedes into depth (scale down + fade).
+   New page advances from slight depth + right offset.
+   Both run simultaneously on their respective snapshots.
+
+   Desktop: full 3D-depth movement.
+   Mobile : lightweight fade only.
+   reduced-motion: no animation at all.
+   ══════════════════════════════════════════════════ */
+
+/* ══════════════════════════════════════════════════
+   PAGE TRANSITIONS  (View Transitions API)
+
+   Reines Crossfade – kein Scale, kein Translate,
+   kein Blur. 200ms ist kurz genug um unsichtbar
+   zu wirken, lang genug um kein harter Schnitt zu sein.
+   ══════════════════════════════════════════════════ */
+
+@keyframes vt-fade-out {
+  to { opacity: 0; }
+}
+@keyframes vt-fade-in {
+  from { opacity: 0; }
+}
+
+::view-transition-old(root) {
+  animation: 200ms ease-out both vt-fade-out;
+}
+::view-transition-new(root) {
+  animation: 200ms ease-in  both vt-fade-in;
+}
+
+/* Accessibility: respect reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none;
+  }
+}
+
+/* Mobile: turn off heavy effects */
+@media (hover: none), (max-width: 768px) {
+  [data-reveal] {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+  .hero-glow::after,
+  .card-3d::before {
+    display: none;
+  }
+  .cards-group:has(.card-3d:hover) .card-3d:not(:hover) {
+    opacity: 1;
+    filter: none;
+    transform: none;
+  }
+  /* Disable shine on touch/mobile */
+  .glass-shine::after,
+  .btn-primary::after,
+  .btn-silver::after,
+  .card-3d::after {
+    display: none;
+  }
+}
+
+/* ══════════════════════════════════════════════════
+   GLASS SHINE EFFECT
+
+   Einmaliger diagonaler Lichtreflex beim Hover.
+   Technik:
+     • @keyframes translateX(-120%) → translateX(220%)
+       mit skewX für Dynamik
+     • forwards: Strahl stoppt außerhalb → unsichtbar
+     • overflow: hidden clippt den Strahl auf das Element
+     • Kein Loop, kein aggressiver Dauerglow
+   ══════════════════════════════════════════════════ */
+
+@keyframes glass-shine-sweep {
+  from { transform: translateX(-120%) skewX(-14deg); }
+  to   { transform: translateX(220%)  skewX(-14deg); }
+}
+
+/* ── Gemeinsame Shine-Schicht (Buttons + Logo Mark) */
+.glass-shine {
+  position: relative;
+  overflow: hidden;
+}
+.glass-shine::after,
+.btn-primary::after,
+.btn-silver::after {
+  content: '';
+  position: absolute;
+  top: -15%;
+  left: 0;
+  width: 52%;
+  height: 130%;
+  background: linear-gradient(
+    to right,
+    transparent               0%,
+    rgba(255,255,255,0.00)   20%,
+    rgba(255,255,255,0.22)   45%,
+    rgba(255,255,255,0.34)   50%,
+    rgba(255,255,255,0.22)   55%,
+    rgba(255,255,255,0.00)   80%,
+    transparent              100%
+  );
+  transform: translateX(-120%) skewX(-14deg);
+  pointer-events: none;
+  border-radius: inherit;
+  z-index: 1;
+}
+
+/* Trigger: shine einmalig beim Hover */
+.glass-shine:hover::after,
+.btn-primary:hover::after,
+.btn-silver:hover::after {
+  animation: glass-shine-sweep 540ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+/* ── Card Shine (::after, da ::before für Maus-Glow) */
+.card-3d::after {
+  content: '';
+  position: absolute;
+  top: -15%;
+  left: 0;
+  width: 50%;
+  height: 130%;
+  background: linear-gradient(
+    to right,
+    transparent               0%,
+    rgba(255,255,255,0.00)   20%,
+    rgba(255,255,255,0.18)   45%,
+    rgba(255,255,255,0.26)   50%,
+    rgba(255,255,255,0.18)   55%,
+    rgba(255,255,255,0.00)   80%,
+    transparent              100%
+  );
+  transform: translateX(-120%) skewX(-14deg);
+  pointer-events: none;
+  border-radius: inherit;
+  z-index: 2;  /* über Inhalt, aber pointer-events: none */
+}
+.card-3d:hover::after {
+  animation: glass-shine-sweep 600ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+.card-3d:active {
+  transform: translateY(-2px) scale(0.985) !important;
+  transition: transform 70ms ease !important;
+}
+
+/* ══════════════════════════════════════════════════
+   DOM ICON – Logo Mark Animationen
+
+   Idle:  langsames Float (6s, ±1.5px) – kaum
+          wahrnehmbar aber das Mark wirkt lebendig
+   Hover: drop-shadow Glow auf dem Wrapper
+   Tips:  Rote Spitzen haben dezente Opazitäts-Pulsation
+   ══════════════════════════════════════════════════ */
+
+@keyframes logo-float {
+  0%, 100% { transform: translateY(0px);    }
+  50%       { transform: translateY(-2px);  }
+}
+
+@keyframes tip-pulse {
+  0%, 100% { opacity: 1;    }
+  50%       { opacity: 0.72; }
+}
+
+/* Idle Float – langsam, subtil */
+.dom-icon {
+  animation: logo-float 6s ease-in-out infinite;
+  will-change: transform;
+}
+
+/* Hover-Glow auf dem glass-shine Wrapper */
+.glass-shine:hover .dom-icon {
+  filter: drop-shadow(0 3px 10px rgba(31,46,74,0.35))
+          drop-shadow(0 0 6px rgba(46,76,125,0.20));
+  transition: filter 0.35s ease;
+}
+
+/* Rote Spitzen – sehr langsame Pulsation */
+.dom-tip {
+  transform-origin: center bottom;
+  transform-box: fill-box;
+  animation: tip-pulse 3.5s ease-in-out infinite;
+}
+.dom-tip-r {
+  animation-delay: 0.6s;
+}
+
+/* Hover: Tips leuchten stärker (kein pulse während hover) */
+.glass-shine:hover .dom-tip {
+  animation: none;
+  opacity: 1;
+  filter: drop-shadow(0 0 3px rgba(229,57,53,0.55));
+}
+
+/* Mobile/Touch: alle Logo-Animationen stoppen */
+@media (hover: none), (max-width: 768px) {
+  .dom-icon {
+    animation: none;
+  }
+  .dom-tip {
+    animation: none;
+  }
 }

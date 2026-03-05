@@ -62,7 +62,7 @@ export default function Contact() {
         </div>
       </div>
 
-      <main className="section-padding" style={{ background: '#F5F5F5' }}>
+      <main className="section-padding" style={{ background: '#F2F2F2' }}>
         <div className="container-max">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
 
@@ -76,7 +76,7 @@ export default function Contact() {
                 >
                   <div
                     className="w-8 h-8 flex items-center justify-center flex-shrink-0 text-gray-400"
-                    style={{ background: '#F5F5F5', borderRadius: '8px' }}
+                    style={{ background: '#EEF1F6', borderRadius: '8px' }}
                   >
                     {icon}
                   </div>
@@ -108,7 +108,7 @@ export default function Contact() {
               <div
                 className="p-5"
                 style={{
-                  background: 'linear-gradient(135deg, #222 0%, #333 100%)',
+                  background: 'linear-gradient(135deg, #1F2E4A 0%, #2E4C7D 100%)',
                   borderRadius: '12px',
                 }}
               >

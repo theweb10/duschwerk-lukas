@@ -60,7 +60,7 @@ export default function References() {
         </div>
       </div>
 
-      <main className="section-padding" style={{ background: '#F5F5F5' }}>
+      <main className="section-padding" style={{ background: '#F2F2F2' }}>
         <div className="container-max">
 
           {/* Filter */}
@@ -124,7 +124,7 @@ export default function References() {
 
       <section
         className="section-padding text-center"
-        style={{ background: 'linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%)' }}
+        style={{ background: 'linear-gradient(135deg, #1F2E4A 0%, #2E4C7D 100%)' }}
       >
         <div className="container-max">
           <p className="text-white/40 text-xs uppercase tracking-widest font-medium mb-3">Ihr Projekt</p>
