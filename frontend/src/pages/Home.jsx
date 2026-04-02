@@ -4,6 +4,7 @@ import Hero from '../components/sections/Hero'
 import ScrollCinematic from '../components/sections/ScrollCinematic'
 import ServicesPreview from '../components/sections/ServicesPreview'
 import Testimonials from '../components/sections/Testimonials'
+import { GlassCard } from '../components/glass'
 
 const usps = [
   {
@@ -74,9 +75,14 @@ export default function Home() {
               </h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {usps.map(({ icon, title, desc }) => (
-                  <div
+                  <GlassCard
                     key={title}
-                    className="card-3d p-5 group cursor-default"
+                    variant="light"
+                    blur={18}
+                    padding={20}
+                    hover
+                    className="group cursor-default"
+                    style={{ border: '1px solid rgba(31,46,74,0.08)' }}
                   >
                     <div
                       className="w-9 h-9 flex items-center justify-center mb-3 text-gray-400 group-hover:text-primary transition-colors duration-200"
@@ -88,7 +94,7 @@ export default function Home() {
                       {title}
                     </p>
                     <p className="text-gray-500 text-xs font-light leading-relaxed">{desc}</p>
-                  </div>
+                  </GlassCard>
                 ))}
               </div>
             </div>

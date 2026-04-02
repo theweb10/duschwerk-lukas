@@ -167,6 +167,68 @@
   }
 }
 
+/* ══════════════════════════════════════════════════
+   GLASS DESIGN SYSTEM
+   ══════════════════════════════════════════════════
+
+   Architecture:
+     GlassPanel (React) sets --glass-* CSS vars inline.
+     These classes handle shared behaviour: fallbacks,
+     hover states, noise grain. No style is duplicated.
+
+   Blur scale (reference for props):
+     blur=10  → whisper     (badges, pills)
+     blur=20  → standard    (cards, panels)
+     blur=32  → immersive   (modal overlays)
+     blur=48  → deep-field  (full-page overlays)
+   ══════════════════════════════════════════════════ */
+
+/* @supports fallback: solid bg in Firefox (no flag) / older Safari */
+@supports not (backdrop-filter: blur(1px)) {
+  .glass-panel-root {
+    background: var(--glass-fallback, rgba(255,255,255,0.97)) !important;
+  }
+}
+
+/* Interactive card lift — GPU-only (transform + box-shadow) */
+.glass-card-hover {
+  transition:
+    transform   0.22s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow  0.22s ease;
+  will-change: transform;
+}
+.glass-card-hover:hover {
+  transform: translateY(-5px);
+}
+.glass-card-hover:active {
+  transform: translateY(-1px) scale(0.982) !important;
+  transition: transform 0.07s ease !important;
+}
+
+/* Film-grain noise — SVG data-URI, no external file */
+.glass-noise::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  z-index: 5;
+  opacity: 0.030;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='256' height='256'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='256' height='256' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 128px 128px;
+}
+
+/* Disable glass animations under reduced-motion or on mobile */
+@media (prefers-reduced-motion: reduce) {
+  .glass-card-hover { transition: none !important; }
+  .glass-card-hover:hover { transform: none; }
+}
+@media (hover: none), (max-width: 768px) {
+  .glass-card-hover { transition: none !important; }
+  .glass-noise::before { display: none; }
+}
+
 /* ── Scroll hint pulse ───────────────────────────── */
 @keyframes scroll-hint {
   0%, 100% { transform: scaleY(1);   opacity: 0.25; }

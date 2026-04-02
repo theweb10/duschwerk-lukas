@@ -2,6 +2,7 @@ import { useRef, useCallback } from 'react'
 import { Link } from 'react-router-dom'
 import RegensburgSilhouette from './RegensburgSilhouette'
 import { useParallax } from '../../hooks/useParallax'
+import { GlassPanel } from '../glass'
 
 export default function Hero() {
   const parallax   = useParallax()
@@ -53,19 +54,23 @@ export default function Hero() {
           {/* Location badge – layer 1 */}
           <div
             data-reveal
-            style={{ transform: t(5, 3), transition: 'transform 0.1s ease-out' }}
+            style={{ transform: t(5, 3) }}
             className="inline-flex items-center gap-2 mb-10"
           >
-            <div
+            {/* Location badge — GlassPanel (light, pill shape) */}
+            <GlassPanel
+              variant="light"
+              blur={14}
+              radius={100}
+              shimmer={false}
+              gleam={false}
               style={{
-                background: 'rgba(255,255,255,0.85)',
-                backdropFilter: 'blur(12px)',
-                border: '1px solid rgba(31,46,74,0.15)',
-                borderRadius: '100px',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 8,
                 padding: '6px 16px',
                 boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
               }}
-              className="inline-flex items-center gap-2"
             >
               <span
                 className="w-1.5 h-1.5 rounded-full flex-shrink-0"
@@ -74,7 +79,7 @@ export default function Hero() {
               <span className="text-gray-500 text-xs font-medium tracking-widest uppercase">
                 Regensburg &amp; ganz Bayern
               </span>
-            </div>
+            </GlassPanel>
           </div>
 
           {/* H1 – layer 2 (most depth) */}

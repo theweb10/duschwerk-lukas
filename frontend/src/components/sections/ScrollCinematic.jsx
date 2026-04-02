@@ -1,5 +1,9 @@
-import { useRef, useEffect, useState } from 'react'
+import { useRef, useState, useEffect, Suspense, lazy } from 'react'
 import { Link } from 'react-router-dom'
+import { useScrollProgress } from '../../hooks/useScrollProgress'
+
+// Lazy-load the 3D scene so Three.js doesn't block initial render
+const GlassShardScene = lazy(() => import('../3d/GlassShardScene'))
 
 /* ─── Scene definitions ─────────────────────────── */
 const SCENES = [
@@ -75,6 +79,7 @@ function blendHex(a, b, t) {
   └──────────────────────────┘
   Die Seitenscheibe ist perspektivisch verkürzt dargestellt.
 */
+// Legacy SVG panel — used as Suspense fallback while 3D scene loads
 function GlassPanel({ sceneP, sceneIdx, p }) {
   const isLight = sceneIdx < 2
 
@@ -336,34 +341,26 @@ function GlassPanel({ sceneP, sceneIdx, p }) {
 /* ─── Main Component ────────────────────────────── */
 export default function ScrollCinematic() {
   const containerRef = useRef(null)
-  const rafRef       = useRef(null)
-  const rawRef       = useRef(0)
-  const smoothRef    = useRef(0)
 
-  const [p, setP] = useState(0) // smooth global progress 0→1
+  // Canonical scroll controller — replaces 25 lines of manual RAF + listener
+  const { smooth: p } = useScrollProgress(containerRef)
 
+  // Pause GPU when section is off-screen
+  const [inView, setInView] = useState(true)
   useEffect(() => {
-    const onScroll = () => {
-      const el = containerRef.current
-      if (!el) return
-      const rect  = el.getBoundingClientRect()
-      const total = el.offsetHeight - window.innerHeight
-      rawRef.current = clamp(-rect.top / total, 0, 1)
-    }
-
-    const tick = () => {
-      smoothRef.current += (rawRef.current - smoothRef.current) * 0.11
-      setP(smoothRef.current)
-      rafRef.current = requestAnimationFrame(tick)
-    }
-
-    window.addEventListener('scroll', onScroll, { passive: true })
-    rafRef.current = requestAnimationFrame(tick)
-    return () => {
-      window.removeEventListener('scroll', onScroll)
-      cancelAnimationFrame(rafRef.current)
-    }
+    const el = containerRef.current
+    if (!el) return
+    const obs = new IntersectionObserver(
+      ([entry]) => setInView(entry.isIntersecting),
+      { rootMargin: '200px' }
+    )
+    obs.observe(el)
+    return () => obs.disconnect()
   }, [])
+
+  // Respect prefers-reduced-motion
+  const reducedMotion = typeof window !== 'undefined'
+    && window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
   /* ── Derive scene state from p ───────────────── */
   const total      = SCENES.length
@@ -482,21 +479,26 @@ export default function ScrollCinematic() {
             )}
           </div>
 
-          {/* ── Right: Glass Panel SVG ── */}
-          <div className="hidden lg:flex items-center justify-center h-full">
-            <div
-              className="w-64 xl:w-72"
-              style={{
-                opacity: clamp(textOpacity + 0.2, 0.1, 1),
-                transform: `scale(${lerp(0.92, 1, textIn)})`,
-                transition: 'transform 0.6s ease-out',
-              }}
-            >
-              <GlassPanel
-                sceneP={sceneP}
-                sceneIdx={sceneIdx}
-                p={p}
-              />
+          {/* ── Right: 3D Glass Scene (desktop) ── */}
+          <div
+            className="hidden lg:flex items-center justify-center h-full"
+            style={{
+              opacity: clamp(textOpacity + 0.2, 0.1, 1),
+              willChange: 'opacity',
+            }}
+          >
+            {/* Height capped — full column height caused 630K+ px/frame */}
+            <div style={{ width: '100%', height: 'clamp(320px, 44vh, 480px)' }}>
+              <Suspense
+                fallback={
+                  // SVG panel while Three.js is downloading
+                  <div className="w-64 xl:w-72 mx-auto">
+                    <GlassPanel sceneP={sceneP} sceneIdx={sceneIdx} p={p} />
+                  </div>
+                }
+              >
+                <GlassShardScene scrollP={p} active={inView} reducedMotion={reducedMotion} />
+              </Suspense>
             </div>
           </div>
         </div>
