@@ -545,7 +545,10 @@
   border-radius: 12px;
   overflow: hidden;
   isolation: isolate;
+  position: relative;
+  cursor: grab;
 }
+.shower-canvas-wrapper.is-dragging { cursor: grabbing; }
 .shower-canvas-wrapper canvas {
   display: block;
   width: 100% !important;
@@ -555,12 +558,55 @@
   .shower-canvas-wrapper { height: 280px; }
 }
 
+/* ── Viewer Placeholder ──────────────────── */
+.viewer-placeholder {
+  position: absolute; inset: 0; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 16px;
+  background: #f4f4f4; pointer-events: none;
+}
+.placeholder-icon { opacity: 0.35; }
+.placeholder-text {
+  font-size: 13px; color: #999; text-align: center; line-height: 1.6; margin: 0;
+}
+.placeholder-steps {
+  font-size: 11px; color: #bbb; letter-spacing: 0.05em;
+  background: rgba(0,0,0,0.04); padding: 5px 14px; border-radius: 20px;
+}
+
+/* ── Canvas Loading State ────────────────── */
+.canvas-loading {
+  position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+  background: #f4f4f4;
+}
+.canvas-loading-spinner {
+  width: 32px; height: 32px; border-radius: 50%;
+  border: 3px solid #ddd; border-top-color: #1F2E4A;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── Canvas Controls (Zoom) ──────────────── */
+.canvas-controls {
+  position: absolute; bottom: 24px; right: 20px;
+  display: flex; flex-direction: column; gap: 6px; z-index: 10;
+}
+
+/* ── Viewer Badge ────────────────────────── */
+.viewer-badge {
+  position: absolute; top: 14px; left: 14px;
+  font-size: 9px; font-weight: 700; letter-spacing: 0.12em;
+  color: #1F2E4A; background: rgba(255,255,255,0.88);
+  padding: 4px 10px; border-radius: 6px;
+  backdrop-filter: blur(8px); border: 1px solid rgba(31,46,74,0.1);
+}
+
 /* ── Konfigurator Two-Column Layout ─────── */
-.konfigurator-page { padding-top: 72px; background: #F8FAFC; min-height: 100vh; }
+.konfigurator-page { padding-top: 72px; background: #f0f2f5; min-height: 100vh; }
 .konfigurator-layout { display: flex; height: calc(100vh - 72px); }
-.konfigurator-viewer { flex: 0 0 70%; position: relative; background: linear-gradient(160deg,#EEF2FF 0%,#E4EAF5 100%); overflow: hidden; }
-.konfigurator-panel { flex: 0 0 30%; overflow-y: auto; background: #fff; box-shadow: -4px 0 24px rgba(0,0,0,0.06); padding: 32px 24px; }
-.konfigurator-viewer .shower-canvas-wrapper { height: 100%; border-radius: 0; }
+.konfigurator-viewer { flex: 1 1 0; position: relative; background: #f4f4f4; overflow: hidden; }
+.konfigurator-panel { flex: 0 0 360px; min-width: 320px; max-width: 400px; overflow-y: auto; background: #fff; box-shadow: -2px 0 16px rgba(0,0,0,0.06); }
+.konfigurator-viewer .shower-canvas-wrapper { height: 100%; border-radius: 0; cursor: grab; }
+.konfigurator-viewer .shower-canvas-wrapper.is-dragging { cursor: grabbing; }
 
 /* ── Config Panel ────────────────────────── */
 .config-brand { font-size: 10px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: #1F2E4A; margin-bottom: 28px; }
@@ -593,10 +639,354 @@
 .zoom-btn:hover { box-shadow: 0 4px 20px rgba(0,0,0,0.20); transform: scale(1.07); }
 .zoom-btn:active { transform: scale(0.95); }
 
+/* ── Viewer Hint ─────────────────────────── */
+.viewer-hint {
+  position: absolute; bottom: 68px; left: 50%; transform: translateX(-50%);
+  font-size: 11px; color: rgba(31,46,74,0.4); letter-spacing: 0.05em;
+  pointer-events: none; transition: opacity 0.5s;
+}
+
+/* ── Wizard Panel Override ───────────────── */
+.wizard-panel { padding: 0; display: flex; flex-direction: column; }
+
+/* ── Wizard Shell ────────────────────────── */
+.wizard-shell { display: flex; flex-direction: column; height: 100%; }
+
+/* ── Stepper ─────────────────────────────── */
+.wizard-stepper {
+  display: flex; gap: 0; padding: 0; border-bottom: 1px solid #EAEDF2;
+  background: #FAFBFD; overflow-x: auto; flex-shrink: 0;
+}
+.stepper-item {
+  display: flex; align-items: center; gap: 6px; padding: 14px 14px;
+  border: none; background: none; cursor: pointer; font-size: 12px;
+  color: #AAA; white-space: nowrap; transition: all 0.2s;
+  border-bottom: 2px solid transparent; position: relative;
+}
+.stepper-item:disabled { cursor: not-allowed; opacity: 0.35; }
+.stepper-item.active { color: #1F2E4A; font-weight: 600; border-bottom-color: #1F2E4A; }
+.stepper-item.done { color: #2E7D32; }
+.stepper-item:hover:not(:disabled):not(.active) { color: #666; }
+.stepper-number {
+  width: 22px; height: 22px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 700; flex-shrink: 0;
+  border: 1.5px solid #DDD; color: #AAA; background: #fff;
+  transition: all 0.2s;
+}
+.stepper-item.active .stepper-number { border-color: #1F2E4A; color: #fff; background: #1F2E4A; }
+.stepper-item.done .stepper-number { border-color: #2E7D32; color: #fff; background: #2E7D32; }
+.stepper-label { display: none; }
+@media (min-width: 900px) { .stepper-label { display: inline; } }
+
+/* ── Wizard Content ──────────────────────── */
+.wizard-content { flex: 1; overflow-y: auto; padding: 28px 24px; }
+.wizard-step { animation: wizardFadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1); }
+@keyframes wizardFadeIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Step Header ─────────────────────────── */
+.step-header { margin-bottom: 28px; }
+.step-header h2 { font-size: 22px; font-weight: 700; color: #1F2E4A; margin: 0 0 8px; letter-spacing: -0.02em; }
+.step-header p { font-size: 14px; color: #888; margin: 0; line-height: 1.6; }
+
+/* ── Wizard Navigation ───────────────────── */
+.wizard-nav {
+  display: flex; justify-content: space-between; gap: 12px;
+  padding: 16px 24px; border-top: 1px solid #EAEDF2;
+  background: #fff; flex-shrink: 0;
+}
+.wizard-back { flex: 0 0 auto; padding: 10px 24px; font-size: 13px; }
+.wizard-next { flex: 1; max-width: 200px; font-size: 13px; }
+.wizard-next:disabled { opacity: 0.35; cursor: not-allowed; pointer-events: none; }
+.wizard-cta { width: 100%; margin-top: 16px; }
+
+/* ── Step: Einstieg ──────────────────────── */
+.step-einstieg { text-align: center; padding-top: 24px; }
+.step-einstieg .step-header { margin-bottom: 36px; }
+.einstieg-features { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 36px; }
+.einstieg-feature {
+  padding: 24px 14px; border-radius: 14px;
+  background: linear-gradient(160deg, #FAFBFE, #F0F3FA);
+  border: 1px solid #E8ECF4; text-align: center;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.einstieg-feature:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(31,46,74,0.08); }
+.einstieg-icon { font-size: 28px; margin-bottom: 10px; color: #1F2E4A; }
+.einstieg-feature h3 { font-size: 13px; font-weight: 600; margin: 0 0 4px; color: #1F2E4A; }
+.einstieg-feature p { font-size: 11px; color: #999; margin: 0; line-height: 1.4; }
+
+/* ══════════════════════════════════════════
+   PREMIUM SERIE CARDS
+   ══════════════════════════════════════════ */
+.serie-grid-premium { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.serie-card-premium {
+  text-align: left; border-radius: 12px; cursor: pointer; overflow: hidden;
+  border: 2px solid #E8ECF4; background: #fff; transition: all 0.25s cubic-bezier(0.16,1,0.3,1);
+  position: relative;
+}
+.serie-card-premium:hover { border-color: #C62828; transform: translateY(-2px); box-shadow: 0 12px 32px rgba(0,0,0,0.08); }
+.serie-card-premium.active { border-color: #1F2E4A; box-shadow: 0 4px 20px rgba(31,46,74,0.15); }
+.serie-visual {
+  height: 64px; display: flex; align-items: center; justify-content: center;
+  position: relative; overflow: hidden;
+}
+.serie-icon { font-size: 28px; z-index: 1; }
+.serie-badge {
+  position: absolute; top: 8px; right: 8px;
+  font-size: 9px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+  color: #fff; padding: 2px 8px; border-radius: 4px;
+}
+.serie-body { padding: 14px 16px; }
+.serie-body h3 { font-size: 14px; font-weight: 700; color: #1F2E4A; margin: 0 0 4px; }
+.serie-desc { font-size: 11px; color: #888; margin: 0 0 10px; line-height: 1.4; }
+.serie-features { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
+.serie-feature-chip {
+  display: flex; align-items: center; gap: 4px;
+  font-size: 10px; color: #777; background: #F5F7FA; padding: 3px 8px; border-radius: 10px;
+}
+.serie-feature-highlight { background: #E8F5E9; color: #2E7D32; font-weight: 600; }
+.feature-dot { width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; }
+.serie-rahmen { display: flex; gap: 4px; }
+.rahmen-tag { font-size: 9px; color: #aaa; background: #F0F0F0; padding: 2px 6px; border-radius: 4px; }
+.serie-selected-indicator {
+  position: absolute; top: 10px; left: 10px;
+  width: 20px; height: 20px; border-radius: 50%;
+  background: #1F2E4A; color: #fff; display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 700; z-index: 2;
+}
+.serie-selected-indicator::after { content: '\2713'; }
+
+/* ══════════════════════════════════════════
+   PREMIUM EINBAUSITUATION — Grundriss-Karten
+   ══════════════════════════════════════════ */
+.einbau-grid-premium { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.einbau-card-premium {
+  display: flex; gap: 12px; align-items: center; padding: 16px;
+  border-radius: 12px; cursor: pointer; position: relative;
+  border: 2px solid #E8ECF4; background: #fff; transition: all 0.25s cubic-bezier(0.16,1,0.3,1);
+}
+.einbau-card-premium:hover { border-color: #C62828; transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.06); }
+.einbau-card-premium.active { border-color: #1F2E4A; background: #FAFCFF; box-shadow: 0 4px 16px rgba(31,46,74,0.1); }
+.einbau-grundriss { width: 64px; height: 64px; flex-shrink: 0; }
+.einbau-info h3 { font-size: 14px; font-weight: 600; color: #1F2E4A; margin: 0 0 2px; }
+.einbau-info p { font-size: 11px; color: #888; margin: 0; line-height: 1.3; }
+.einbau-check {
+  position: absolute; top: 8px; right: 8px;
+  width: 20px; height: 20px; border-radius: 50%; background: #1F2E4A;
+  color: #fff; display: flex; align-items: center; justify-content: center;
+  font-size: 12px;
+}
+
+/* ── Step: Maße ──────────────────────────── */
+.masse-controls { display: flex; flex-direction: column; gap: 24px; }
+.mass-input-group { display: flex; flex-direction: column; gap: 8px; }
+.mass-label-row { display: flex; justify-content: space-between; align-items: center; }
+.mass-label-row label { font-size: 14px; font-weight: 600; color: #1F2E4A; }
+.mass-value-display { display: flex; align-items: center; gap: 4px; }
+.mass-number-input {
+  width: 76px; text-align: right; font-size: 18px; font-weight: 700; color: #1F2E4A;
+  border: 2px solid #E8ECF4; border-radius: 8px; padding: 6px 10px; outline: none;
+  transition: border-color 0.2s;
+}
+.mass-number-input:focus { border-color: #1F2E4A; box-shadow: 0 0 0 3px rgba(31,46,74,0.1); }
+.mass-unit { font-size: 14px; color: #888; font-weight: 500; }
+.wizard-slider {
+  -webkit-appearance: none; appearance: none; width: 100%; height: 6px;
+  border-radius: 3px; background: #E8ECF4; outline: none;
+}
+.wizard-slider::-webkit-slider-thumb {
+  -webkit-appearance: none; width: 20px; height: 20px; border-radius: 50%;
+  background: #1F2E4A; cursor: pointer; border: 3px solid #fff;
+  box-shadow: 0 2px 8px rgba(31,46,74,0.3);
+}
+.mass-range-labels { display: flex; justify-content: space-between; font-size: 11px; color: #BBB; }
+.mass-preview { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 12px; }
+.mass-preview .dimension-chip { background: #F0F4FF; border: 1.5px solid #D0D9EF; }
+
+/* ══════════════════════════════════════════
+   PREMIUM DESIGN STEP
+   Glass Cards, Metal Swatches, Tür-Ikonen
+   ══════════════════════════════════════════ */
+.design-sections { display: flex; flex-direction: column; gap: 24px; }
+.design-group h3 {
+  font-size: 10px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.12em; color: #999; margin: 0 0 12px;
+}
+
+/* Türsystem Grid */
+.tuer-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 8px; }
+.tuer-card {
+  display: flex; flex-direction: column; align-items: center; gap: 6px;
+  padding: 14px 8px; border-radius: 10px; cursor: pointer;
+  border: 2px solid #E8ECF4; background: #fff; transition: all 0.2s; color: #888;
+}
+.tuer-card:hover { border-color: #C62828; color: #C62828; }
+.tuer-card.active { border-color: #1F2E4A; background: #F0F4FF; color: #1F2E4A; }
+.tuer-icon-area { width: 36px; height: 36px; }
+.tuer-name { font-size: 12px; font-weight: 600; }
+.tuer-desc { font-size: 9px; color: #aaa; text-align: center; }
+.tuer-card.active .tuer-desc { color: #666; }
+
+/* Walk-In Notice */
+.walkin-notice {
+  padding: 16px; background: linear-gradient(135deg, #F0F4FF, #E8F0FF);
+  border-radius: 10px; border: 1px solid #D0D9EF;
+  font-size: 14px; color: #1F2E4A; font-weight: 500; text-align: center;
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+}
+.walkin-icon { font-size: 24px; }
+
+/* ── Glass Material Cards (KRITISCH) ───── */
+.glass-cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 10px; }
+.glass-card-select {
+  display: flex; flex-direction: column; border-radius: 12px; cursor: pointer;
+  border: 2px solid #E8ECF4; background: #fff; overflow: hidden;
+  transition: all 0.25s cubic-bezier(0.16,1,0.3,1); position: relative;
+}
+.glass-card-select:hover { border-color: #C62828; transform: translateY(-3px); box-shadow: 0 12px 28px rgba(0,0,0,0.08); }
+.glass-card-select.active { border-color: #1F2E4A; box-shadow: 0 4px 16px rgba(31,46,74,0.12); }
+.glass-preview {
+  height: 72px; position: relative; overflow: hidden;
+  border-bottom: 1px solid #eee; display: flex; align-items: flex-end;
+  padding: 6px 8px;
+}
+/* Simulated Light Reflection */
+.glass-reflection {
+  position: absolute; top: -30%; right: -20%; width: 60%; height: 80%;
+  background: linear-gradient(135deg, rgba(255,255,255,0.6), transparent);
+  border-radius: 50%; pointer-events: none; transform: rotate(-15deg);
+}
+.glass-type-label {
+  font-size: 9px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em;
+  color: rgba(0,0,0,0.35); z-index: 1;
+}
+.glass-card-info { padding: 10px 10px 12px; }
+.glass-card-name { font-size: 12px; font-weight: 600; color: #1F2E4A; display: block; }
+.glass-card-desc {
+  font-size: 10px; color: #999; display: block; margin-top: 2px; line-height: 1.3;
+  animation: wizardFadeIn 0.2s ease;
+}
+.glass-card-select.active .glass-card-name { color: #1F2E4A; }
+.selection-check {
+  position: absolute; top: 6px; right: 6px;
+  width: 20px; height: 20px; border-radius: 50%; background: #1F2E4A;
+  color: #fff; display: flex; align-items: center; justify-content: center;
+  font-size: 12px; z-index: 2;
+}
+
+/* ── Glasstärke Bar ──────────────────────── */
+.staerke-bar { display: flex; gap: 8px; }
+.staerke-option {
+  flex: 1; display: flex; flex-direction: column; align-items: center; gap: 8px;
+  padding: 14px 8px; border-radius: 10px; cursor: pointer;
+  border: 2px solid #E8ECF4; background: #fff; transition: all 0.2s;
+  font-size: 13px; font-weight: 500; color: #666;
+}
+.staerke-option:hover { border-color: #C62828; }
+.staerke-option.active { border-color: #1F2E4A; background: #F0F4FF; color: #1F2E4A; font-weight: 700; }
+.staerke-visual { height: 24px; display: flex; align-items: center; justify-content: center; }
+.staerke-line { height: 100%; background: linear-gradient(135deg, #c8d8e8, #a0b8d0); border-radius: 2px; min-width: 3px; }
+.staerke-option.active .staerke-line { background: linear-gradient(135deg, #1F2E4A, #2E4C7D); }
+.safety-hint { font-size: 11px; color: #C62828; margin-top: 8px; font-style: italic; }
+
+/* ── Metal Profile Swatches ──────────────── */
+.metal-swatches { display: grid; grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); gap: 8px; }
+.metal-swatch {
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  padding: 12px 6px; border-radius: 10px; cursor: pointer; position: relative;
+  border: 2px solid #E8ECF4; background: #fff; transition: all 0.25s cubic-bezier(0.16,1,0.3,1);
+}
+.metal-swatch:hover { border-color: #C62828; transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,0,0,0.06); }
+.metal-swatch.active { border-color: #1F2E4A; box-shadow: 0 4px 16px rgba(31,46,74,0.1); }
+.metal-preview {
+  width: 44px; height: 44px; border-radius: 50%;
+  border: 1px solid rgba(0,0,0,0.06); position: relative; overflow: hidden;
+}
+/* Shine auf poliertem Metall */
+.metal-shine {
+  position: absolute; top: -20%; left: 10%; width: 40%; height: 60%;
+  background: linear-gradient(135deg, rgba(255,255,255,0.7), transparent);
+  border-radius: 50%; transform: rotate(-20deg);
+}
+.metal-name { font-size: 10px; color: #666; text-align: center; line-height: 1.2; }
+.metal-swatch.active .metal-name { color: #1F2E4A; font-weight: 600; }
+.metal-check {
+  position: absolute; top: 4px; right: 4px;
+  width: 16px; height: 16px; border-radius: 50%; background: #1F2E4A;
+  color: #fff; display: flex; align-items: center; justify-content: center;
+  font-size: 10px;
+}
+.metal-tooltip {
+  position: absolute; bottom: -24px; left: 50%; transform: translateX(-50%);
+  font-size: 9px; color: #888; white-space: nowrap; background: #fff;
+  padding: 2px 8px; border-radius: 4px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  pointer-events: none; animation: wizardFadeIn 0.15s ease;
+}
+
+/* ── Corrections / Hints ─────────────────── */
+.wizard-corrections { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
+.correction-hint {
+  display: flex; align-items: center; gap: 8px; padding: 10px 14px;
+  background: #FFFDE7; border: 1px solid #FFF176; border-radius: 10px;
+  font-size: 12px; color: #795548;
+}
+.correction-hint.correction-error { background: #FFF5F5; border-color: #FFCDD2; color: #C62828; }
+.correction-icon { font-weight: 700; font-size: 14px; flex-shrink: 0; }
+
+/* ── Step: Zusammenfassung ───────────────── */
+.summary-table { margin-bottom: 28px; border-radius: 10px; overflow: hidden; border: 1px solid #EAEDF2; }
+.summary-row {
+  display: flex; justify-content: space-between; padding: 12px 16px;
+  border-bottom: 1px solid #F0F2F5; font-size: 13px;
+  background: #fff;
+}
+.summary-row:nth-child(even) { background: #FAFBFD; }
+.summary-row:last-child { border-bottom: none; }
+.summary-label { color: #888; }
+.summary-value { font-weight: 600; color: #1F2E4A; }
+.summary-contact { display: flex; flex-direction: column; gap: 12px; }
+.summary-contact h3 {
+  font-size: 10px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.12em; color: #999; margin: 0 0 4px;
+}
+
+/* ── Summary Export Actions ──────────────── */
+.summary-actions { display: flex; gap: 8px; margin-bottom: 24px; }
+.summary-action-btn {
+  flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px;
+  padding: 9px 14px; border-radius: 8px; font-size: 12px; font-weight: 500;
+  color: #555; background: #F5F7FA; border: 1.5px solid #E8ECF4;
+  cursor: pointer; transition: all 0.15s;
+}
+.summary-action-btn:hover { border-color: #1F2E4A; color: #1F2E4A; background: #EEF2FF; }
+.action-icon { font-size: 14px; }
+
+/* Privacy Note */
+.privacy-note { font-size: 10px; color: #bbb; margin: 0; text-align: center; line-height: 1.4; }
+
+/* ── Success State ───────────────────────── */
+.step-success { text-align: center; padding: 48px 0; }
+.success-icon {
+  font-size: 56px; color: #2E7D32; margin-bottom: 16px;
+  width: 80px; height: 80px; line-height: 80px;
+  border-radius: 50%; background: #E8F5E9; margin: 0 auto 20px;
+}
+.step-success h2 { color: #2E7D32; }
+
 /* ── Mobile ──────────────────────────────── */
 @media (max-width: 768px) {
   .konfigurator-layout { flex-direction: column; height: auto; }
-  .konfigurator-viewer { flex: none; height: 60vw; min-height: 280px; }
+  .konfigurator-viewer { flex: none; height: 50vw; min-height: 240px; }
   .konfigurator-panel { flex: none; }
   .konfigurator-viewer .shower-canvas-wrapper { height: 100%; }
+  .einstieg-features { grid-template-columns: 1fr; }
+  .serie-grid-premium { grid-template-columns: 1fr; }
+  .einbau-grid-premium { grid-template-columns: 1fr; }
+  .glass-cards-grid { grid-template-columns: 1fr 1fr; }
+  .metal-swatches { grid-template-columns: repeat(3, 1fr); }
+  .stepper-label { display: none; }
+  .viewer-hint { display: none; }
 }

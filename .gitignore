@@ -7,10 +7,15 @@ node_modules/
 .env
 .env.local
 .env.*.local
+*.local
 
 # Build output
 dist/
 build/
+
+# Database & data
+backend/duschwerk.db
+backend/data/
 
 # Logs
 logs/

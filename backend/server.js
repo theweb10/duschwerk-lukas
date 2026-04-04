@@ -32,6 +32,7 @@ app.use('/api', generalLimiter)
 // --- Routes ---
 app.use('/api/contact', require('./routes/contact'))
 app.use('/api/leads', require('./routes/leads'))
+app.use('/api/configurations', require('./routes/configurations'))
 
 // Health check
 app.get('/api/health', (req, res) => {

@@ -32,6 +32,24 @@ db.exec(`
     source     TEXT    DEFAULT 'website',
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
   );
+
+  CREATE TABLE IF NOT EXISTS configurations (
+    id              INTEGER PRIMARY KEY AUTOINCREMENT,
+    session_id      TEXT,
+    serie           TEXT,
+    einbausituation TEXT,
+    tuersystem      TEXT,
+    breite          INTEGER,
+    hoehe           INTEGER,
+    glastyp         TEXT,
+    glasstaerke     TEXT,
+    profilfarbe     TEXT,
+    rahmentyp       TEXT,
+    config_json     TEXT,
+    status          TEXT    DEFAULT 'draft',
+    created_at      DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at      DATETIME DEFAULT CURRENT_TIMESTAMP
+  );
 `)
 
 module.exports = db
