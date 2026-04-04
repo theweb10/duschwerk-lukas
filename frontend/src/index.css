@@ -1,0 +1,602 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── Corporate Color System ──────────────────────── */
+:root {
+  --color-primary:      #1F2E4A;
+  --color-navy:         #2E4C7D;
+  --color-accent:       #C62828;
+  --color-accent-hover: #A61E1E;
+  --color-white:        #FFFFFF;
+  --color-bg:           #F2F2F2;
+  --color-border:       #DDDDDD;
+  --color-text:         #333333;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    @apply bg-white font-body;
+    color: var(--color-text);
+  }
+
+  h1, h2, h3, h4 {
+    @apply font-headline tracking-tight;
+    color: var(--color-primary);
+  }
+}
+
+@layer components {
+
+  /* ── Buttons ─────────────────────────────────────── */
+
+  /* Dunkelblau → Rot hover (Haupt-CTA) */
+  .btn-primary {
+    @apply inline-flex items-center justify-center
+           font-medium text-sm text-white
+           px-8 py-3 min-h-[44px]
+           tracking-wide
+           transition-all duration-250 ease-out;
+    background: var(--color-primary);
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(31,46,74,0.22);
+    position: relative;
+    overflow: hidden;
+  }
+  .btn-primary:hover {
+    background: var(--color-accent);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(198,40,40,0.35);
+  }
+  .btn-primary:active {
+    transform: translateY(0px) scale(0.97) !important;
+    box-shadow: 0 1px 4px rgba(31,46,74,0.18) !important;
+    transition: transform 70ms ease, box-shadow 70ms ease !important;
+  }
+
+  /* Ghost outline → Rot fill on hover */
+  .btn-outline {
+    @apply inline-flex items-center justify-center
+           border font-medium text-sm
+           px-8 py-3 min-h-[44px]
+           tracking-wide
+           transition-all duration-250 ease-out;
+    color: var(--color-primary);
+    border-color: var(--color-border);
+    border-radius: 10px;
+  }
+  .btn-outline:hover {
+    border-color: var(--color-accent);
+    background: rgba(198,40,40,0.06);
+    color: var(--color-accent);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(198,40,40,0.15);
+  }
+
+  /* Weißer Button auf dunklem Hintergrund */
+  .btn-silver {
+    @apply inline-flex items-center justify-center
+           bg-white font-medium text-sm
+           px-8 py-3 min-h-[44px]
+           tracking-wide
+           transition-all duration-250 ease-out;
+    color: var(--color-primary);
+    border-radius: 10px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.12);
+    position: relative;
+    overflow: hidden;
+  }
+  .btn-silver:hover {
+    background: var(--color-accent);
+    color: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(198,40,40,0.30);
+  }
+  .btn-silver:active {
+    transform: translateY(0px) scale(0.97) !important;
+    box-shadow: 0 1px 6px rgba(0,0,0,0.10) !important;
+    transition: transform 70ms ease, box-shadow 70ms ease !important;
+  }
+
+  /* ── Layout ──────────────────────────────────────── */
+
+  .section-padding {
+    @apply py-24 px-4 sm:px-6 lg:px-8;
+  }
+
+  .container-max {
+    @apply max-w-6xl mx-auto;
+  }
+
+  /* ── Cards ───────────────────────────────────────── */
+
+  .card-3d {
+    @apply bg-white;
+    border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+  }
+  .card-3d:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 16px 40px rgba(0,0,0,0.10);
+  }
+
+  .glass-card {
+    background: rgba(255,255,255,0.80);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255,255,255,0.45);
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.08);
+  }
+
+  /* ── Inputs ──────────────────────────────────────── */
+
+  .input-apple {
+    @apply w-full bg-white text-sm placeholder-gray-300
+           transition-all duration-200;
+    color: var(--color-text);
+    border: 1.5px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    outline: none;
+  }
+  .input-apple:focus {
+    border-color: var(--color-navy);
+    box-shadow: 0 0 0 3px rgba(46,76,125,0.15);
+  }
+  .input-apple-error {
+    border-color: var(--color-accent);
+    background: #fff8f8;
+  }
+  .input-apple-error:focus {
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 3px rgba(198,40,40,0.12);
+  }
+
+  /* ── Page Hero ───────────────────────────────────── */
+  .page-hero {
+    @apply bg-white pt-36 pb-20 px-4 sm:px-6 lg:px-8;
+    border-bottom: 1px solid #EEEEEE;
+  }
+}
+
+/* ══════════════════════════════════════════════════
+   GLASS DESIGN SYSTEM
+   ══════════════════════════════════════════════════
+
+   Architecture:
+     GlassPanel (React) sets --glass-* CSS vars inline.
+     These classes handle shared behaviour: fallbacks,
+     hover states, noise grain. No style is duplicated.
+
+   Blur scale (reference for props):
+     blur=10  → whisper     (badges, pills)
+     blur=20  → standard    (cards, panels)
+     blur=32  → immersive   (modal overlays)
+     blur=48  → deep-field  (full-page overlays)
+   ══════════════════════════════════════════════════ */
+
+/* @supports fallback: solid bg in Firefox (no flag) / older Safari */
+@supports not (backdrop-filter: blur(1px)) {
+  .glass-panel-root {
+    background: var(--glass-fallback, rgba(255,255,255,0.97)) !important;
+  }
+}
+
+/* Interactive card lift — GPU-only (transform + box-shadow) */
+.glass-card-hover {
+  transition:
+    transform   0.22s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow  0.22s ease;
+  will-change: transform;
+}
+.glass-card-hover:hover {
+  transform: translateY(-5px);
+}
+.glass-card-hover:active {
+  transform: translateY(-1px) scale(0.982) !important;
+  transition: transform 0.07s ease !important;
+}
+
+/* Film-grain noise — SVG data-URI, no external file */
+.glass-noise::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  z-index: 5;
+  opacity: 0.030;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='256' height='256'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='256' height='256' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 128px 128px;
+}
+
+/* Disable glass animations under reduced-motion or on mobile */
+@media (prefers-reduced-motion: reduce) {
+  .glass-card-hover { transition: none !important; }
+  .glass-card-hover:hover { transform: none; }
+}
+@media (hover: none), (max-width: 768px) {
+  .glass-card-hover { transition: none !important; }
+  .glass-noise::before { display: none; }
+}
+
+/* ── Scroll hint pulse ───────────────────────────── */
+@keyframes scroll-hint {
+  0%, 100% { transform: scaleY(1);   opacity: 0.25; }
+  50%       { transform: scaleY(1.6); opacity: 0.5;  }
+}
+
+/* ── Utility: smooth 250ms ───────────────────────── */
+.duration-250 {
+  transition-duration: 250ms;
+}
+
+/* ══════════════════════════════════════════════════
+   SCROLL REVEAL
+   Elements start invisible + shifted down 18px.
+   .revealed = final visible state.
+   ══════════════════════════════════════════════════ */
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 0.55s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.55s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+[data-reveal].revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ══════════════════════════════════════════════════
+   CARD GROUP DIMMING
+   When any card in a .cards-group is hovered,
+   the others get slightly faded + desaturated.
+   ══════════════════════════════════════════════════ */
+.cards-group:has(.card-3d:hover) .card-3d:not(:hover) {
+  opacity: 0.55;
+  filter: saturate(0.6);
+  transform: translateY(0) scale(0.99);
+  transition: opacity 0.3s ease, filter 0.3s ease,
+              transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* ══════════════════════════════════════════════════
+   HERO MOUSE GLOW
+   Radial light spot that follows the cursor inside
+   the hero section. Uses CSS custom props --gx/--gy
+   updated via JS in Hero.jsx.
+   ══════════════════════════════════════════════════ */
+.hero-glow::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    circle 420px at var(--gx, 50%) var(--gy, 50%),
+    rgba(255, 255, 255, 0.07) 0%,
+    transparent 65%
+  );
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  border-radius: inherit;
+}
+.hero-glow:hover::after {
+  opacity: 1;
+}
+
+/* ══════════════════════════════════════════════════
+   CARD MOUSE GLOW (per-card)
+   Same technique: CSS props --cx/--cy set via JS
+   in a delegated mousemove listener.
+   ══════════════════════════════════════════════════ */
+.card-3d {
+  position: relative;
+  overflow: hidden;
+}
+.card-3d::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    circle 200px at var(--cx, 50%) var(--cy, 50%),
+    rgba(46, 76, 125, 0.07) 0%,
+    transparent 70%
+  );
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  z-index: 0;
+  border-radius: inherit;
+}
+.card-3d:hover::before {
+  opacity: 1;
+}
+/* Ensure card content sits above the glow layer */
+.card-3d > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* ══════════════════════════════════════════════════
+   3D PAGE TRANSITIONS  (View Transitions API)
+
+   Old page recedes into depth (scale down + fade).
+   New page advances from slight depth + right offset.
+   Both run simultaneously on their respective snapshots.
+
+   Desktop: full 3D-depth movement.
+   Mobile : lightweight fade only.
+   reduced-motion: no animation at all.
+   ══════════════════════════════════════════════════ */
+
+/* ══════════════════════════════════════════════════
+   PAGE TRANSITIONS  (View Transitions API)
+
+   Reines Crossfade – kein Scale, kein Translate,
+   kein Blur. 200ms ist kurz genug um unsichtbar
+   zu wirken, lang genug um kein harter Schnitt zu sein.
+   ══════════════════════════════════════════════════ */
+
+@keyframes vt-fade-out {
+  to { opacity: 0; }
+}
+@keyframes vt-fade-in {
+  from { opacity: 0; }
+}
+
+::view-transition-old(root) {
+  animation: 200ms ease-out both vt-fade-out;
+}
+::view-transition-new(root) {
+  animation: 200ms ease-in  both vt-fade-in;
+}
+
+/* Accessibility: respect reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none;
+  }
+}
+
+/* Mobile: turn off heavy effects */
+@media (hover: none), (max-width: 768px) {
+  [data-reveal] {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+  .hero-glow::after,
+  .card-3d::before {
+    display: none;
+  }
+  .cards-group:has(.card-3d:hover) .card-3d:not(:hover) {
+    opacity: 1;
+    filter: none;
+    transform: none;
+  }
+  /* Disable shine on touch/mobile */
+  .glass-shine::after,
+  .btn-primary::after,
+  .btn-silver::after,
+  .card-3d::after {
+    display: none;
+  }
+}
+
+/* ══════════════════════════════════════════════════
+   GLASS SHINE EFFECT
+
+   Einmaliger diagonaler Lichtreflex beim Hover.
+   Technik:
+     • @keyframes translateX(-120%) → translateX(220%)
+       mit skewX für Dynamik
+     • forwards: Strahl stoppt außerhalb → unsichtbar
+     • overflow: hidden clippt den Strahl auf das Element
+     • Kein Loop, kein aggressiver Dauerglow
+   ══════════════════════════════════════════════════ */
+
+@keyframes glass-shine-sweep {
+  from { transform: translateX(-120%) skewX(-14deg); }
+  to   { transform: translateX(220%)  skewX(-14deg); }
+}
+
+/* ── Gemeinsame Shine-Schicht (Buttons + Logo Mark) */
+.glass-shine {
+  position: relative;
+  overflow: hidden;
+}
+.glass-shine::after,
+.btn-primary::after,
+.btn-silver::after {
+  content: '';
+  position: absolute;
+  top: -15%;
+  left: 0;
+  width: 52%;
+  height: 130%;
+  background: linear-gradient(
+    to right,
+    transparent               0%,
+    rgba(255,255,255,0.00)   20%,
+    rgba(255,255,255,0.22)   45%,
+    rgba(255,255,255,0.34)   50%,
+    rgba(255,255,255,0.22)   55%,
+    rgba(255,255,255,0.00)   80%,
+    transparent              100%
+  );
+  transform: translateX(-120%) skewX(-14deg);
+  pointer-events: none;
+  border-radius: inherit;
+  z-index: 1;
+}
+
+/* Trigger: shine einmalig beim Hover */
+.glass-shine:hover::after,
+.btn-primary:hover::after,
+.btn-silver:hover::after {
+  animation: glass-shine-sweep 540ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+/* ── Card Shine (::after, da ::before für Maus-Glow) */
+.card-3d::after {
+  content: '';
+  position: absolute;
+  top: -15%;
+  left: 0;
+  width: 50%;
+  height: 130%;
+  background: linear-gradient(
+    to right,
+    transparent               0%,
+    rgba(255,255,255,0.00)   20%,
+    rgba(255,255,255,0.18)   45%,
+    rgba(255,255,255,0.26)   50%,
+    rgba(255,255,255,0.18)   55%,
+    rgba(255,255,255,0.00)   80%,
+    transparent              100%
+  );
+  transform: translateX(-120%) skewX(-14deg);
+  pointer-events: none;
+  border-radius: inherit;
+  z-index: 2;  /* über Inhalt, aber pointer-events: none */
+}
+.card-3d:hover::after {
+  animation: glass-shine-sweep 600ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+.card-3d:active {
+  transform: translateY(-2px) scale(0.985) !important;
+  transition: transform 70ms ease !important;
+}
+
+/* ══════════════════════════════════════════════════
+   DOM ICON – Logo Mark Animationen
+
+   Idle:  langsames Float (6s, ±1.5px) – kaum
+          wahrnehmbar aber das Mark wirkt lebendig
+   Hover: drop-shadow Glow auf dem Wrapper
+   Tips:  Rote Spitzen haben dezente Opazitäts-Pulsation
+   ══════════════════════════════════════════════════ */
+
+@keyframes logo-float {
+  0%, 100% { transform: translateY(0px);    }
+  50%       { transform: translateY(-2px);  }
+}
+
+@keyframes tip-pulse {
+  0%, 100% { opacity: 1;    }
+  50%       { opacity: 0.72; }
+}
+
+/* Idle Float – langsam, subtil */
+.dom-icon {
+  animation: logo-float 6s ease-in-out infinite;
+  will-change: transform;
+}
+
+/* Hover-Glow auf dem glass-shine Wrapper */
+.glass-shine:hover .dom-icon {
+  filter: drop-shadow(0 3px 10px rgba(31,46,74,0.35))
+          drop-shadow(0 0 6px rgba(46,76,125,0.20));
+  transition: filter 0.35s ease;
+}
+
+/* Rote Spitzen – sehr langsame Pulsation */
+.dom-tip {
+  transform-origin: center bottom;
+  transform-box: fill-box;
+  animation: tip-pulse 3.5s ease-in-out infinite;
+}
+.dom-tip-r {
+  animation-delay: 0.6s;
+}
+
+/* Hover: Tips leuchten stärker (kein pulse während hover) */
+.glass-shine:hover .dom-tip {
+  animation: none;
+  opacity: 1;
+  filter: drop-shadow(0 0 3px rgba(229,57,53,0.55));
+}
+
+/* Mobile/Touch: alle Logo-Animationen stoppen */
+@media (hover: none), (max-width: 768px) {
+  .dom-icon {
+    animation: none;
+  }
+  .dom-tip {
+    animation: none;
+  }
+}
+
+/* ── 3D Configurator Canvas ─────────────── */
+.shower-canvas-wrapper {
+  width: 100%;
+  height: 400px;
+  border-radius: 12px;
+  overflow: hidden;
+  isolation: isolate;
+}
+.shower-canvas-wrapper canvas {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+}
+@media (max-width: 768px) {
+  .shower-canvas-wrapper { height: 280px; }
+}
+
+/* ── Konfigurator Two-Column Layout ─────── */
+.konfigurator-page { padding-top: 72px; background: #F8FAFC; min-height: 100vh; }
+.konfigurator-layout { display: flex; height: calc(100vh - 72px); }
+.konfigurator-viewer { flex: 0 0 70%; position: relative; background: linear-gradient(160deg,#EEF2FF 0%,#E4EAF5 100%); overflow: hidden; }
+.konfigurator-panel { flex: 0 0 30%; overflow-y: auto; background: #fff; box-shadow: -4px 0 24px rgba(0,0,0,0.06); padding: 32px 24px; }
+.konfigurator-viewer .shower-canvas-wrapper { height: 100%; border-radius: 0; }
+
+/* ── Config Panel ────────────────────────── */
+.config-brand { font-size: 10px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: #1F2E4A; margin-bottom: 28px; }
+.config-brand span { color: #C62828; }
+.config-section { padding: 18px 0; border-bottom: 1px solid #F0F0F0; }
+.config-section:last-child { border-bottom: none; }
+.config-section h3 { font-size: 10px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: #AAAAAA; margin-bottom: 12px; }
+.dimension-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.dimension-chip { background: #F0F4FF; border: 1px solid #D0D9EF; border-radius: 8px; padding: 10px 12px; }
+.dimension-chip-label { font-size: 9px; color: #999; text-transform: uppercase; letter-spacing: 0.1em; display: block; margin-bottom: 2px; }
+.dimension-chip-value { font-size: 20px; font-weight: 700; color: #1F2E4A; line-height: 1; }
+.dimension-chip-unit { font-size: 11px; color: #888; font-weight: 400; }
+.option-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.option-chip { padding: 6px 14px; border: 1.5px solid #E5E7EB; border-radius: 20px; font-size: 13px; color: #555; background: #fff; cursor: pointer; transition: all 0.15s; }
+.option-chip.active { border-color: #1F2E4A; background: #F0F4FF; color: #1F2E4A; font-weight: 600; }
+.option-chip:hover:not(.active) { border-color: #C62828; color: #C62828; }
+.profile-options { display: flex; flex-direction: column; gap: 6px; }
+.profile-option { display: flex; align-items: center; gap: 10px; padding: 8px 12px; border: 1.5px solid #E5E7EB; border-radius: 8px; cursor: pointer; transition: all 0.15s; background: #fff; font-size: 13px; color: #555; }
+.profile-option.active { border-color: #1F2E4A; background: #F0F4FF; color: #1F2E4A; font-weight: 600; }
+.profile-option:hover:not(.active) { border-color: #C62828; }
+.profile-swatch { width: 18px; height: 18px; border-radius: 50%; border: 1px solid rgba(0,0,0,0.12); flex-shrink: 0; }
+.dim-slider-row { display: flex; justify-content: space-between; margin-bottom: 6px; }
+.dim-slider-label { font-size: 13px; color: #555; }
+.dim-slider-value { font-size: 13px; font-weight: 600; color: #1F2E4A; }
+.dim-slider { width: 100%; accent-color: #1F2E4A; margin-top: 4px; }
+
+/* ── Zoom Controls ───────────────────────── */
+.zoom-controls { position: absolute; bottom: 24px; left: 50%; transform: translateX(-50%); display: flex; gap: 8px; z-index: 10; }
+.zoom-btn { width: 40px; height: 40px; border-radius: 50%; border: none; background: rgba(255,255,255,0.92); box-shadow: 0 2px 12px rgba(0,0,0,0.14); font-size: 22px; font-weight: 300; color: #1F2E4A; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.15s; backdrop-filter: blur(8px); }
+.zoom-btn:hover { box-shadow: 0 4px 20px rgba(0,0,0,0.20); transform: scale(1.07); }
+.zoom-btn:active { transform: scale(0.95); }
+
+/* ── Mobile ──────────────────────────────── */
+@media (max-width: 768px) {
+  .konfigurator-layout { flex-direction: column; height: auto; }
+  .konfigurator-viewer { flex: none; height: 60vw; min-height: 280px; }
+  .konfigurator-panel { flex: none; }
+  .konfigurator-viewer .shower-canvas-wrapper { height: 100%; }
+}

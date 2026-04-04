@@ -1,0 +1,7 @@
+export { default as MassIcon }        from './MassIcon'
+export { default as MontageIcon }     from './MontageIcon'
+export { default as MaterialienIcon } from './MaterialienIcon'
+export { default as BeratungIcon }    from './BeratungIcon'
+export { default as RegensburgIcon }  from './RegensburgIcon'
+export { default as GarantieIcon }    from './GarantieIcon'
+export { default as DomIcon }         from './DomIcon'
