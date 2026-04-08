@@ -56,29 +56,22 @@ export default function Hero() {
             style={{ transform: t(5, 3) }}
             className="inline-flex items-center gap-2 mb-10"
           >
-            {/* Location badge — rot-blau */}
+            {/* Location badge */}
             <div
               style={{
                 display: 'inline-flex',
                 alignItems: 'center',
-                gap: 8,
-                padding: '6px 16px',
+                gap: 7,
+                padding: '5px 14px',
                 borderRadius: 100,
-                background: '#fff',
-                border: '1.5px solid #E8ECF4',
-                borderLeftColor: '#C62828',
-                borderLeftWidth: '3px',
-                boxShadow: '0 2px 8px rgba(31,46,74,0.08)',
+                background: '#EEF1F8',
+                border: '1px solid #DDE3EE',
               }}
             >
               <span
-                className="w-1.5 h-1.5 rounded-full flex-shrink-0"
-                style={{ background: '#C62828' }}
+                style={{ width: 6, height: 6, borderRadius: '50%', background: '#C62828', flexShrink: 0 }}
               />
-              <span
-                className="text-xs font-bold tracking-widest uppercase"
-                style={{ color: '#1F2E4A', letterSpacing: '0.14em' }}
-              >
+              <span className="eyebrow" style={{ letterSpacing: '0.14em' }}>
                 Regensburg &amp; ganz Bayern
               </span>
             </div>

@@ -13,21 +13,34 @@ const services = [
     title: 'Maßgefertigte Duschabtrennungen',
     description: 'Der Schwerpunkt von Duschwerk Bayern liegt auf der Planung und Umsetzung maßgefertigter Duschabtrennungen. Jede Dusche wird individuell an die räumlichen Gegebenheiten sowie an die gestalterischen Vorstellungen der Kunden angepasst.',
     features: ['Nischenlösung', 'Eckdusche', 'Walk-In Dusche', 'Glaswand (einzelne Wand)', 'Badewannenaufsatz', 'Beratung & Aufmaß vor Ort'],
-    icon: '🚿',
+    icon: (
+      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 17h18M3 17V8a1 1 0 011-1h3m13 10V8a1 1 0 00-1-1h-3M7 7V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 17v-4m3 4v-6m3 6v-3" />
+      </svg>
+    ),
   },
   {
     id: 'teilsanierung',
     title: 'Badewanne zur Dusche umbauen',
     description: 'Ein wichtiger Leistungsbereich ist der Umbau bestehender Badewannen zu modernen und komfortablen Duschanlagen. Passende Duschwannen, Wandpaneele sowie Armaturen werden geliefert und durch langjährige Subunternehmer fachgerecht montiert.',
     features: ['Duschwannen', 'Wandpaneele (Artwall)', 'Armaturen', 'Altersgerechter Umbau', 'Schnelle Umsetzung', 'Minimaler Eingriff in Bausubstanz'],
-    icon: '🔧',
+    icon: (
+      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M11 4a2 2 0 114 0v1a1 1 0 001 1h3a1 1 0 011 1v3a1 1 0 01-1 1h-1a2 2 0 100 4h1a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-1a2 2 0 10-4 0v1a1 1 0 01-1 1H7a1 1 0 01-1-1v-3a1 1 0 00-1-1H4a2 2 0 110-4h1a1 1 0 001-1V6a1 1 0 011-1h3a1 1 0 001-1V4z" />
+      </svg>
+    ),
   },
   {
     id: 'zubehoer',
     title: 'Zubehör & Ergänzungen',
     description: 'Ergänzend werden verschiedene Zubehörartikel und praktische Ergänzungen für den Duschbereich angeboten – für eine komfortable Nutzung und langfristige Pflege der Dusche.',
     features: ['Duschabzieher', 'Reinigungsprodukte', 'Handtuchhalter', 'Funktionale Ausstattungselemente', 'Hochwertige Markenprodukte', 'Auf Anfrage erhältlich'],
-    icon: '✨',
+    icon: (
+      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+      </svg>
+    ),
   },
 ]
 
@@ -80,7 +93,12 @@ export default function Services() {
                 {/* Content */}
                 <div className="p-8 text-center flex flex-col flex-1">
                   <span className="text-gray-300 text-[10px] font-semibold tracking-widest uppercase mb-3 block">0{index + 1}</span>
-                  <div className="text-3xl mb-3">{icon}</div>
+                  <div
+                    className="w-12 h-12 flex items-center justify-center mb-4 mx-auto text-white"
+                    style={{ background: '#1F2E4A', borderRadius: '12px' }}
+                  >
+                    {icon}
+                  </div>
                   <h2 className="font-headline text-xl text-primary mb-3" style={{ letterSpacing: '-0.02em' }}>{title}</h2>
                   <p className="text-gray-500 leading-relaxed mb-6 font-light text-sm">{description}</p>
                   <ul className="flex flex-wrap justify-center gap-2 mb-8">
