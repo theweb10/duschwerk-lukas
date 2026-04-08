@@ -190,7 +190,7 @@ function ViewerPlaceholder() {
       </div>
       <p className="placeholder-text">3D-Vorschau erscheint<br/>nach vollständiger Konfiguration</p>
       <div className="placeholder-steps">
-        <span>Serie → Einbau → Maße → Design</span>
+        <span>Einbau → Türart → Bauart → Maße → Design</span>
       </div>
     </div>
   );

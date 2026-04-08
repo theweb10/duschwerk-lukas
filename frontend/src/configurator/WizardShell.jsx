@@ -90,7 +90,7 @@ export default function WizardShell({
       </div>
 
       {/* ── Navigation ───────────────────────── */}
-      {step > 0 && step < 6 && (
+      {step > 0 && (
         <div className="wizard-nav">
           <button className="wizard-back-btn" onClick={prevStep}>
             <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
@@ -98,19 +98,21 @@ export default function WizardShell({
             </svg>
             Zurück
           </button>
-          <div className="wizard-nav-right">
-            <span className="wizard-step-counter">{step} / 5</span>
-            <button
-              className={`wizard-next-btn${!canProceed ? ' disabled' : ''}`}
-              onClick={nextStep}
-              disabled={!canProceed}
-            >
-              {step === 5 ? 'Zur Anfrage' : 'Weiter'}
-              <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                <path d="M5 2l5 5-5 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-            </button>
-          </div>
+          {step < 6 && (
+            <div className="wizard-nav-right">
+              <span className="wizard-step-counter">{step} / 5</span>
+              <button
+                className={`wizard-next-btn${!canProceed ? ' disabled' : ''}`}
+                onClick={nextStep}
+                disabled={!canProceed}
+              >
+                {step === 5 ? 'Zur Anfrage' : 'Weiter'}
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                  <path d="M5 2l5 5-5 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </button>
+            </div>
+          )}
         </div>
       )}
     </div>
