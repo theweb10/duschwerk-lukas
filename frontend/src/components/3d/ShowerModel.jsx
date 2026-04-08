@@ -296,21 +296,24 @@ function WalkIn({ w, h, t, glassMat, metalMat, rahmentyp }) {
 
 // ── Drehtür ──────────────────────────────────────────────────
 function Drehtuer({ w, h, t, glassMat, metalMat, rahmentyp }) {
-  const voll   = rahmentyp === 'vollgerahmt';
-  const pw     = voll ? P * 1.7 : P;          // Rahmenbreite
-  const fixW   = w * 0.26;
-  const doorW  = w - fixW - P * 3;
-  const glassH = rahmentyp === 'rahmenlos' ? h : h - pw * 2;  // Glas innen im Rahmen
+  const voll    = rahmentyp === 'vollgerahmt';
+  const pw      = voll ? P * 1.7 : P;
+  const glassH  = rahmentyp === 'rahmenlos' ? h : h - pw * 2;
+  // Glas bleibt innerhalb der Rahmenprofile
+  const innerW  = rahmentyp === 'rahmenlos' ? w : w - pw * 2;
+  const fixW    = innerW * 0.30;
+  const doorW   = innerW - fixW - P;
+  const midX    = -w / 2 + (rahmentyp === 'rahmenlos' ? 0 : pw) + fixW + P / 2;
 
   return (
     <group>
-      {/* Festes Seitenteil (links) */}
-      <mesh castShadow position={[-w / 2 + fixW / 2 + P, 0, 0]}>
+      {/* Festes Seitenteil (links) — inset um pw */}
+      <mesh castShadow position={[-w / 2 + (rahmentyp === 'rahmenlos' ? 0 : pw) + fixW / 2, 0, 0]}>
         <boxGeometry args={[fixW, glassH, t]} />
         <primitive object={glassMat} attach="material" />
       </mesh>
-      {/* Türblatt */}
-      <mesh castShadow position={[w / 2 - doorW / 2 - P, 0, 0]}>
+      {/* Türblatt — inset um pw */}
+      <mesh castShadow position={[w / 2 - (rahmentyp === 'rahmenlos' ? 0 : pw) - doorW / 2, 0, 0]}>
         <boxGeometry args={[doorW, glassH, t]} />
         <primitive object={glassMat} attach="material" />
       </mesh>
@@ -319,26 +322,26 @@ function Drehtuer({ w, h, t, glassMat, metalMat, rahmentyp }) {
       <FrameProfiles w={w} h={h} rahmentyp={rahmentyp} metalMat={metalMat} />
 
       {/* Mittelprofil Türanschlag */}
-      <mesh position={[-w / 2 + fixW + P * 1.5, 0, 0]}>
+      <mesh position={[midX, 0, 0]}>
         <boxGeometry args={[P, h - (rahmentyp === 'rahmenlos' ? 0 : pw * 2), PH * 1.5]} />
         <primitive object={metalMat} attach="material" />
       </mesh>
 
       {/* Scharniere */}
       {[h / 2 - 0.13, -h / 2 + 0.13].map((y, i) => (
-        <mesh key={i} position={[-w / 2 + fixW + P * 1.5 + 0.001, y, t / 2 + 0.011]}>
+        <mesh key={i} position={[midX + 0.001, y, t / 2 + 0.011]}>
           <cylinderGeometry args={[0.013, 0.013, 0.055, 10]} />
           <primitive object={metalMat} attach="material" />
         </mesh>
       ))}
 
       {/* Griff */}
-      <mesh position={[w / 2 - doorW - P * 2 + 0.055, 0, t / 2 + 0.024]}>
+      <mesh position={[midX + doorW * 0.35, 0, t / 2 + 0.024]}>
         <cylinderGeometry args={[0.009, 0.009, 0.28, 10]} />
         <primitive object={metalMat} attach="material" />
       </mesh>
       {[0.145, -0.145].map((y, i) => (
-        <mesh key={i} position={[w / 2 - doorW - P * 2 + 0.055, y, t / 2 + 0.024]}>
+        <mesh key={i} position={[midX + doorW * 0.35, y, t / 2 + 0.024]}>
           <sphereGeometry args={[0.011, 8, 8]} />
           <primitive object={metalMat} attach="material" />
         </mesh>
@@ -349,22 +352,26 @@ function Drehtuer({ w, h, t, glassMat, metalMat, rahmentyp }) {
 
 // ── Schiebetür ───────────────────────────────────────────────
 function Schiebetuer({ w, h, t, glassMat, metalMat, rahmentyp }) {
-  const voll   = rahmentyp === 'vollgerahmt';
-  const pw     = voll ? P * 1.7 : P;
-  const phe    = voll ? PH * 1.5 : PH;
-  // Each panel covers 52% → 4% overlap at center; both reach their wall edge
-  const pW     = w * 0.52;
-  const glassH = rahmentyp === 'rahmenlos' ? h - P * 1.4 : h - pw * 2;
+  const voll    = rahmentyp === 'vollgerahmt';
+  const pw      = voll ? P * 1.7 : P;
+  // Glas innerhalb des Rahmens: jedes Panel 52% der Innenbreite → 4% Überlapp mittig
+  const innerW  = rahmentyp === 'rahmenlos' ? w : w - pw * 2;
+  const pW      = innerW * 0.52;
+  const glassH  = rahmentyp === 'rahmenlos' ? h - P * 1.4 : h - pw * 2;
+  // Außenkanten der Glaspaneele beginnen an der Innenkante des Rahmenprofils
+  const off     = rahmentyp === 'rahmenlos' ? 0 : pw;
+  const frontX  = -(w / 2 - off - pW / 2);
+  const backX   =   w / 2 - off - pW / 2;
 
   return (
     <group>
-      {/* Panel vorne (links) — beginnt direkt am linken Rand */}
-      <mesh castShadow position={[-(w / 2 - pW / 2), 0, t * 0.55]}>
+      {/* Panel vorne (links) */}
+      <mesh castShadow position={[frontX, 0, t * 0.55]}>
         <boxGeometry args={[pW, glassH, t]} />
         <primitive object={glassMat} attach="material" />
       </mesh>
-      {/* Panel hinten (rechts) — endet direkt am rechten Rand */}
-      <mesh castShadow position={[(w / 2 - pW / 2), 0, -t * 0.55]}>
+      {/* Panel hinten (rechts) */}
+      <mesh castShadow position={[backX, 0, -t * 0.55]}>
         <boxGeometry args={[pW, glassH, t]} />
         <primitive object={glassMat} attach="material" />
       </mesh>
@@ -372,7 +379,7 @@ function Schiebetuer({ w, h, t, glassMat, metalMat, rahmentyp }) {
       {/* Rahmenprofile */}
       <FrameProfiles w={w} h={h} rahmentyp={rahmentyp} metalMat={metalMat} />
 
-      {/* Führungsschienen – nur rahmenlos (sichtbar als funktionales Element) */}
+      {/* Führungsschienen – nur rahmenlos */}
       {rahmentyp === 'rahmenlos' && (
         [h / 2 + P * 0.4, -h / 2 - P * 0.4].map((y, i) => (
           <mesh key={i} position={[0, y, 0]}>
@@ -384,8 +391,8 @@ function Schiebetuer({ w, h, t, glassMat, metalMat, rahmentyp }) {
 
       {/* Griffe */}
       {[
-        [-(w / 2 - pW / 2) + pW * 0.28,  t * 0.55 + t / 2 + 0.018],
-        [ (w / 2 - pW / 2) - pW * 0.28, -t * 0.55 - t / 2 - 0.018],
+        [frontX + pW * 0.28,  t * 0.55 + t / 2 + 0.018],
+        [backX  - pW * 0.28, -t * 0.55 - t / 2 - 0.018],
       ].map(([x, z], i) => (
         <mesh key={i} position={[x, 0, z]}>
           <cylinderGeometry args={[0.008, 0.008, 0.22, 10]} />
@@ -400,19 +407,21 @@ function Schiebetuer({ w, h, t, glassMat, metalMat, rahmentyp }) {
 function Falttuer({ w, h, t, glassMat, metalMat, rahmentyp }) {
   const voll   = rahmentyp === 'vollgerahmt';
   const pw     = voll ? P * 1.7 : P;
-  // 2 Paneele: linkes (fest an Wand), rechtes (Tür)
-  const panelW = (w - P * 3) / 2;
+  // Glas innerhalb der Rahmenprofile — 2 Paneele mit Mittelgelenk
+  const innerW = rahmentyp === 'rahmenlos' ? w : w - pw * 2;
+  const panelW = (innerW - P) / 2;
   const glassH = rahmentyp === 'rahmenlos' ? h : h - pw * 2;
+  const off    = rahmentyp === 'rahmenlos' ? 0 : pw;
 
   return (
     <group>
       {/* Festes Paneel (links) */}
-      <mesh castShadow position={[-w / 2 + P + panelW / 2, 0, 0]}>
+      <mesh castShadow position={[-w / 2 + off + panelW / 2, 0, 0]}>
         <boxGeometry args={[panelW, glassH, t]} />
         <primitive object={glassMat} attach="material" />
       </mesh>
       {/* Türpaneel (rechts, leicht vorgezogen) */}
-      <mesh castShadow position={[w / 2 - P - panelW / 2, 0, t * 0.4]}>
+      <mesh castShadow position={[w / 2 - off - panelW / 2, 0, t * 0.4]}>
         <boxGeometry args={[panelW, glassH, t]} />
         <primitive object={glassMat} attach="material" />
       </mesh>
@@ -435,7 +444,7 @@ function Falttuer({ w, h, t, glassMat, metalMat, rahmentyp }) {
       ))}
 
       {/* Griff am Türpaneel */}
-      <mesh position={[w / 2 - P - 0.04, 0, t * 0.4 + t / 2 + 0.020]}>
+      <mesh position={[w / 2 - off - 0.04, 0, t * 0.4 + t / 2 + 0.020]}>
         <cylinderGeometry args={[0.008, 0.008, 0.20, 10]} />
         <primitive object={metalMat} attach="material" />
       </mesh>
@@ -561,6 +570,8 @@ export default function ShowerModel({ config, canvasRef }) {
     if (!canvasRef?.current) return;
     const el = canvasRef.current;
     const onDown = (e) => {
+      // Zoom-Buttons und andere UI-Elemente (keine Drag-Rotation auslösen)
+      if (e.target.closest?.('.canvas-controls') || e.target.tagName === 'BUTTON') return;
       isDragging.current = true;
       el.setPointerCapture(e.pointerId);
       dragStart.current = { x: e.clientX, y: e.clientY };
