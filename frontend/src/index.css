@@ -642,22 +642,29 @@
   position: absolute; inset: 0; pointer-events: none; z-index: 5;
 }
 .measurement-width {
-  position: absolute; bottom: 18px; left: 50%; transform: translateX(-50%);
-  font-size: 11px; font-weight: 600; letter-spacing: 0.08em;
-  color: rgba(200,210,220,0.80);
-  background: rgba(10,12,16,0.45);
-  padding: 3px 10px; border-radius: 4px;
-  backdrop-filter: blur(4px);
-}
-.measurement-height {
-  position: absolute; top: 50%; left: 10px; transform: translateY(-50%) rotate(-90deg);
-  font-size: 11px; font-weight: 600; letter-spacing: 0.08em;
-  color: rgba(200,210,220,0.80);
-  background: rgba(10,12,16,0.45);
-  padding: 3px 10px; border-radius: 4px;
-  backdrop-filter: blur(4px);
+  position: absolute; bottom: 22px; left: 50%; transform: translateX(-50%);
+  font-size: 13px; font-weight: 700; letter-spacing: 0.12em;
+  color: rgba(235,244,255,0.96);
+  background: rgba(4,8,18,0.72);
+  padding: 5px 18px; border-radius: 20px;
+  border: 1px solid rgba(160,190,220,0.28);
+  backdrop-filter: blur(8px);
   white-space: nowrap;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.40);
 }
+.measurement-width::before { content: '↔  '; opacity: 0.70; }
+.measurement-height {
+  position: absolute; top: 50%; left: 14px; transform: translateY(-50%) rotate(-90deg);
+  font-size: 13px; font-weight: 700; letter-spacing: 0.12em;
+  color: rgba(235,244,255,0.96);
+  background: rgba(4,8,18,0.72);
+  padding: 5px 18px; border-radius: 20px;
+  border: 1px solid rgba(160,190,220,0.28);
+  backdrop-filter: blur(8px);
+  white-space: nowrap;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.40);
+}
+.measurement-height::before { content: '↕  '; opacity: 0.70; }
 
 /* ── Wizard Panel Override ───────────────── */
 .wizard-panel { padding: 0; display: flex; flex-direction: column; }

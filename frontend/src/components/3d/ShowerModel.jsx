@@ -424,6 +424,71 @@ function Falttuer({ w, h, t, glassMat, metalMat, rahmentyp }) {
   );
 }
 
+// ── Duscharmatur: Stange + Handbrause + Thermostat ───────────
+function ShowerFixture({ w, h, metalMat }) {
+  const x  = -w / 2 + 0.023;   // innere linke Wand + 23 mm
+  const bz = -(D * 0.38);       // 38 % Tiefe
+  const tY = -h / 2 + 1.00;    // Thermostat 100 cm ab Boden
+  const barCY = -h / 2 + 0.68; // Stangenmitte
+
+  return (
+    <group>
+      {/* ── Thermostatarmatur ── */}
+      <mesh position={[x, tY, bz]}>
+        <boxGeometry args={[0.040, 0.060, 0.140]} />
+        <primitive object={metalMat} attach="material" />
+      </mesh>
+      {/* Knopf Temperatur (links, größer) */}
+      <mesh rotation={[0, 0, Math.PI / 2]} position={[x + 0.032, tY + 0.010, bz - 0.040]}>
+        <cylinderGeometry args={[0.020, 0.020, 0.024, 16]} />
+        <primitive object={metalMat} attach="material" />
+      </mesh>
+      {/* Knopf Menge (rechts, kleiner) */}
+      <mesh rotation={[0, 0, Math.PI / 2]} position={[x + 0.032, tY + 0.010, bz + 0.040]}>
+        <cylinderGeometry args={[0.015, 0.015, 0.024, 16]} />
+        <primitive object={metalMat} attach="material" />
+      </mesh>
+      {/* Auslaufstutzen */}
+      <mesh rotation={[0, 0, Math.PI / 2]} position={[x + 0.036, tY - 0.018, bz]}>
+        <cylinderGeometry args={[0.009, 0.009, 0.016, 10]} />
+        <primitive object={metalMat} attach="material" />
+      </mesh>
+
+      {/* ── Wandstange ── */}
+      <mesh position={[x, barCY, bz]}>
+        <cylinderGeometry args={[0.010, 0.010, 0.60, 10]} />
+        <primitive object={metalMat} attach="material" />
+      </mesh>
+      {/* Halterung oben */}
+      <mesh rotation={[0, 0, Math.PI / 2]} position={[x - 0.004, barCY + 0.28, bz]}>
+        <cylinderGeometry args={[0.016, 0.016, 0.020, 10]} />
+        <primitive object={metalMat} attach="material" />
+      </mesh>
+      {/* Halterung unten */}
+      <mesh rotation={[0, 0, Math.PI / 2]} position={[x - 0.004, barCY - 0.28, bz]}>
+        <cylinderGeometry args={[0.016, 0.016, 0.020, 10]} />
+        <primitive object={metalMat} attach="material" />
+      </mesh>
+
+      {/* ── Handbrausen-Schlitten ── */}
+      <mesh position={[x + 0.004, barCY + 0.10, bz]}>
+        <boxGeometry args={[0.034, 0.044, 0.034]} />
+        <primitive object={metalMat} attach="material" />
+      </mesh>
+      {/* Anschlussrohr Schlitten → Kopf */}
+      <mesh rotation={[0.35, 0, 0]} position={[x + 0.038, barCY + 0.06, bz + 0.042]}>
+        <cylinderGeometry args={[0.007, 0.007, 0.072, 8]} />
+        <primitive object={metalMat} attach="material" />
+      </mesh>
+      {/* Handbrause-Kopf */}
+      <mesh rotation={[Math.PI / 2 - 0.35, 0, 0]} position={[x + 0.044, barCY + 0.03, bz + 0.076]}>
+        <cylinderGeometry args={[0.030, 0.026, 0.018, 14]} />
+        <primitive object={metalMat} attach="material" />
+      </mesh>
+    </group>
+  );
+}
+
 const TYPE_COMPONENTS = {
   'Walk-in':    WalkIn,
   'Drehtür':    Drehtuer,
@@ -443,6 +508,8 @@ export default function ShowerModel({ config, canvasRef }) {
   const dragStart  = useRef({ x: 0, y: 0 });
   const rotStart   = useRef({ x: 0, y: 0 });
   const currentRot = useRef({ x: 0.06, y: -0.28 });
+  const velocity   = useRef({ x: 0, y: 0 });
+  const prevMouse  = useRef({ x: 0, y: 0 });
 
   const glassMat = useGlassMaterial();
   const metalMat = useMetalMaterial();
@@ -478,9 +545,13 @@ export default function ShowerModel({ config, canvasRef }) {
     };
     const onMove = (e) => {
       if (!isDragging.current) return;
-      currentRot.current.y = rotStart.current.y + (e.clientX - dragStart.current.x) * 0.007;
-      currentRot.current.x = Math.max(-0.30, Math.min(0.30,
-        rotStart.current.x + (e.clientY - dragStart.current.y) * 0.007));
+      currentRot.current.y = rotStart.current.y + (e.clientX - dragStart.current.x) * 0.011;
+      currentRot.current.x = Math.max(-0.44, Math.min(0.44,
+        rotStart.current.x + (e.clientY - dragStart.current.y) * 0.011));
+      // Track velocity for inertia
+      velocity.current.y = (e.clientX - prevMouse.current.x) * 0.011;
+      velocity.current.x = (e.clientY - prevMouse.current.y) * 0.011;
+      prevMouse.current  = { x: e.clientX, y: e.clientY };
     };
     const onUp = () => { isDragging.current = false; };
     el.addEventListener('pointerdown', onDown);
@@ -502,11 +573,21 @@ export default function ShowerModel({ config, canvasRef }) {
 
   useFrame(() => {
     tickAnimation();
+    // Inertia: continue rotation after release, decay with friction
+    if (!isDragging.current) {
+      const vy = velocity.current.y, vx = velocity.current.x;
+      if (Math.abs(vy) > 0.00008 || Math.abs(vx) > 0.00008) {
+        currentRot.current.y += vy;
+        currentRot.current.x = Math.max(-0.44, Math.min(0.44, currentRot.current.x + vx));
+        velocity.current.y *= 0.88;
+        velocity.current.x *= 0.88;
+      }
+    }
     if (groupRef.current) {
       const s = animScale.current;
       groupRef.current.scale.set(s, s, s);
-      groupRef.current.rotation.y += (currentRot.current.y - groupRef.current.rotation.y) * 0.18;
-      groupRef.current.rotation.x += (currentRot.current.x - groupRef.current.rotation.x) * 0.18;
+      groupRef.current.rotation.y += (currentRot.current.y - groupRef.current.rotation.y) * 0.20;
+      groupRef.current.rotation.x += (currentRot.current.x - groupRef.current.rotation.x) * 0.20;
     }
     updateGlassMaterial(glassMat.current, glass, t, animOpacity.current);
     updateMetalMaterial(metalMat.current, metal);
@@ -517,6 +598,7 @@ export default function ShowerModel({ config, canvasRef }) {
   return (
     <group ref={groupRef} position={[0, -h / 2, 0]}>
       <ShowerEnclosure w={w} h={h} />
+      <ShowerFixture w={w} h={h} metalMat={metalMat.current} />
       <TypeComponent
         w={w} h={h} t={t}
         glassMat={glassMat.current}
