@@ -574,10 +574,11 @@ function BathtubFixture({ w, backZ, tubTopY }) {
 // Wanne aus offenen Seitenpaneelen → Innenbecken von oben sichtbar.
 function BathtubModel({ w, h, t, glassMat, metalMat }) {
   const TUB_H  = 0.52;
+  const TUB_D  = 1.70;   // realistische Wannenlänge (170 cm, nicht quadratisch)
   const TW     = 0.055;   // Wannenwandstärke (sichtbarer Rand oben)
   const TUB_CY = -h / 2 - TUB_H / 2;
-  const sideZ  = -(D / 2);
-  const backZ  = -(D + WT / 2);
+  const sideZ  = -(TUB_D / 2);
+  const backZ  = -(TUB_D + WT / 2);
   const TM = { color: '#f4f1e8', roughness: 0.05, metalness: 0.04, envMapIntensity: 0.75 };
 
   return (
@@ -589,34 +590,34 @@ function BathtubModel({ w, h, t, glassMat, metalMat }) {
         <meshStandardMaterial {...TM} />
       </mesh>
       {/* Rückseite */}
-      <mesh castShadow position={[0, TUB_CY, -D + TW / 2]}>
+      <mesh castShadow position={[0, TUB_CY, -TUB_D + TW / 2]}>
         <boxGeometry args={[w, TUB_H, TW]} />
         <meshStandardMaterial {...TM} />
       </mesh>
       {/* Linke Seite */}
       <mesh castShadow position={[-w / 2 + TW / 2, TUB_CY, sideZ]}>
-        <boxGeometry args={[TW, TUB_H, D - TW * 2]} />
+        <boxGeometry args={[TW, TUB_H, TUB_D - TW * 2]} />
         <meshStandardMaterial {...TM} />
       </mesh>
       {/* Rechte Seite */}
       <mesh castShadow position={[w / 2 - TW / 2, TUB_CY, sideZ]}>
-        <boxGeometry args={[TW, TUB_H, D - TW * 2]} />
+        <boxGeometry args={[TW, TUB_H, TUB_D - TW * 2]} />
         <meshStandardMaterial {...TM} />
       </mesh>
       {/* Wannenboden (außen) */}
       <mesh castShadow position={[0, TUB_CY - TUB_H / 2 + TW / 2, sideZ]}>
-        <boxGeometry args={[w, TW, D]} />
+        <boxGeometry args={[w, TW, TUB_D]} />
         <meshStandardMaterial color="#ece8df" roughness={0.06} metalness={0.02} />
       </mesh>
       {/* Wannenboden (innen, sichtbar durch offene Oberseite) */}
       <mesh position={[0, TUB_CY - TUB_H / 2 + TW + 0.002, sideZ]}>
-        <boxGeometry args={[w - TW * 2 - 0.008, 0.005, D - TW * 2 - 0.008]} />
+        <boxGeometry args={[w - TW * 2 - 0.008, 0.005, TUB_D - TW * 2 - 0.008]} />
         <meshStandardMaterial color="#dedad1" roughness={0.04} metalness={0.02} envMapIntensity={0.3} />
       </mesh>
 
       {/* ── Armatur & Abfluss ── */}
       <BathtubFixture w={w} backZ={backZ} tubTopY={-h / 2} />
-      <mesh position={[0, TUB_CY - TUB_H / 2 + TW + 0.003, -D * 0.62]}>
+      <mesh position={[0, TUB_CY - TUB_H / 2 + TW + 0.003, -TUB_D * 0.62]}>
         <cylinderGeometry args={[0.026, 0.026, 0.005, 16]} />
         <meshStandardMaterial color="#c0bab4" metalness={0.92} roughness={0.10} />
       </mesh>
