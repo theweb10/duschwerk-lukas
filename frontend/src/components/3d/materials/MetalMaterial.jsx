@@ -2,52 +2,23 @@ import { useRef } from 'react';
 import * as THREE from 'three';
 
 /**
- * Realistisches Metall-Material
+ * Professional Metal Material — Duka-style chrome & finishes
  *
- * Strategie: PBR-Metall mit differenzierten Eigenschaften
- * - Chrom: Spiegel-ähnlich, sehr hohe Reflexion
- * - Edelstahl gebürstet: Weiche gerichtete Reflexion, leichte Anisotropie
- * - Schwarz matt: Pulverbeschichtet, kaum Reflexion
- * - Gold/Kupfer: Warm, mittlere Reflexion
+ * - Polished chrome: near-mirror, cool white, high env reflections
+ * - Brushed: directional sheen, anisotropic look via roughness
+ * - Matt: powder-coat feel, low reflection
+ * - Gold/Copper: warm with appropriate metalness
  *
- * Performance: Keine prozeduralen Texturen (zu teuer).
- * Unterschiede nur über metalness/roughness/envMapIntensity.
+ * Performance: no procedural textures — PBR values only.
  */
-
-// Shared: einmalig gebaut, nie neu erstellt
-let _brushedRoughnessMap = null;
-
-function getBrushedRoughnessMap() {
-  if (_brushedRoughnessMap) return _brushedRoughnessMap;
-
-  const canvas = document.createElement('canvas');
-  canvas.width = 64; canvas.height = 256; // Schmal & hoch = Bürstrichtung
-  const ctx = canvas.getContext('2d');
-
-  for (let y = 0; y < 256; y++) {
-    for (let x = 0; x < 64; x++) {
-      // Horizontale Kratzer: hohe Roughness in X, niedrig in Y
-      const scratch = Math.abs(Math.sin(y * 1.2 + Math.random() * 0.5)) * 25;
-      const base = 135 + scratch;
-      const v = Math.min(255, base + (Math.random() - 0.5) * 20) | 0;
-      ctx.fillStyle = `rgb(${v},${v},${v})`;
-      ctx.fillRect(x, y, 1, 1);
-    }
-  }
-
-  _brushedRoughnessMap = new THREE.CanvasTexture(canvas);
-  _brushedRoughnessMap.wrapS = _brushedRoughnessMap.wrapT = THREE.RepeatWrapping;
-  _brushedRoughnessMap.repeat.set(1, 6);
-  return _brushedRoughnessMap;
-}
 
 export function useMetalMaterial() {
   const mat = useRef(
     new THREE.MeshStandardMaterial({
-      color:           new THREE.Color(0xe8e8e8),
-      metalness:       0.95,
+      color:           new THREE.Color('#f2f2f4'),
+      metalness:       0.96,
       roughness:       0.04,
-      envMapIntensity: 1.8,
+      envMapIntensity: 2.2,
     })
   );
   return mat;
@@ -57,51 +28,51 @@ export function updateMetalMaterial(mat, metal) {
   mat.color.set(metal.color);
 
   switch (metal.metalTyp) {
+
     case 'poliert': {
-      // Chrom: fast perfekter Spiegel
+      // Mirror-chrome — high-end product look
       mat.metalness       = 0.97;
       mat.roughness       = 0.03;
-      mat.envMapIntensity = 2.0;
-      mat.roughnessMap    = null;
+      mat.envMapIntensity = 2.5;
       break;
     }
+
     case 'gebürstet': {
-      // Edelstahl gebürstet: gerichtete Reflexion
-      mat.metalness       = 0.90;
-      mat.roughness       = 0.25;
-      mat.envMapIntensity = 1.2;
-      mat.roughnessMap    = getBrushedRoughnessMap();
-      break;
-    }
-    case 'matt': {
-      // Schwarz matt: kaum Reflexion
-      mat.metalness       = 0.65;
-      mat.roughness       = 0.55;
-      mat.envMapIntensity = 0.3;
-      mat.roughnessMap    = null;
-      break;
-    }
-    case 'gold': {
-      // Gold gebürstet: warm, mittlere Reflexion
-      mat.metalness       = 0.90;
-      mat.roughness       = 0.20;
+      // Satin / brushed — muted directional sheen
+      mat.metalness       = 0.92;
+      mat.roughness       = 0.28;
       mat.envMapIntensity = 1.4;
-      mat.roughnessMap    = getBrushedRoughnessMap();
       break;
     }
+
+    case 'matt': {
+      // Powder-coat — minimal reflection
+      mat.metalness       = 0.60;
+      mat.roughness       = 0.60;
+      mat.envMapIntensity = 0.25;
+      break;
+    }
+
+    case 'gold': {
+      // Brushed gold — warm, medium reflection
+      mat.metalness       = 0.92;
+      mat.roughness       = 0.22;
+      mat.envMapIntensity = 1.6;
+      break;
+    }
+
     case 'kupfer': {
-      // Kupfer: warm, etwas matter als Gold
-      mat.metalness       = 0.85;
-      mat.roughness       = 0.30;
-      mat.envMapIntensity = 1.0;
-      mat.roughnessMap    = null;
+      // Copper — warm, slightly rougher
+      mat.metalness       = 0.88;
+      mat.roughness       = 0.28;
+      mat.envMapIntensity = 1.2;
       break;
     }
+
     default: {
-      mat.metalness       = 0.95;
+      mat.metalness       = 0.96;
       mat.roughness       = 0.04;
-      mat.envMapIntensity = 1.8;
-      mat.roughnessMap    = null;
+      mat.envMapIntensity = 2.2;
     }
   }
 

@@ -334,11 +334,6 @@ export default function ShowerModel({ config, canvasRef }) {
         metalMat={metalMat.current}
         rahmentyp={rahmentyp}
       />
-      {/* Weicher Bodenschatten */}
-      <mesh receiveShadow rotation={[-Math.PI / 2, 0, 0]} position={[0, -h / 2 - 0.001, 0]}>
-        <planeGeometry args={[6, 6]} />
-        <shadowMaterial opacity={0.12} />
-      </mesh>
     </group>
   );
 }

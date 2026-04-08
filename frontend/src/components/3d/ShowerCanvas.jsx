@@ -105,14 +105,15 @@ export default function ShowerCanvas({ config, isComplete }) {
           gl={{
             antialias:           true,
             alpha:               false,
-            toneMapping:         3,
-            toneMappingExposure: 1.0,
+            toneMapping:         4,          // ACESFilmic — cinematic product look
+            toneMappingExposure: 1.05,
             outputColorSpace:    'srgb',
+            powerPreference:     'high-performance',
           }}
           frameloop="always"
-          shadows="soft"
-          camera={{ fov: 38, position: [0, 0, 4.5], near: 0.05, far: 80 }}
-          style={{ background: '#f4f4f4' }}
+          camera={{ fov: 36, position: [0, 0, 4.5], near: 0.05, far: 80 }}
+          dpr={[1, 2]}
+          style={{ background: '#ffffff' }}
           onPointerDown={() => setIsDragging(true)}
           onPointerUp={() => setIsDragging(false)}
           onPointerLeave={() => setIsDragging(false)}
@@ -125,19 +126,19 @@ export default function ShowerCanvas({ config, isComplete }) {
           {/* Zoom-Lerp (jeder Frame) */}
           <ZoomController h={mapped.h} zoomRef={zoomRef} />
 
-          {/* Beleuchtung */}
-          <ambientLight intensity={0.65} color="#ffffff" />
-          <directionalLight
-            position={[-3, 5, 4]} intensity={0.7} castShadow
-            shadow-mapSize-width={1024} shadow-mapSize-height={1024}
-            shadow-camera-far={12} shadow-camera-left={-2.5}
-            shadow-camera-right={2.5} shadow-camera-top={3}
-            shadow-camera-bottom={-3} shadow-bias={-0.0005}
-            shadow-normalBias={0.02} color="#ffffff"
-          />
-          <directionalLight position={[4, 3, 2]} intensity={0.3} color="#eef2ff" />
-          <hemisphereLight skyColor="#ffffff" groundColor="#e8e8e8" intensity={0.25} />
-          <Environment preset="studio" />
+          {/* ── Beleuchtung — Studio-Photography-Setup ── */}
+          {/* Key light: soft from top-left front */}
+          <directionalLight position={[-2.5, 5, 3.5]} intensity={0.75} color="#ffffff" />
+          {/* Fill light: right side, cooler */}
+          <directionalLight position={[3.5, 2, 2]} intensity={0.35} color="#f0f4ff" />
+          {/* Rim light: from behind for chrome separation */}
+          <directionalLight position={[0, 3, -4]} intensity={0.20} color="#ffffff" />
+          {/* Ambient: very bright for product-white look */}
+          <ambientLight intensity={1.1} color="#ffffff" />
+          <hemisphereLight skyColor="#ffffff" groundColor="#eaecf0" intensity={0.5} />
+
+          {/* Environment: apartment gives warm neutral reflections on chrome */}
+          <Environment preset="apartment" />
 
           {/* Hintergrund */}
           <StudioScene showerHeight={mapped.h} />
