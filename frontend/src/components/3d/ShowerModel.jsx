@@ -14,7 +14,7 @@ const D   = 0.90;    // Duschtiefe front→back
 const WT  = 0.14;    // Wandstärke
 const TH  = 0.055;   // Wanenhöhe
 
-// ── Tile-Textur ──────────────────────────────────────────────
+// ── Grauer Marmor-Textur ─────────────────────────────────────
 let _wallTex = null;
 function getWallTex() {
   if (_wallTex) return _wallTex;
@@ -22,42 +22,35 @@ function getWallTex() {
   const canvas = document.createElement('canvas');
   canvas.width = W; canvas.height = H;
   const ctx = canvas.getContext('2d');
+  const img = ctx.createImageData(W, H);
+  const d = img.data;
 
-  const COLS = 2, ROWS = 4;
-  const TW = W / COLS, TH2 = H / ROWS;
-  const GP = 4; // grout px
-
-  // Fuge
-  ctx.fillStyle = '#a8a49c';
-  ctx.fillRect(0, 0, W, H);
-
-  for (let r = 0; r < ROWS; r++) {
-    for (let c = 0; c < COLS; c++) {
-      const x = c * TW + GP, y = r * TH2 + GP;
-      const tw = TW - GP * 2, th = TH2 - GP * 2;
-
-      // Kachel Grundton (leichte Variation pro Kachel)
-      const variation = (Math.random() - 0.5) * 14;
-      const base = 194 + variation;
-      ctx.fillStyle = `rgb(${base|0},${(base - 2)|0},${(base - 5)|0})`;
-      ctx.fillRect(x, y, tw, th);
-
-      // Feines Korn auf Kachel
-      for (let i = 0; i < 300; i++) {
-        const nx = x + Math.random() * tw;
-        const ny = y + Math.random() * th;
-        const a = Math.random() * 0.035;
-        ctx.fillStyle = Math.random() > 0.5
-          ? `rgba(255,252,248,${a})` : `rgba(100,96,90,${a})`;
-        ctx.fillRect(nx, ny, Math.random() * 10 + 2, 1);
-      }
+  for (let y = 0; y < H; y++) {
+    for (let x = 0; x < W; x++) {
+      // Mehrschichtige Turbulenz → klassische Marmor-Maserung
+      const turb =
+        Math.sin(x * 0.018 + y * 0.007) * 38 +
+        Math.sin(x * 0.006 - y * 0.022 + Math.sin(x * 0.011) * 5) * 24 +
+        Math.sin(x * 0.032 + y * 0.028) * 14 +
+        Math.sin(y * 0.015 + x * 0.009) * 10 +
+        (Math.random() - 0.5) * 5;
+      const vein = Math.sin(y * 0.013 + turb * 0.038);
+      // Basis: mittleres Grau (#888)
+      const base = 138;
+      const v = Math.max(82, Math.min(218, base + vein * 52 + turb * 0.18));
+      const i = (y * W + x) * 4;
+      d[i]   = v | 0;
+      d[i+1] = v | 0;
+      d[i+2] = (v + 5) | 0;  // leicht kühler Blaustich = grauer Marmor
+      d[i+3] = 255;
     }
   }
+  ctx.putImageData(img, 0, 0);
 
   const tex = new THREE.CanvasTexture(canvas);
   tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
-  tex.repeat.set(1.5, 1);
-  tex.anisotropy = 8;
+  tex.repeat.set(1.2, 1);
+  tex.anisotropy = 16;
   return (_wallTex = tex);
 }
 
@@ -68,38 +61,40 @@ function getFloorTex() {
   const canvas = document.createElement('canvas');
   canvas.width = W; canvas.height = W;
   const ctx = canvas.getContext('2d');
+  const img = ctx.createImageData(W, W);
+  const d = img.data;
 
-  const N = 4, S = W / N, GP = 4;
-  ctx.fillStyle = '#9c9890';
-  ctx.fillRect(0, 0, W, W);
-
-  for (let r = 0; r < N; r++) {
-    for (let c = 0; c < N; c++) {
-      const x = c * S + GP, y = r * S + GP;
-      const s = S - GP * 2;
-      const v = 168 + (Math.random() - 0.5) * 16;
-      ctx.fillStyle = `rgb(${v|0},${(v-3)|0},${(v-7)|0})`;
-      ctx.fillRect(x, y, s, s);
-      for (let i = 0; i < 80; i++) {
-        const a = Math.random() * 0.04;
-        ctx.fillStyle = Math.random() > 0.5
-          ? `rgba(255,252,248,${a})` : `rgba(80,76,70,${a})`;
-        ctx.fillRect(x + Math.random() * s, y + Math.random() * s, Math.random() * 8 + 2, 1);
-      }
+  for (let y = 0; y < W; y++) {
+    for (let x = 0; x < W; x++) {
+      // Dunklere Marmor-Variante für Duschwanne
+      const turb =
+        Math.sin(x * 0.022 + y * 0.010) * 28 +
+        Math.sin(x * 0.008 - y * 0.018) * 18 +
+        Math.sin(x * 0.040 + y * 0.035) * 10 +
+        (Math.random() - 0.5) * 4;
+      const vein = Math.sin(y * 0.016 + turb * 0.04);
+      const base = 118;
+      const v = Math.max(68, Math.min(192, base + vein * 42));
+      const i = (y * W + x) * 4;
+      d[i]   = v | 0;
+      d[i+1] = v | 0;
+      d[i+2] = (v + 6) | 0;
+      d[i+3] = 255;
     }
   }
+  ctx.putImageData(img, 0, 0);
 
   const tex = new THREE.CanvasTexture(canvas);
   tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
   tex.repeat.set(1, 1);
-  tex.anisotropy = 8;
+  tex.anisotropy = 16;
   return (_floorTex = tex);
 }
 
 // ── Statische Materialien ────────────────────────────────────
 let _wMat = null, _tMat = null, _drainMat = null;
 const getWMat = () => _wMat || (_wMat = new THREE.MeshStandardMaterial({
-  map: getWallTex(), roughness: 0.55, metalness: 0.01, envMapIntensity: 0.20,
+  map: getWallTex(), roughness: 0.15, metalness: 0.02, envMapIntensity: 0.45,
 }));
 const getTMat = () => _tMat || (_tMat = new THREE.MeshStandardMaterial({
   map: getFloorTex(), roughness: 0.38, metalness: 0.02, envMapIntensity: 0.25,
@@ -148,35 +143,39 @@ function ShowerEnclosure({ w, h }) {
 }
 
 // ── Hilfsfunktion: Profile bedingt rendern ───────────────────
+// vollgerahmt = kräftige Profile rundum; teilgerahmt = schmale Profile oben+seiten; rahmenlos = null
 function FrameProfiles({ w, h, rahmentyp, metalMat, noLeft = false, noRight = false }) {
   if (rahmentyp === 'rahmenlos') return null;
   const partial = rahmentyp === 'teilgerahmt';
+  // vollgerahmt: deutlich breitere Profile für sichtbaren Unterschied
+  const pw  = partial ? P       : P * 1.7;   // Profilbreite
+  const phe = partial ? PH      : PH * 1.5;  // Profiltiefe
 
   return (
     <>
       {/* Oben */}
-      <mesh position={[0, h / 2 - P / 2, 0]}>
-        <boxGeometry args={[w, P, PH]} />
+      <mesh position={[0, h / 2 - pw / 2, 0]}>
+        <boxGeometry args={[w, pw, phe]} />
         <primitive object={metalMat} attach="material" />
       </mesh>
       {/* Unten – nur vollgerahmt */}
       {!partial && (
-        <mesh position={[0, -h / 2 + P / 2, 0]}>
-          <boxGeometry args={[w, P, PH]} />
+        <mesh position={[0, -h / 2 + pw / 2, 0]}>
+          <boxGeometry args={[w, pw, phe]} />
           <primitive object={metalMat} attach="material" />
         </mesh>
       )}
       {/* Links */}
       {!noLeft && (
-        <mesh position={[-w / 2 + P / 2, 0, 0]}>
-          <boxGeometry args={[P, h, PH]} />
+        <mesh position={[-w / 2 + pw / 2, 0, 0]}>
+          <boxGeometry args={[pw, h, phe]} />
           <primitive object={metalMat} attach="material" />
         </mesh>
       )}
       {/* Rechts */}
       {!noRight && (
-        <mesh position={[w / 2 - P / 2, 0, 0]}>
-          <boxGeometry args={[P, h, PH]} />
+        <mesh position={[w / 2 - pw / 2, 0, 0]}>
+          <boxGeometry args={[pw, h, phe]} />
           <primitive object={metalMat} attach="material" />
         </mesh>
       )}
@@ -186,21 +185,43 @@ function FrameProfiles({ w, h, rahmentyp, metalMat, noLeft = false, noRight = fa
 
 // ── Walk-In ──────────────────────────────────────────────────
 function WalkIn({ w, h, t, glassMat, metalMat, rahmentyp }) {
-  const rahmenlos = rahmentyp === 'rahmenlos' || !rahmentyp;
+  const rahmenlos  = rahmentyp === 'rahmenlos' || !rahmentyp;
+  const voll       = rahmentyp === 'vollgerahmt';
+  const pw         = voll ? P * 1.7 : P;
+  const phe        = voll ? PH * 1.5 : PH;
+
   return (
     <group>
       <mesh castShadow>
-        <boxGeometry args={[w, h, t]} />
+        <boxGeometry args={[w - (rahmenlos ? 0 : pw * 2), h - (voll ? pw * 2 : 0), t]} />
         <primitive object={glassMat} attach="material" />
       </mesh>
+
+      {/* Seiten- und Querprofile je nach rahmentyp */}
       {!rahmenlos && (
-        <mesh position={[-w / 2 - P / 2, 0, 0]}>
-          <boxGeometry args={[P, h + P, PH]} />
-          <primitive object={metalMat} attach="material" />
-        </mesh>
+        <>
+          {/* Linkes Seitenprofil (Wandseite) */}
+          <mesh position={[-w / 2 + pw / 2, 0, 0]}>
+            <boxGeometry args={[pw, h, phe]} />
+            <primitive object={metalMat} attach="material" />
+          </mesh>
+          {/* Oberes Querprofil */}
+          <mesh position={[0, h / 2 - pw / 2, 0]}>
+            <boxGeometry args={[w, pw, phe]} />
+            <primitive object={metalMat} attach="material" />
+          </mesh>
+          {/* Unteres Querprofil – nur vollgerahmt */}
+          {voll && (
+            <mesh position={[0, -h / 2 + pw / 2, 0]}>
+              <boxGeometry args={[w, pw, phe]} />
+              <primitive object={metalMat} attach="material" />
+            </mesh>
+          )}
+        </>
       )}
-      {/* Wandklemmen */}
-      {[h / 2 - 0.08, -h / 2 + 0.08].map((y, i) => (
+
+      {/* Wandklemmen (rahmenlos) */}
+      {rahmenlos && [h / 2 - 0.08, -h / 2 + 0.08].map((y, i) => (
         <mesh key={i} position={[-w / 2 - 0.008, y, 0]}>
           <boxGeometry args={[0.018, 0.06, 0.048]} />
           <primitive object={metalMat} attach="material" />

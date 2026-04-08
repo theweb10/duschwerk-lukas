@@ -37,15 +37,16 @@ export function useGlassMaterial() {
       transmission:        0.98,
       roughness:           0.02,
       metalness:           0.0,
-      ior:                 1.52,
+      ior:                 1.38,              // reduziert Fresnel-Reflexion beim Drehen
       thickness:           0.6,
       attenuationDistance: 2.0,
       attenuationColor:    new THREE.Color('#ddeeff'),
-      envMapIntensity:     0.25,
+      envMapIntensity:     0.06,             // sehr niedrig → kein Spiegel-Effekt
+      specularIntensity:   0.25,             // reduziert Glanzlichter
       clearcoat:           0.0,
       transparent:         true,
       opacity:             1.0,
-      side:                THREE.FrontSide,   // DoubleSide verursacht doppelte Spiegelungen beim Drehen
+      side:                THREE.FrontSide,
       depthWrite:          false,
     })
   );
@@ -56,8 +57,10 @@ export function updateGlassMaterial(mat, glass, t, opacity = 1.0) {
   const op = Math.max(0, Math.min(1, opacity));
 
   // Always reset maps first
-  mat.roughnessMap = null;
-  mat.normalMap    = null;
+  mat.roughnessMap     = null;
+  mat.normalMap        = null;
+  mat.specularIntensity = 0.25;  // global: Reflexionen beim Drehen dämpfen
+  mat.ior              = 1.38;   // niedrig → weniger Fresnel-Spiegelung
 
   const glasTyp      = glass?.glasTyp      ?? 'klarglas';
   const catalogColor = glass?.color        ?? null;
@@ -80,7 +83,8 @@ export function updateGlassMaterial(mat, glass, t, opacity = 1.0) {
         mat.thickness           = t * 5;
         mat.attenuationDistance = 0.35;
         mat.attenuationColor.set('#8899aa');
-        mat.envMapIntensity     = 0.90;
+        mat.envMapIntensity     = 0.55;   // Spiegelglas: etwas Reflexion ok
+        mat.specularIntensity   = 0.6;
         mat.opacity             = op;
       } else {
         // Satinato: frosted
@@ -88,11 +92,11 @@ export function updateGlassMaterial(mat, glass, t, opacity = 1.0) {
         mat.transmission        = 0.80;
         mat.roughness           = 0.66;
         mat.metalness           = 0.0;
-        mat.ior                 = 1.46;
+        mat.ior                 = 1.38;
         mat.thickness           = t * 9;
         mat.attenuationDistance = 0.90;
         mat.attenuationColor.set('#e2e6f0');
-        mat.envMapIntensity     = 0.07;
+        mat.envMapIntensity     = 0.04;
         mat.roughnessMap        = getSatinatoMap();
         mat.opacity             = 0.92 * op;
       }
@@ -105,11 +109,11 @@ export function updateGlassMaterial(mat, glass, t, opacity = 1.0) {
       mat.transmission        = catalogTrans ?? 0.82;
       mat.roughness           = catalogRough ?? 0.04;
       mat.metalness           = 0.0;
-      mat.ior                 = 1.52;
+      mat.ior                 = 1.38;
       mat.thickness           = t * 12;
       mat.attenuationDistance = 0.50;
       mat.attenuationColor.set('#7a4818');
-      mat.envMapIntensity     = 0.20;
+      mat.envMapIntensity     = 0.06;
       mat.opacity             = op;
       break;
     }
@@ -123,11 +127,11 @@ export function updateGlassMaterial(mat, glass, t, opacity = 1.0) {
       mat.transmission        = trans;
       mat.roughness           = 0.03;
       mat.metalness           = 0.0;
-      mat.ior                 = 1.52;
+      mat.ior                 = 1.38;
       mat.thickness           = t * (isGraphit ? 16 : 12);
       mat.attenuationDistance = isGraphit ? 0.28 : 0.44;
       mat.attenuationColor.set(isGraphit ? '#181e24' : '#303840');
-      mat.envMapIntensity     = 0.22;
+      mat.envMapIntensity     = 0.06;
       mat.opacity             = op;
       break;
     }
@@ -141,11 +145,11 @@ export function updateGlassMaterial(mat, glass, t, opacity = 1.0) {
       mat.transmission        = trans;
       mat.roughness           = catalogRough ?? 0.015;
       mat.metalness           = 0.0;
-      mat.ior                 = 1.52;
+      mat.ior                 = 1.38;
       mat.thickness           = t * 10;
       mat.attenuationDistance = isUltraClear ? 3.0 : 2.5;
       mat.attenuationColor.set(isUltraClear ? '#e8fff4' : '#ddeeff');
-      mat.envMapIntensity     = 0.18;
+      mat.envMapIntensity     = 0.05;
       mat.opacity             = op;
     }
   }

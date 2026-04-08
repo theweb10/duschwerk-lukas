@@ -2,7 +2,6 @@ import React, { useRef, useMemo, Suspense, useEffect, useCallback, useState } fr
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { Environment, AdaptiveDpr } from '@react-three/drei';
 import ShowerModel from './ShowerModel';
-import MeasurementLines from './MeasurementLines';
 import BathroomScene from './BathroomScene';
 import { mapConfig } from './configurator/useShowerConfig';
 
@@ -115,7 +114,7 @@ export default function ShowerCanvas({ config, isComplete }) {
           frameloop="always"
           camera={{ fov: 38, position: [0, 0, 4.5], near: 0.05, far: 80 }}
           dpr={[1, 2]}
-          style={{ background: '#d8d4cc' }}
+          style={{ background: '#16181c' }}
           onPointerDown={() => setIsDragging(true)}
           onPointerUp={() => setIsDragging(false)}
           onPointerLeave={() => setIsDragging(false)}
@@ -158,10 +157,7 @@ export default function ShowerCanvas({ config, isComplete }) {
             />
           )}
 
-          {/* Maßlinien — nur wenn Modell sichtbar */}
-          {isComplete && (
-            <MeasurementLines w={mapped.w} h={mapped.h} />
-          )}
+          {/* Maßlinien werden innerhalb ShowerModel gerendert (lokale Koordinaten) */}
         </Canvas>
       </Suspense>
 
@@ -173,6 +169,18 @@ export default function ShowerCanvas({ config, isComplete }) {
 
       {isComplete && <div className="viewer-badge">3D</div>}
       {isComplete && <div className="viewer-hint">Ziehen zum Drehen</div>}
+
+      {/* Maßangaben als HTML-Overlay — immer gerade, unabhängig von 3D-Rotation */}
+      {isComplete && (
+        <div className="measurement-overlay" style={{ pointerEvents: 'none' }}>
+          <div className="measurement-width">
+            {Math.round(mapped.w * 1000)} mm
+          </div>
+          <div className="measurement-height">
+            {Math.round(mapped.h * 1000)} mm
+          </div>
+        </div>
+      )}
 
       {/* Placeholder — wird angezeigt solange Wizard nicht fertig */}
       {!isComplete && <ViewerPlaceholder />}
