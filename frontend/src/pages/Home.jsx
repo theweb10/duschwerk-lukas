@@ -64,7 +64,7 @@ export default function Home() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
 
             <div>
-              <p className="text-gray-400 text-xs uppercase tracking-widest font-medium mb-3">
+              <p className="eyebrow mb-3">
                 Warum Duschwerk Bayern
               </p>
               <h2

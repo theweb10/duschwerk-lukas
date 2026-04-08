@@ -52,7 +52,7 @@ export default function Contact() {
       {/* Page Hero */}
       <div className="page-hero">
         <div className="container-max">
-          <p className="text-gray-400 text-xs uppercase tracking-widest font-medium mb-3">Kontakt</p>
+          <p className="eyebrow mb-3">Kontakt</p>
           <h1 className="font-headline text-4xl sm:text-5xl text-primary mb-4" style={{ letterSpacing: '-0.03em' }}>
             Jetzt Aufmaß buchen.
           </h1>

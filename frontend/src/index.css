@@ -69,7 +69,7 @@
            tracking-wide
            transition-all duration-250 ease-out;
     color: var(--color-primary);
-    border-color: var(--color-border);
+    border-color: #BEC8D8;
     border-radius: 10px;
   }
   .btn-outline:hover {
@@ -115,19 +115,31 @@
     @apply max-w-6xl mx-auto;
   }
 
+  /* ── Section Eyebrow Label — Rot wie im Konfigurator */
+  .eyebrow {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: #C62828;
+    display: block;
+  }
+
   /* ── Cards ───────────────────────────────────────── */
 
   .card-3d {
     @apply bg-white;
     border-radius: 12px;
     border: 1px solid #E8ECF4;
+    border-top: 2px solid #E8ECF4;
     box-shadow: 0 1px 6px rgba(31,46,74,0.05);
     transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
   }
   .card-3d:hover {
     transform: translateY(-4px);
-    border-color: #C8D0E4;
-    box-shadow: 0 10px 32px rgba(31,46,74,0.10);
+    border-color: #1F2E4A;
+    border-top-color: #C62828;
+    box-shadow: 0 10px 32px rgba(31,46,74,0.12);
   }
 
   .glass-card {

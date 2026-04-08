@@ -20,7 +20,7 @@ export default function About() {
       {/* Page Hero */}
       <div className="page-hero">
         <div className="container-max">
-          <p className="text-gray-400 text-xs uppercase tracking-widest font-medium mb-3">Über uns</p>
+          <p className="eyebrow mb-3">Über uns</p>
           <h1 className="font-headline text-4xl sm:text-5xl text-primary mb-4" style={{ letterSpacing: '-0.03em' }}>
             Duschwerk Bayern.
           </h1>
@@ -37,7 +37,7 @@ export default function About() {
           <div className="container-max">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
               <div>
-                <p className="text-gray-400 text-xs uppercase tracking-widest font-medium mb-3">Wer wir sind</p>
+                <p className="eyebrow mb-3">Wer wir sind</p>
                 <h2 className="font-headline text-3xl sm:text-4xl text-primary mb-8" style={{ letterSpacing: '-0.03em' }}>
                   Ihr Spezialist im Duschbereich.
                 </h2>
@@ -92,7 +92,7 @@ export default function About() {
         <section className="section-padding" style={{ background: '#ECEEF2' }}>
           <div className="container-max">
             <header className="mb-12">
-              <p className="text-gray-400 text-xs uppercase tracking-widest font-medium mb-3">Unser Angebot</p>
+              <p className="eyebrow mb-3">Unser Angebot</p>
               <h2 className="font-headline text-3xl text-primary" style={{ letterSpacing: '-0.03em' }}>
                 Komplettservice aus einer Hand.
               </h2>
@@ -131,7 +131,7 @@ export default function About() {
         <section className="section-padding bg-white">
           <div className="container-max">
             <header className="mb-12">
-              <p className="text-gray-400 text-xs uppercase tracking-widest font-medium mb-3">Werte</p>
+              <p className="eyebrow mb-3">Werte</p>
               <h2 className="font-headline text-3xl text-primary" style={{ letterSpacing: '-0.03em' }}>
                 Wofür Duschwerk Bayern steht.
               </h2>

@@ -75,7 +75,7 @@ export default function Products() {
       {/* Page Hero */}
       <div className="page-hero">
         <div className="container-max">
-          <p className="text-gray-400 text-xs uppercase tracking-widest font-medium mb-3">Produkte</p>
+          <p className="eyebrow mb-3">Produkte</p>
           <h1 className="font-headline text-4xl sm:text-5xl text-primary mb-4" style={{ letterSpacing: '-0.03em' }}>
             Produkte unserer Partnerfirmen.
           </h1>
@@ -91,7 +91,7 @@ export default function Products() {
         <section className="section-padding" style={{ background: '#ECEEF2' }}>
           <div className="container-max">
             <header className="mb-10">
-              <p className="text-gray-400 text-xs uppercase tracking-widest font-medium mb-2">Partnerfirma</p>
+              <p className="eyebrow mb-2">Partnerfirma</p>
               <h2 className="font-headline text-3xl text-primary" style={{ letterSpacing: '-0.03em' }}>Artweger</h2>
               <p className="text-gray-500 text-sm font-light mt-2 max-w-xl">
                 Österreichischer Hersteller hochwertiger Dusch- und Badlösungen mit jahrzehntelanger Erfahrung in Design und Technik.
@@ -112,7 +112,7 @@ export default function Products() {
         <section className="section-padding bg-white">
           <div className="container-max">
             <header className="mb-10">
-              <p className="text-gray-400 text-xs uppercase tracking-widest font-medium mb-2">Partnerfirma</p>
+              <p className="eyebrow mb-2">Partnerfirma</p>
               <h2 className="font-headline text-3xl text-primary" style={{ letterSpacing: '-0.03em' }}>Radaway</h2>
               <p className="text-gray-500 text-sm font-light mt-2 max-w-xl">
                 Europäischer Anbieter moderner Duschabtrennungen mit vielfältigen Einbaumöglichkeiten und breitem Produktsortiment.
@@ -133,7 +133,7 @@ export default function Products() {
         <section className="section-padding" style={{ background: '#ECEEF2' }}>
           <div className="container-max">
             <header className="mb-10">
-              <p className="text-gray-400 text-xs uppercase tracking-widest font-medium mb-3">Partner</p>
+              <p className="eyebrow mb-3">Partner</p>
               <h2 className="font-headline text-3xl text-primary" style={{ letterSpacing: '-0.03em' }}>
                 Unsere Partnerlinks.
               </h2>

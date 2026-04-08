@@ -49,7 +49,7 @@ export default function ServicesPreview() {
       <div className="container-max">
 
         <header className="mb-14 text-center" data-reveal>
-          <p className="text-gray-400 text-xs uppercase tracking-widest font-medium mb-3">Leistungen</p>
+          <p className="eyebrow mb-3">Leistungen</p>
           <h2
             className="font-headline text-3xl sm:text-4xl text-primary"
             style={{ letterSpacing: '-0.03em' }}

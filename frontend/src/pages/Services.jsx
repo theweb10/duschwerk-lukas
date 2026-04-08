@@ -52,7 +52,7 @@ export default function Services() {
       {/* Page Hero */}
       <div className="page-hero text-center">
         <div className="container-max">
-          <p className="text-gray-400 text-xs uppercase tracking-widest font-medium mb-3">Leistungen</p>
+          <p className="eyebrow mb-3">Leistungen</p>
           <h1 className="font-headline text-4xl sm:text-5xl text-primary mb-4" style={{ letterSpacing: '-0.03em' }}>
             Unsere Leistungen.
           </h1>
@@ -110,7 +110,7 @@ export default function Services() {
       <section className="section-padding bg-white">
         <div className="container-max">
           <header className="mb-12 text-center">
-            <p className="text-gray-400 text-xs uppercase tracking-widest font-medium mb-3">Ablauf</p>
+            <p className="eyebrow mb-3">Ablauf</p>
             <h2 className="font-headline text-3xl text-primary" style={{ letterSpacing: '-0.03em' }}>
               So funktioniert Ihr Weg zur neuen Dusche.
             </h2>

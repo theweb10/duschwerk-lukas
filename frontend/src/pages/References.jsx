@@ -13,7 +13,7 @@ export default function References() {
       {/* Page Hero */}
       <div className="page-hero">
         <div className="container-max">
-          <p className="text-gray-400 text-xs uppercase tracking-widest font-medium mb-3">Referenzen</p>
+          <p className="eyebrow mb-3">Referenzen</p>
           <h1 className="font-headline text-4xl sm:text-5xl text-primary mb-4" style={{ letterSpacing: '-0.03em' }}>
             Unsere Projekte.
           </h1>
@@ -39,7 +39,7 @@ export default function References() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
               </svg>
             </div>
-            <p className="text-gray-400 text-xs uppercase tracking-widest font-medium mb-3">In Kürze verfügbar</p>
+            <p className="eyebrow mb-3">In Kürze verfügbar</p>
             <h2 className="font-headline text-2xl text-primary mb-4" style={{ letterSpacing: '-0.02em' }}>
               Referenzbilder folgen.
             </h2>

@@ -25,7 +25,7 @@ export default function Testimonials() {
       <div className="container-max">
 
         <header className="mb-14">
-          <p className="text-gray-400 text-xs uppercase tracking-widest font-medium mb-3">Kundenstimmen</p>
+          <p className="eyebrow mb-3">Kundenstimmen</p>
           <h2
             className="font-headline text-3xl sm:text-4xl text-primary"
             style={{ letterSpacing: '-0.03em' }}
