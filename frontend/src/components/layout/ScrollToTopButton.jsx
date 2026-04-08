@@ -12,7 +12,7 @@ export default function ScrollToTopButton() {
 
   function handleClick() {
     setClicked(true)
-    setTimeout(() => setClicked(false), 700)
+    setTimeout(() => setClicked(false), 900)
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
