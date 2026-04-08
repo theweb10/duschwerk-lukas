@@ -6,7 +6,7 @@ import * as THREE from 'three';
  */
 export default function BathroomScene({ showerWidth = 1.2, showerHeight = 2.0 }) {
   const h      = showerHeight;
-  const floorY = -h - 0.30; // tief genug, kein Overlap beim Kippen
+  const floorY = -h - 0.06; // direkt unter Wannenboden (TH=0.055)
 
   return (
     <group>
