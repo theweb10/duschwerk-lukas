@@ -17,7 +17,7 @@ function StarRating() {
         const next = () => {
           setStep(i)
           i++
-          if (i <= 6) setTimeout(next, i <= 5 ? 200 : 300)
+          if (i <= 6) setTimeout(next, i <= 5 ? 350 : 500)
         }
         setTimeout(next, 100)
       }
