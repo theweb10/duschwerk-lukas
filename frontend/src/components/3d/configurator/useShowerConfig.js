@@ -1,5 +1,5 @@
 // Pure mapping — no hooks
-const THICKNESS_MAP = { '6mm': 0.04, '8mm': 0.06, '10mm': 0.08 };
+const THICKNESS_MAP = { '6mm': 0.006, '8mm': 0.008, '10mm': 0.010 };
 
 const FALLBACK_GLASS = { color: '#ffffff', roughness: 0.02, transmission: 0.98, glasTyp: 'klarglas' };
 const FALLBACK_METAL = { color: '#E8E8E8', metalness: 0.95, roughness: 0.03, metalTyp: 'poliert' };
