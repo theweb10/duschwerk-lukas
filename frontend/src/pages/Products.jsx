@@ -148,13 +148,22 @@ export default function Products() {
                   className="card-3d p-7 block group"
                 >
                   <div className="flex items-start justify-between mb-3">
-                    <h3 className="font-headline text-base text-primary font-semibold tracking-tight group-hover:underline">{name}</h3>
-                    <svg className="w-4 h-4 text-gray-300 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <h3 className="font-headline text-base text-primary font-semibold tracking-tight">{name}</h3>
+                    <svg
+                      className="w-4 h-4 flex-shrink-0 mt-0.5 transition-colors duration-200"
+                      style={{ color: '#8892A4' }}
+                      fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                    >
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
                     </svg>
                   </div>
-                  <p className="text-gray-500 text-sm font-light leading-relaxed">{desc}</p>
-                  <p className="text-gray-300 text-xs mt-3 font-light">{url.replace('https://', '')}</p>
+                  <p className="text-gray-500 text-sm font-light leading-relaxed mb-4">{desc}</p>
+                  <p
+                    className="text-xs font-medium tracking-wide transition-colors duration-200"
+                    style={{ color: '#C62828' }}
+                  >
+                    {url.replace('https://', '')} →
+                  </p>
                 </a>
               ))}
             </div>
