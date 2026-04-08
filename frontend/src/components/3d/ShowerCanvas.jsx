@@ -106,42 +106,46 @@ export default function ShowerCanvas({ config, isComplete }) {
           gl={{
             antialias:           true,
             alpha:               false,
-            toneMapping:         4,          // ACESFilmic — cinematic product look
-            toneMappingExposure: 1.05,
+            toneMapping:         4,
+            toneMappingExposure: 1.10,
             outputColorSpace:    'srgb',
             powerPreference:     'high-performance',
           }}
+          shadows="soft"
           frameloop="always"
-          camera={{ fov: 40, position: [0, 0, 4.5], near: 0.05, far: 80 }}
+          camera={{ fov: 38, position: [0, 0, 4.5], near: 0.05, far: 80 }}
           dpr={[1, 2]}
-          style={{ background: '#eae8e3' }}
+          style={{ background: '#d8d4cc' }}
           onPointerDown={() => setIsDragging(true)}
           onPointerUp={() => setIsDragging(false)}
           onPointerLeave={() => setIsDragging(false)}
         >
           <AdaptiveDpr pixelated />
 
-          {/* Kamera-Setup (einmalig bei h-Änderung) */}
           <CameraSetup h={mapped.h} zoomRef={zoomRef} />
-
-          {/* Zoom-Lerp (jeder Frame) */}
           <ZoomController h={mapped.h} zoomRef={zoomRef} />
 
-          {/* ── Beleuchtung — Badezimmer-Setup ── */}
-          {/* Overhead key light (ceiling spot) */}
-          <directionalLight position={[0.5, 5, 2.5]} intensity={0.70} color="#fffaf5" castShadow
-            shadow-mapSize-width={2048} shadow-mapSize-height={2048} shadow-bias={-0.0004}
+          {/* ── Beleuchtung ─────────────────────────────────── */}
+          {/* Hauptlicht: schräg von oben-links (Deckenspot) */}
+          <directionalLight
+            position={[-1.5, 6, 3.5]} intensity={0.85} color="#fffcf8"
+            castShadow
+            shadow-mapSize-width={2048} shadow-mapSize-height={2048}
+            shadow-camera-near={0.5} shadow-camera-far={20}
+            shadow-camera-left={-3} shadow-camera-right={3}
+            shadow-camera-top={4}   shadow-camera-bottom={-4}
+            shadow-bias={-0.0003}   shadow-normalBias={0.02}
           />
-          {/* Fill from right / window side */}
-          <directionalLight position={[3, 2.5, 2]} intensity={0.30} color="#e8f0ff" />
-          {/* Rim from behind (chrome separation) */}
-          <directionalLight position={[-1, 2, -3]} intensity={0.18} color="#ffffff" />
-          {/* Ambient: balanced for tile reflections */}
-          <ambientLight intensity={0.85} color="#fff8f2" />
-          <hemisphereLight skyColor="#ffffff" groundColor="#d8d0c8" intensity={0.40} />
+          {/* Fülllicht rechts (kühler, Fensterseite) */}
+          <directionalLight position={[4, 2, 2.5]} intensity={0.28} color="#dde8ff" />
+          {/* Rücklicht für Chromkanten */}
+          <directionalLight position={[0.5, 1.5, -4]} intensity={0.16} color="#ffffff" />
+          {/* Ambientes Licht — warm, dezent */}
+          <ambientLight intensity={0.70} color="#fff5ee" />
+          <hemisphereLight skyColor="#ffffff" groundColor="#c8c0b4" intensity={0.35} />
 
-          {/* Environment: apartment — warm neutral chrome reflections */}
-          <Environment preset="apartment" />
+          {/* Environment: warehouse — scharfe Chrome-Reflexionen */}
+          <Environment preset="warehouse" />
 
           {/* Badezimmer-Szene */}
           <BathroomScene showerWidth={mapped.w} showerHeight={mapped.h} />
