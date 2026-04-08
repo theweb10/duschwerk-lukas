@@ -15,8 +15,7 @@ const services = [
     features: ['Nischenlösung', 'Eckdusche', 'Walk-In Dusche', 'Glaswand (einzelne Wand)', 'Badewannenaufsatz', 'Beratung & Aufmaß vor Ort'],
     icon: (
       <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 17h18M3 17V8a1 1 0 011-1h3m13 10V8a1 1 0 00-1-1h-3M7 7V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 17v-4m3 4v-6m3 6v-3" />
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 4.5v15m6-15v15m-10.875 0h15.75c.621 0 1.125-.504 1.125-1.125V5.625c0-.621-.504-1.125-1.125-1.125H4.125C3.504 4.5 3 5.004 3 5.625v12.75c0 .621.504 1.125 1.125 1.125z" />
       </svg>
     ),
   },
@@ -27,7 +26,7 @@ const services = [
     features: ['Duschwannen', 'Wandpaneele (Artwall)', 'Armaturen', 'Altersgerechter Umbau', 'Schnelle Umsetzung', 'Minimaler Eingriff in Bausubstanz'],
     icon: (
       <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M11 4a2 2 0 114 0v1a1 1 0 001 1h3a1 1 0 011 1v3a1 1 0 01-1 1h-1a2 2 0 100 4h1a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-1a2 2 0 10-4 0v1a1 1 0 01-1 1H7a1 1 0 01-1-1v-3a1 1 0 00-1-1H4a2 2 0 110-4h1a1 1 0 001-1V6a1 1 0 011-1h3a1 1 0 001-1V4z" />
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
       </svg>
     ),
   },
@@ -38,7 +37,7 @@ const services = [
     features: ['Duschabzieher', 'Reinigungsprodukte', 'Handtuchhalter', 'Funktionale Ausstattungselemente', 'Hochwertige Markenprodukte', 'Auf Anfrage erhältlich'],
     icon: (
       <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15.75 10.5V6a3.75 3.75 0 1 0-7.5 0v4.5m11.356-1.993 1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 0 1-1.12-1.243l1.264-12A1.125 1.125 0 0 1 5.513 7.5h12.974c.576 0 1.059.435 1.119 1.007z" />
       </svg>
     ),
   },

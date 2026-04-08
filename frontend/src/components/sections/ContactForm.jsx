@@ -4,7 +4,7 @@ function Field({ label, id, required, error, children }) {
   return (
     <div>
       <label htmlFor={id} className="block text-xs font-medium text-gray-400 uppercase tracking-wider mb-2">
-        {label}{required && <span className="text-gray-300 ml-0.5">*</span>}
+        {label}{required && <span className="ml-0.5" style={{ color: '#C62828' }}>*</span>}
       </label>
       {children}
       {error && (
@@ -118,7 +118,7 @@ export default function ContactForm() {
                className="text-primary underline hover:text-gray-600 transition-colors">
               Datenschutzerklärung
             </a>{' '}
-            zu. <span className="text-gray-300">*</span>
+            zu. <span style={{ color: '#C62828' }}>*</span>
           </span>
         </label>
         {errors.privacyConsent && (
@@ -142,8 +142,8 @@ export default function ContactForm() {
         ) : 'Jetzt Aufmaß buchen'}
       </button>
 
-      <p className="text-xs text-gray-300 text-center font-light">
-        * Pflichtfelder · Antwort innerhalb von 24 Stunden
+      <p className="text-xs text-center font-light" style={{ color: '#8892A4' }}>
+        <span style={{ color: '#C62828' }}>*</span> Pflichtfelder · Antwort innerhalb von 24 Stunden
       </p>
     </form>
   )
