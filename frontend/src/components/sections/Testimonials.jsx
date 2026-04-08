@@ -46,7 +46,7 @@ export default function Testimonials() {
                   <svg
                     key={i}
                     className="w-3.5 h-3.5"
-                    fill="#222222"
+                    fill="#F59E0B"
                     viewBox="0 0 20 20"
                     aria-hidden="true"
                   >
