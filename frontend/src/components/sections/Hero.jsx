@@ -68,9 +68,6 @@ export default function Hero() {
                 border: '1px solid #DDE3EE',
               }}
             >
-              <span
-                style={{ width: 6, height: 6, borderRadius: '50%', background: '#C62828', flexShrink: 0 }}
-              />
               <span className="eyebrow" style={{ letterSpacing: '0.14em' }}>
                 Regensburg &amp; ganz Bayern
               </span>
