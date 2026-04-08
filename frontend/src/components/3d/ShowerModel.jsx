@@ -14,57 +14,52 @@ const D   = 0.90;    // Duschtiefe front→back
 const WT  = 0.14;    // Wandstärke
 const TH  = 0.055;   // Wanenhöhe
 
-// ── Textur-Hilfsfunktionen (Value Noise + fBM) ───────────────
-function _vn(x, y) {
-  const ix = x|0, iy = y|0, fx = x-ix, fy = y-iy;
-  const ux = fx*fx*(3-2*fx), uy = fy*fy*(3-2*fy);
-  const h = (a,b) => { const s = Math.sin(a*127.1+b*311.7)*43758.545; return s-Math.floor(s); };
-  return h(ix,iy)*(1-ux)*(1-uy)+h(ix+1,iy)*ux*(1-uy)+h(ix,iy+1)*(1-ux)*uy+h(ix+1,iy+1)*ux*uy;
-}
-function _fbm(x, y, o=4) {
-  let v=0, a=0.5, f=1;
-  for(let i=0;i<o;i++){v+=_vn(x*f,y*f)*a;a*=0.52;f*=2.18;}
-  return v;
-}
-
-// ── Calacatta-Marmor (Wände) ─────────────────────────────────
+// ── Marmor-Textur: sin-basiertes Domain-Warping (performant) ─
 let _wallTex = null;
 function getWallTex() {
   if (_wallTex) return _wallTex;
-  const W = 512, H = 512;
+  // 256×256 — ausreichend für 3D-Viewer, keine UI-Blockade
+  const W = 256, H = 256;
   const canvas = document.createElement('canvas');
   canvas.width = W; canvas.height = H;
   const ctx = canvas.getContext('2d');
   const img = ctx.createImageData(W, H);
   const d = img.data;
-  const clamp = (v,lo=80,hi=248) => v<lo?lo:v>hi?hi:v;
+  const cl = (v) => v < 80 ? 80 : v > 248 ? 248 : v;
 
   for (let y = 0; y < H; y++) {
     for (let x = 0; x < W; x++) {
-      const nx = x/W * 2.2, ny = y/H * 3.0;
+      const nx = x / W, ny = y / H;
 
-      // Domain-Warp: organische Adernführung
-      const wx = nx + 1.5 * (_fbm(nx+0.15, ny+0.30) - 0.5);
-      const wy = ny + 1.5 * (_fbm(nx+0.85, ny+0.75) - 0.5);
+      // Leichtgewichtiges Domain-Warping mit sin-Kaskade
+      const wx = nx * 3.8
+        + Math.sin(nx * 6.2 + ny * 4.1) * 0.55
+        + Math.sin(ny * 9.8 - nx * 3.3) * 0.28
+        + Math.sin(nx * 18 + ny * 14)   * 0.12;
+      const wy = ny * 5.2
+        + Math.sin(ny * 5.5 - nx * 7.3) * 0.50
+        + Math.sin(nx * 11  + ny * 8.2) * 0.24
+        + Math.sin(ny * 21  - nx * 16)  * 0.10;
 
-      // Hauptadern (scharf, fließend)
-      const t1  = Math.sin(wx * 4.2 + wy * 3.5);
-      const v1  = Math.pow(Math.max(0, 1 - Math.abs(t1)), 3.2);
+      // Hauptadern: schmale, fließende Linien
+      const t1 = Math.sin(wx * 1.4 + wy * 1.1);
+      const v1 = Math.pow(Math.max(0, 1 - Math.abs(t1)), 3.0) * 88;
       // Feinadern
-      const t2  = Math.sin(wx * 9.5 + wy * 7.1 + _fbm(wx, wy)*3.8);
-      const v2  = Math.pow(Math.max(0, 1 - Math.abs(t2)), 6.0);
+      const t2 = Math.sin(wx * 3.2 + wy * 2.5 + Math.sin(wx) * 1.2);
+      const v2 = Math.pow(Math.max(0, 1 - Math.abs(t2)), 5.5) * 36;
+      // Hintergrundrauschen (winzige Körnung)
+      const grain = Math.sin(nx * 97 + ny * 137) * 4 + Math.sin(nx * 213 - ny * 179) * 2;
 
-      // Farbvariation (leichte Warmtöne im Stein)
-      const cv  = (_fbm(nx*0.7, ny*0.5) - 0.5) * 18;
+      // Calacatta: helles Creme-Weiß (232), dunkelgraue Adern
+      const base = 232 + grain;
+      const v    = base - v1 - v2;
 
-      // Calacatta: helles Creme-Weiß, dunkelgraue Adern
-      const base = 232 + cv * 0.6;
-      const v    = base - v1 * 82 - v2 * 40;
-
-      const i = (y*W+x)*4;
-      d[i]   = clamp(v + cv*0.8)  | 0;  // R: leicht warm
-      d[i+1] = clamp(v + cv*0.3)  | 0;  // G: neutral
-      d[i+2] = clamp(v - cv*0.6)  | 0;  // B: minimal kühler
+      // Leichter Warmton im Untergrund
+      const warm = Math.sin(nx * 2.1 + ny * 1.6) * 7;
+      const i = (y * W + x) * 4;
+      d[i]   = cl(v + warm)       | 0;
+      d[i+1] = cl(v + warm * 0.3) | 0;
+      d[i+2] = cl(v - warm * 0.5) | 0;
       d[i+3] = 255;
     }
   }
@@ -80,7 +75,7 @@ function getWallTex() {
 let _trayTex = null;
 function getTrayTex() {
   if (_trayTex) return _trayTex;
-  const W = 256;
+  const W = 128;
   const canvas = document.createElement('canvas');
   canvas.width = W; canvas.height = W;
   const ctx = canvas.getContext('2d');
@@ -89,27 +84,24 @@ function getTrayTex() {
 
   for (let y = 0; y < W; y++) {
     for (let x = 0; x < W; x++) {
-      const nx = x/W*3, ny = y/W*3;
-      // Feine Mineralstruktur (Basalt/Anthrazit)
-      const grain = _fbm(nx*4, ny*4, 5) * 22;
-      const base  = 34;
-      const v     = Math.max(18, Math.min(62, base + grain - 11));
-      const i = (y*W+x)*4;
-      d[i]   = v       | 0;
-      d[i+1] = v       | 0;
-      d[i+2] = (v+3)   | 0;  // winziger Blaustich = moderner Anthrazit
-      d[i+3] = 255;
+      const nx = x / W, ny = y / W;
+      const grain =
+        Math.sin(nx * 41  + ny * 73)  * 6 +
+        Math.sin(nx * 127 - ny * 89)  * 4 +
+        Math.sin(nx * 211 + ny * 163) * 2;
+      const v = Math.max(20, Math.min(58, 36 + grain));
+      const i = (y * W + x) * 4;
+      d[i] = v | 0; d[i+1] = v | 0; d[i+2] = (v + 3) | 0; d[i+3] = 255;
     }
   }
   ctx.putImageData(img, 0, 0);
   const tex = new THREE.CanvasTexture(canvas);
   tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
-  tex.repeat.set(2, 2);
+  tex.repeat.set(3, 3);
   tex.anisotropy = 8;
   return (_trayTex = tex);
 }
 
-// Legacy alias (wird nicht mehr für Wände benötigt)
 const getFloorTex = getTrayTex;
 
 // ── Statische Materialien ────────────────────────────────────

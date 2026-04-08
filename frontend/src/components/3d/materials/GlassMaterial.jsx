@@ -137,20 +137,22 @@ export function updateGlassMaterial(mat, glass, t, opacity = 1.0) {
     }
 
     // ── Klarglas / UltraClear (default) ───────────────────────
+    // transmission=0 → kein doppelter Render-Pass → kein Doppelbild beim Drehen
     default: {
-      const trans = catalogTrans ?? 0.97;
-      const isUltraClear = trans > 0.96;
+      const isUltraClear = (catalogTrans ?? 0.97) > 0.96;
 
-      mat.color.set(catalogColor ?? (isUltraClear ? '#f8fffc' : '#f6f9ff'));
-      mat.transmission        = trans;
-      mat.roughness           = catalogRough ?? 0.015;
+      // Leichte Blau-Grün-Tönung wie echtes Glas
+      mat.color.set(catalogColor ?? (isUltraClear ? '#cdeef8' : '#c8e8f5'));
+      mat.transmission        = 0;       // PBR-Transmission aus → kein Ghost
+      mat.opacity             = isUltraClear ? 0.18 * op : 0.22 * op;
+      mat.roughness           = 0.0;
       mat.metalness           = 0.0;
-      mat.ior                 = 1.38;
-      mat.thickness           = t * 10;
-      mat.attenuationDistance = isUltraClear ? 3.0 : 2.5;
-      mat.attenuationColor.set(isUltraClear ? '#e8fff4' : '#ddeeff');
-      mat.envMapIntensity     = 0.05;
-      mat.opacity             = op;
+      mat.ior                 = 1.52;    // Fresnel-Kanten bleiben realistisch
+      mat.thickness           = 0;
+      mat.attenuationDistance = 10.0;
+      mat.attenuationColor.set('#ffffff');
+      mat.envMapIntensity     = 0.10;
+      mat.specularIntensity   = 0.4;
     }
   }
 
