@@ -46,7 +46,7 @@ function StarRating() {
   )
 }
 
-function CountUp({ target, suffix = '', duration = 1300 }) {
+function CountUp({ target, suffix = '', duration = 1300, delay = 0 }) {
   const [count, setCount] = useState(0)
   const elRef = useRef(null)
   const started = useRef(false)
@@ -56,21 +56,46 @@ function CountUp({ target, suffix = '', duration = 1300 }) {
     const obs = new IntersectionObserver(([entry]) => {
       if (entry.isIntersecting && !started.current) {
         started.current = true
-        let t0 = null
-        const step = (ts) => {
-          if (!t0) t0 = ts
-          const p = Math.min((ts - t0) / duration, 1)
-          const eased = 1 - Math.pow(1 - p, 3)
-          setCount(Math.round(eased * target))
-          if (p < 1) requestAnimationFrame(step)
-        }
-        requestAnimationFrame(step)
+        setTimeout(() => {
+          let t0 = null
+          const step = (ts) => {
+            if (!t0) t0 = ts
+            const p = Math.min((ts - t0) / duration, 1)
+            const eased = 1 - Math.pow(1 - p, 3)
+            setCount(Math.round(eased * target))
+            if (p < 1) requestAnimationFrame(step)
+          }
+          requestAnimationFrame(step)
+        }, delay)
       }
     }, { threshold: 0.5 })
     obs.observe(el)
     return () => obs.disconnect()
-  }, [target, duration])
+  }, [target, duration, delay])
   return <span ref={elRef}>{count}{suffix}</span>
+}
+
+function FadeInText({ children, delay = 0 }) {
+  const [visible, setVisible] = useState(false)
+  const elRef = useRef(null)
+  const started = useRef(false)
+  useEffect(() => {
+    const el = elRef.current
+    if (!el) return
+    const obs = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting && !started.current) {
+        started.current = true
+        setTimeout(() => setVisible(true), delay)
+      }
+    }, { threshold: 0.5 })
+    obs.observe(el)
+    return () => obs.disconnect()
+  }, [delay])
+  return (
+    <span ref={elRef} style={{ opacity: visible ? 1 : 0, transition: 'opacity 0.3s' }}>
+      {children}
+    </span>
+  )
 }
 
 export default function Hero() {
@@ -197,17 +222,21 @@ export default function Hero() {
             style={{ borderTop: '1px solid rgba(0,0,0,0.07)' }}
           >
             {[
-              { label: 'Projekte',       num: 300, suffix: '+' },
-              { label: 'Maßanfertigung', num: 100, suffix: '%' },
-              { label: 'Reaktionszeit',  text: '24h' },
+              { label: 'Projekte',       num: 300, suffix: '+', delay: 700 },
+              { label: 'Maßanfertigung', num: 100, suffix: '%', delay: 700 },
+              { label: 'Reaktionszeit',  text: '24h',           delay: 1800 },
               { label: 'Bewertung',      stars: true },
-            ].map(({ label, num, suffix, text, stars }) => (
+            ].map(({ label, num, suffix, text, stars, delay }) => (
               <div key={label} className="text-center">
                 <div
                   className="font-headline text-2xl text-primary font-semibold"
                   style={{ letterSpacing: '-0.03em' }}
                 >
-                  {stars ? <StarRating /> : num != null ? <CountUp target={num} suffix={suffix} /> : text}
+                  {stars
+                    ? <StarRating />
+                    : num != null
+                      ? <CountUp target={num} suffix={suffix} delay={delay} />
+                      : <FadeInText delay={delay}>{text}</FadeInText>}
                 </div>
                 <div className="text-gray-400 text-xs mt-1 tracking-wider uppercase font-medium">
                   {label}
