@@ -26,7 +26,7 @@ function StarRating() {
     return () => obs.disconnect()
   }, [])
 
-  if (step === 6) return <span ref={elRef}>5 ★</span>
+  if (step === 6) return <span ref={elRef}>5 <span style={{ color: '#F59E0B' }}>★</span></span>
 
   return (
     <span ref={elRef} style={{ display: 'inline-flex', gap: 2, alignItems: 'center' }}>
