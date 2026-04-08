@@ -177,8 +177,11 @@ export default function ShowerCanvas({ config, isComplete }) {
           {/* Environment: warehouse — scharfe Chrome-Reflexionen */}
           <Environment preset="warehouse" />
 
-          {/* Badezimmer-Szene */}
-          <BathroomScene showerWidth={mapped.w} showerHeight={mapped.h} />
+          {/* Badezimmer-Szene — bei Badewanne Boden tiefer für Wannengehäuse */}
+          <BathroomScene
+            showerWidth={mapped.w}
+            showerHeight={config?.einbausituation === 'badewanne' ? mapped.h + 0.16 : mapped.h}
+          />
 
           {/* Modell — NUR wenn Konfiguration abgeschlossen */}
           {isComplete && (

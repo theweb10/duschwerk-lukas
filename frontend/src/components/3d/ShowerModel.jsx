@@ -174,7 +174,7 @@ function ShowerEnclosure({ w, h, einbausituation = 'nische' }) {
       </mesh>
       {/* Vordere Wannenlippe */}
       <mesh position={[0, -h / 2 + 0.008, -0.006]}>
-        <boxGeometry args={[w + WT * 2 + 0.01, 0.016, 0.012]} />
+        <boxGeometry args={[hasRightWall ? w + WT * 2 + 0.01 : w + WT + 0.01, 0.016, 0.012]} />
         <meshStandardMaterial map={trayTex} roughness={0.06} metalness={0.08} envMapIntensity={0.70} />
       </mesh>
 
@@ -534,100 +534,152 @@ const TYPE_COMPONENTS = {
 
 // ── Badewannenarmatur ─────────────────────────────────────────
 function BathtubFixture({ w, backZ, tubTopY }) {
-  const z  = backZ + WT + 0.022;
-  const fY = tubTopY + 0.08;
-  const M  = { color: '#181818', metalness: 0.90, roughness: 0.10, envMapIntensity: 0.8 };
+  const z  = backZ + WT + 0.026;
+  const fY = tubTopY + 0.06;
+  const M  = { color: '#181818', metalness: 0.92, roughness: 0.08, envMapIntensity: 1.0 };
 
   return (
-    <group>
-      {/* Auslaufbogen */}
-      <mesh position={[w * 0.10, fY + 0.045, z + 0.058]} rotation={[0.8, 0, 0]}>
-        <cylinderGeometry args={[0.010, 0.010, 0.110, 10]} />
+    <group position={[-w * 0.25, 0, 0]}>
+      {/* Armaturkörper */}
+      <mesh position={[0, fY, z + 0.018]}>
+        <boxGeometry args={[0.145, 0.048, 0.034]} />
+        <meshStandardMaterial {...M} />
+      </mesh>
+      {/* Knopf links (Temperatur) */}
+      <mesh rotation={[Math.PI / 2, 0, 0]} position={[-0.044, fY + 0.008, z + 0.034]}>
+        <cylinderGeometry args={[0.020, 0.020, 0.022, 14]} />
+        <meshStandardMaterial {...M} />
+      </mesh>
+      {/* Knopf rechts (Menge) */}
+      <mesh rotation={[Math.PI / 2, 0, 0]} position={[0.044, fY + 0.008, z + 0.034]}>
+        <cylinderGeometry args={[0.014, 0.014, 0.022, 12]} />
+        <meshStandardMaterial {...M} />
+      </mesh>
+      {/* Auslaufrohr (Bogen nach unten-vorne) */}
+      <mesh position={[0, fY - 0.040, z + 0.052]} rotation={[0.55, 0, 0]}>
+        <cylinderGeometry args={[0.012, 0.012, 0.095, 12]} />
         <meshStandardMaterial {...M} />
       </mesh>
       {/* Auslaufkopf */}
-      <mesh position={[w * 0.10, fY - 0.005, z + 0.094]}>
-        <boxGeometry args={[0.030, 0.014, 0.054]} />
+      <mesh position={[0, fY - 0.082, z + 0.086]}>
+        <boxGeometry args={[0.030, 0.014, 0.042]} />
         <meshStandardMaterial {...M} />
-      </mesh>
-      {/* Griff links */}
-      <mesh rotation={[Math.PI / 2, 0, 0]} position={[w * 0.10 - 0.058, fY + 0.012, z + 0.018]}>
-        <cylinderGeometry args={[0.017, 0.017, 0.018, 12]} />
-        <meshStandardMaterial {...M} />
-      </mesh>
-      {/* Griff rechts */}
-      <mesh rotation={[Math.PI / 2, 0, 0]} position={[w * 0.10 + 0.058, fY + 0.012, z + 0.018]}>
-        <cylinderGeometry args={[0.017, 0.017, 0.018, 12]} />
-        <meshStandardMaterial {...M} />
-      </mesh>
-      {/* Überlaufring */}
-      <mesh rotation={[Math.PI / 2, 0, 0]} position={[w * 0.35, tubTopY + 0.012, -(D * 0.80)]}>
-        <cylinderGeometry args={[0.022, 0.022, 0.004, 16]} />
-        <meshStandardMaterial color="#b8a898" metalness={0.75} roughness={0.22} />
       </mesh>
     </group>
   );
 }
 
 // ── Badewannen-Modell ─────────────────────────────────────────
-// Glaspaneel (Badewannenaufsatz) sitzt auf der Wanne:
-//   - Glasmitte bei local Y = 0 (wie bei allen Türtypen)
-//   - Wannenrand bei local Y = -h/2 (= Unterkante Glas)
-//   - Wanne darunter bis local Y = -h/2 - TUB_H
+// Aufgebaut aus Seitenpaneelen (offene Oberseite) → Innenbecken sichtbar.
+// Glaspaneel (Aufsatz) an der Frontseite der Wanne.
 function BathtubModel({ w, h, t, glassMat, metalMat }) {
-  const TUB_H  = 0.38;           // Wannenhöhe — passt über BathroomScene-Boden
+  const TUB_H  = 0.52;            // realistische Wannenhöhe
+  const TW     = 0.055;           // Wandstärke der Wanne (sichtbarer Rand)
   const TUB_CY = -h / 2 - TUB_H / 2;
   const WALL_H = h + TUB_H;
-  const WALL_CY = -TUB_H / 2;   // Wände zentriert über Gesamthöhe
+  const WALL_CY = -TUB_H / 2;
   const backZ  = -(D + WT / 2);
   const sideZ  = -(D / 2);
   const leftX  = -w / 2 - WT / 2;
   const rightX =  w / 2 + WT / 2;
   const wallTex = getWallTex();
+  const TM = { color: '#f4f1e8', roughness: 0.05, metalness: 0.04, envMapIntensity: 0.75 };
 
   return (
     <group>
-      {/* Rückwand */}
+      {/* ── Hintergrundwände (Marmor) ── */}
       <mesh receiveShadow position={[0, WALL_CY, backZ]}>
         <boxGeometry args={[w + WT * 2, WALL_H, WT]} />
         <meshStandardMaterial map={wallTex} roughness={0.12} metalness={0.02} envMapIntensity={0.55} />
       </mesh>
-      {/* Linke Wand */}
       <mesh receiveShadow position={[leftX, WALL_CY, sideZ]}>
         <boxGeometry args={[WT, WALL_H, D]} />
         <meshStandardMaterial map={wallTex} roughness={0.12} metalness={0.02} envMapIntensity={0.55} />
       </mesh>
-      {/* Rechte Wand */}
       <mesh receiveShadow position={[rightX, WALL_CY, sideZ]}>
         <boxGeometry args={[WT, WALL_H, D]} />
         <meshStandardMaterial map={wallTex} roughness={0.12} metalness={0.02} envMapIntensity={0.55} />
       </mesh>
 
-      {/* Wannengehäuse (Acryl weiß-creme, glänzend) */}
-      <mesh castShadow receiveShadow position={[0, TUB_CY, sideZ]}>
-        <boxGeometry args={[w, TUB_H, D]} />
-        <meshStandardMaterial color="#f3f0ea" roughness={0.07} metalness={0.03} envMapIntensity={0.55} />
+      {/* ── Wanne: 4 Seitenpaneele + Boden (offene Oberseite) ── */}
+      {/* Frontseite */}
+      <mesh castShadow position={[0, TUB_CY, -TW / 2]}>
+        <boxGeometry args={[w, TUB_H, TW]} />
+        <meshStandardMaterial {...TM} />
+      </mesh>
+      {/* Rückseite */}
+      <mesh castShadow position={[0, TUB_CY, -D + TW / 2]}>
+        <boxGeometry args={[w, TUB_H, TW]} />
+        <meshStandardMaterial {...TM} />
+      </mesh>
+      {/* Linke Seite */}
+      <mesh castShadow position={[-w / 2 + TW / 2, TUB_CY, sideZ]}>
+        <boxGeometry args={[TW, TUB_H, D - TW * 2]} />
+        <meshStandardMaterial {...TM} />
+      </mesh>
+      {/* Rechte Seite */}
+      <mesh castShadow position={[w / 2 - TW / 2, TUB_CY, sideZ]}>
+        <boxGeometry args={[TW, TUB_H, D - TW * 2]} />
+        <meshStandardMaterial {...TM} />
+      </mesh>
+      {/* Wannenboden (außen) */}
+      <mesh castShadow position={[0, TUB_CY - TUB_H / 2 + TW / 2, sideZ]}>
+        <boxGeometry args={[w, TW, D]} />
+        <meshStandardMaterial color="#ece8df" roughness={0.06} metalness={0.02} />
+      </mesh>
+      {/* Wannenboden (innen, sichtbar von oben durch offene Oberseite) */}
+      <mesh position={[0, TUB_CY - TUB_H / 2 + TW + 0.002, sideZ]}>
+        <boxGeometry args={[w - TW * 2 - 0.008, 0.005, D - TW * 2 - 0.008]} />
+        <meshStandardMaterial color="#dedad1" roughness={0.04} metalness={0.02} envMapIntensity={0.3} />
       </mesh>
 
-      {/* Wannen-Innenbecken (sichtbar von oben, leicht vertieft) */}
-      <mesh position={[0, -h / 2 - 0.04, sideZ]}>
-        <boxGeometry args={[w - 0.08, 0.012, D - 0.08]} />
-        <meshStandardMaterial color="#e6e2da" roughness={0.08} metalness={0.02} />
-      </mesh>
-
-      {/* Badewannenarmatur */}
+      {/* ── Armatur & Abfluss ── */}
       <BathtubFixture w={w} backZ={backZ} tubTopY={-h / 2} />
+      <mesh position={[0, TUB_CY - TUB_H / 2 + TW + 0.003, -D * 0.62]}>
+        <cylinderGeometry args={[0.026, 0.026, 0.005, 16]} />
+        <meshStandardMaterial color="#c0bab4" metalness={0.92} roughness={0.10} />
+      </mesh>
 
-      {/* Badewannenaufsatz — Glaspaneel (sitzt auf Wannenrand) */}
+      {/* ── Glasaufsatz (Badewannenaufsatz an der Front) ── */}
       <mesh castShadow position={[0, 0, 0]}>
         <boxGeometry args={[w, h, t]} />
         <primitive object={glassMat} attach="material" />
       </mesh>
-      {/* Oberes Profil */}
       <mesh position={[0, h / 2 - P / 2, 0]}>
         <boxGeometry args={[w, P, PH * 1.2]} />
         <primitive object={metalMat} attach="material" />
       </mesh>
+    </group>
+  );
+}
+
+// ── Glaswand-Modell ───────────────────────────────────────────
+// Einzelne Glasscheibe an linker Wand befestigt, ohne Einhausung
+function GlaswandModel({ w, h, t, glassMat, metalMat, rahmentyp }) {
+  const leftX  = -w / 2 - WT / 2;
+  const floorY = -h / 2 - TH / 2;
+  const wallTex = getWallTex();
+  const trayTex = getTrayTex();
+
+  return (
+    <group>
+      {/* Seitenwand links */}
+      <mesh receiveShadow position={[leftX, 0, -(D / 2)]}>
+        <boxGeometry args={[WT, h, D]} />
+        <meshStandardMaterial map={wallTex} roughness={0.12} metalness={0.02} envMapIntensity={0.55} />
+      </mesh>
+      {/* Duschwanne */}
+      <mesh receiveShadow position={[0, floorY, -(D / 2 + WT / 2)]}>
+        <boxGeometry args={[w + WT + 0.01, TH, D + WT + 0.01]} />
+        <meshStandardMaterial map={trayTex} roughness={0.06} metalness={0.08} envMapIntensity={0.70} />
+      </mesh>
+      {/* Ablauf */}
+      <mesh position={[0, -h / 2 + 0.006, -(D - 0.032)]}>
+        <boxGeometry args={[w * 0.85, 0.003, 0.034]} />
+        <meshStandardMaterial color="#909090" metalness={0.95} roughness={0.08} />
+      </mesh>
+      {/* Glaspanel */}
+      <WalkIn w={w} h={h} t={t} glassMat={glassMat} metalMat={metalMat} rahmentyp={rahmentyp} />
     </group>
   );
 }
@@ -751,6 +803,8 @@ export default function ShowerModel({ config, canvasRef }) {
     <group ref={groupRef} position={[0, -h / 2, 0]}>
       {einbausituation === 'badewanne' ? (
         <BathtubModel w={w} h={h} t={t} glassMat={glassMat.current} metalMat={metalMat.current} />
+      ) : einbausituation === 'glaswand' ? (
+        <GlaswandModel w={w} h={h} t={t} glassMat={glassMat.current} metalMat={metalMat.current} rahmentyp={rahmentyp} />
       ) : (
         <>
           <ShowerEnclosure w={w} h={h} einbausituation={einbausituation} />
