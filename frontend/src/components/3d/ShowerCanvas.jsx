@@ -1,9 +1,39 @@
 import React, { useRef, useMemo, Suspense, useEffect, useCallback, useState } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { Environment, AdaptiveDpr } from '@react-three/drei';
+import * as THREE from 'three';
 import ShowerModel from './ShowerModel';
 import BathroomScene from './BathroomScene';
 import { mapConfig } from './configurator/useShowerConfig';
+
+// ─────────────────────────────────────────────────────────────
+//  Gradient-Hintergrund (studio look: dunkel oben → dunkelblau-grau unten)
+// ─────────────────────────────────────────────────────────────
+function BackgroundGradient() {
+  const { scene } = useThree();
+
+  useEffect(() => {
+    const W = 4, H = 512;
+    const canvas = document.createElement('canvas');
+    canvas.width = W; canvas.height = H;
+    const ctx = canvas.getContext('2d');
+    const g = ctx.createLinearGradient(0, 0, 0, H);
+    g.addColorStop(0.00, '#07080a');   // oben: fast schwarz
+    g.addColorStop(0.35, '#0e1118');   // mitte-oben: dunkel
+    g.addColorStop(0.75, '#141c28');   // mitte-unten: blau-grau Stich
+    g.addColorStop(1.00, '#0a0e14');   // unten: zurück dunkel (Boden)
+    ctx.fillStyle = g;
+    ctx.fillRect(0, 0, W, H);
+
+    const tex = new THREE.CanvasTexture(canvas);
+    tex.needsUpdate = true;
+    scene.background = tex;
+
+    return () => { tex.dispose(); scene.background = null; };
+  }, [scene]);
+
+  return null;
+}
 
 // ─────────────────────────────────────────────────────────────
 //  Zoom-Konstanten
@@ -114,12 +144,13 @@ export default function ShowerCanvas({ config, isComplete }) {
           frameloop="always"
           camera={{ fov: 38, position: [0, 0, 4.5], near: 0.05, far: 80 }}
           dpr={[1, 2]}
-          style={{ background: '#16181c' }}
+          style={{ background: '#07080a' }}
           onPointerDown={() => setIsDragging(true)}
           onPointerUp={() => setIsDragging(false)}
           onPointerLeave={() => setIsDragging(false)}
         >
           <AdaptiveDpr pixelated />
+          <BackgroundGradient />
 
           <CameraSetup h={mapped.h} zoomRef={zoomRef} />
           <ZoomController h={mapped.h} zoomRef={zoomRef} />

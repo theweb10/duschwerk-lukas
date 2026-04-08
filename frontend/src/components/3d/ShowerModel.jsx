@@ -92,7 +92,7 @@ function getFloorTex() {
 }
 
 // ── Statische Materialien ────────────────────────────────────
-let _wMat = null, _tMat = null, _drainMat = null;
+let _wMat = null, _tMat = null, _drainMat = null, _rainMat = null;
 const getWMat = () => _wMat || (_wMat = new THREE.MeshStandardMaterial({
   map: getWallTex(), roughness: 0.15, metalness: 0.02, envMapIntensity: 0.45,
 }));
@@ -102,6 +102,44 @@ const getTMat = () => _tMat || (_tMat = new THREE.MeshStandardMaterial({
 const getDrainMat = () => _drainMat || (_drainMat = new THREE.MeshStandardMaterial({
   color: '#a0a0a0', metalness: 0.92, roughness: 0.12,
 }));
+// Schwarzes Metall für Regendusche
+const getRainMat = () => _rainMat || (_rainMat = new THREE.MeshStandardMaterial({
+  color: '#141414', metalness: 0.82, roughness: 0.22, envMapIntensity: 0.8,
+}));
+
+// ── Decken-Regendusche (schwarzes Design) ────────────────────
+function RainShower({ w, h }) {
+  const headW  = Math.min(w * 0.42, 0.38);  // Kopfbreite max 38cm
+  const headD  = Math.min(D * 0.44, 0.28);  // Kopftiefe max 28cm
+  const armLen = 0.28;                        // Arm-Länge an Rückwand
+  const topY   = h / 2;                       // Deckenebene (lokal)
+  const backZ  = -(D + WT / 2) + WT / 2 + armLen / 2;
+
+  return (
+    <group>
+      {/* Deckenarm (von Rückwand nach vorne) */}
+      <mesh position={[0, topY - 0.018, -(D - armLen / 2)]}>
+        <boxGeometry args={[0.020, 0.020, armLen]} />
+        <primitive object={getRainMat()} attach="material" />
+      </mesh>
+      {/* Verbindungsstück Arm → Kopf */}
+      <mesh position={[0, topY - 0.055, -(D - armLen) + 0.01]}>
+        <boxGeometry args={[0.020, 0.074, 0.020]} />
+        <primitive object={getRainMat()} attach="material" />
+      </mesh>
+      {/* Regenbrause-Kopf (flach, rechteckig) */}
+      <mesh castShadow position={[0, topY - 0.094, -(D - armLen) + 0.01]}>
+        <boxGeometry args={[headW, 0.016, headD]} />
+        <primitive object={getRainMat()} attach="material" />
+      </mesh>
+      {/* Düsengitter — leicht dunklere Unterseite */}
+      <mesh position={[0, topY - 0.103, -(D - armLen) + 0.01]}>
+        <boxGeometry args={[headW - 0.012, 0.002, headD - 0.012]} />
+        <primitive object={getDrainMat()} attach="material" />
+      </mesh>
+    </group>
+  );
+}
 
 // ── Duschnische (Wände + Boden) ──────────────────────────────
 function ShowerEnclosure({ w, h }) {
@@ -138,6 +176,8 @@ function ShowerEnclosure({ w, h }) {
         <boxGeometry args={[w * 0.70, 0.004, 0.052]} />
         <primitive object={getDrainMat()} attach="material" />
       </mesh>
+      {/* Decken-Regendusche */}
+      <RainShower w={w} h={h} />
     </group>
   );
 }

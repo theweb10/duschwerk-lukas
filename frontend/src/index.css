@@ -549,6 +549,13 @@
   cursor: grab;
 }
 .shower-canvas-wrapper.is-dragging { cursor: grabbing; }
+/* Vignette für Studio-Look */
+.shower-canvas-wrapper::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse at 50% 45%, transparent 52%, rgba(4,5,8,0.62) 100%);
+  pointer-events: none; z-index: 4;
+}
 .shower-canvas-wrapper canvas {
   display: block;
   width: 100% !important;

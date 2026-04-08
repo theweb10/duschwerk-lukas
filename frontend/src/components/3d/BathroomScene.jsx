@@ -1,25 +1,34 @@
 import * as THREE from 'three';
 
 /**
- * Minimaler Schattenboden für den Shower-Konfigurator.
- * Kein Hintergrundgeometrie — dunkler Canvas-Hintergrund reicht.
- * Der Boden liegt tief genug, dass er nie mit der Duschwanne überlappt.
+ * Studio-Boden für den Shower-Konfigurator.
+ * Polierter dunkler Stein mit Schattenempfang und Soft-Reflexion.
  */
 export default function BathroomScene({ showerWidth = 1.2, showerHeight = 2.0 }) {
   const h      = showerHeight;
-  // Deutlich tiefer als Wanne (TH=0.055), damit keine Überschneidung beim Kippen
-  const floorY = -h - 0.30;
+  const floorY = -h - 0.30; // tief genug, kein Overlap beim Kippen
 
   return (
     <group>
-      {/* Schattenboden — nur Schattenempfänger, kein visueller Hintergrund */}
-      <mesh receiveShadow rotation={[-Math.PI / 2, 0, 0]} position={[0, floorY, -0.5]}>
-        <planeGeometry args={[18, 12]} />
+      {/* Polierter Reflexionsboden — dunkler Naturstein */}
+      <mesh receiveShadow rotation={[-Math.PI / 2, 0, 0]} position={[0, floorY, -1.0]}>
+        <planeGeometry args={[20, 14]} />
         <meshStandardMaterial
-          color="#0e1012"
-          roughness={0.70}
-          metalness={0.02}
-          envMapIntensity={0.04}
+          color="#0a0c10"
+          roughness={0.08}
+          metalness={0.12}
+          envMapIntensity={0.55}
+        />
+      </mesh>
+
+      {/* Weit entfernte Rückwand — sehr dunkel, nur als Tiefenhinweis */}
+      <mesh position={[0, floorY + (h + 3) / 2, -4.5]}>
+        <planeGeometry args={[16, h + 6]} />
+        <meshStandardMaterial
+          color="#080a0d"
+          roughness={0.95}
+          metalness={0.0}
+          side={THREE.FrontSide}
         />
       </mesh>
     </group>
