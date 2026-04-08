@@ -88,7 +88,7 @@ export default function Products() {
       <main>
 
         {/* Artweger */}
-        <section className="section-padding" style={{ background: '#F2F2F2' }}>
+        <section className="section-padding" style={{ background: '#ECEEF2' }}>
           <div className="container-max">
             <header className="mb-10">
               <p className="text-gray-400 text-xs uppercase tracking-widest font-medium mb-2">Partnerfirma</p>
@@ -130,7 +130,7 @@ export default function Products() {
         </section>
 
         {/* Partnerlinks */}
-        <section className="section-padding" style={{ background: '#F5F5F5' }}>
+        <section className="section-padding" style={{ background: '#ECEEF2' }}>
           <div className="container-max">
             <header className="mb-10">
               <p className="text-gray-400 text-xs uppercase tracking-widest font-medium mb-3">Partner</p>

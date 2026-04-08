@@ -9,8 +9,8 @@
   --color-accent:       #C62828;
   --color-accent-hover: #A61E1E;
   --color-white:        #FFFFFF;
-  --color-bg:           #F2F2F2;
-  --color-border:       #DDDDDD;
+  --color-bg:           #ECEEF2;
+  --color-border:       #E4E8F0;
   --color-text:         #333333;
 }
 
@@ -22,7 +22,8 @@
   }
 
   body {
-    @apply bg-white font-body;
+    @apply font-body;
+    background: var(--color-bg);
     color: var(--color-text);
   }
 
@@ -119,12 +120,14 @@
   .card-3d {
     @apply bg-white;
     border-radius: 12px;
-    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
-    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    border: 1px solid #E8ECF4;
+    box-shadow: 0 1px 6px rgba(31,46,74,0.05);
+    transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
   }
   .card-3d:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 16px 40px rgba(0,0,0,0.10);
+    transform: translateY(-4px);
+    border-color: #C8D0E4;
+    box-shadow: 0 10px 32px rgba(31,46,74,0.10);
   }
 
   .glass-card {
@@ -142,7 +145,7 @@
     @apply w-full bg-white text-sm placeholder-gray-300
            transition-all duration-200;
     color: var(--color-text);
-    border: 1.5px solid #e5e7eb;
+    border: 1.5px solid #E4E8F0;
     border-radius: 8px;
     padding: 0.75rem 1rem;
     outline: none;
@@ -163,7 +166,7 @@
   /* ── Page Hero ───────────────────────────────────── */
   .page-hero {
     @apply bg-white pt-36 pb-20 px-4 sm:px-6 lg:px-8;
-    border-bottom: 1px solid #EEEEEE;
+    border-bottom: 1px solid #E4E8F0;
   }
 }
 

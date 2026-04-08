@@ -45,7 +45,7 @@ const services = [
 
 export default function ServicesPreview() {
   return (
-    <section className="section-padding" style={{ background: '#F2F2F2' }}>
+    <section className="section-padding" style={{ background: '#ECEEF2' }}>
       <div className="container-max">
 
         <header className="mb-14 text-center" data-reveal>

@@ -27,7 +27,7 @@ export default function Hero() {
       onMouseMove={onMouseMove}
       className="hero-glow relative min-h-screen flex items-center justify-center overflow-hidden"
       style={{
-        background: 'linear-gradient(170deg, #FFFFFF 0%, #FAFAFA 60%, #F2F2F2 100%)',
+        background: 'linear-gradient(170deg, #FFFFFF 0%, #F5F6FA 60%, #ECEEF2 100%)',
       }}
       aria-label="Hero"
     >

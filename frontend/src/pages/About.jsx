@@ -89,7 +89,7 @@ export default function About() {
         </section>
 
         {/* Komplettservice */}
-        <section className="section-padding" style={{ background: '#F5F5F5' }}>
+        <section className="section-padding" style={{ background: '#ECEEF2' }}>
           <div className="container-max">
             <header className="mb-12">
               <p className="text-gray-400 text-xs uppercase tracking-widest font-medium mb-3">Unser Angebot</p>

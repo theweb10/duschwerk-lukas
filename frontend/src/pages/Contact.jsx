@@ -62,7 +62,7 @@ export default function Contact() {
         </div>
       </div>
 
-      <main className="section-padding" style={{ background: '#F2F2F2' }}>
+      <main className="section-padding" style={{ background: '#ECEEF2' }}>
         <div className="container-max">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
 

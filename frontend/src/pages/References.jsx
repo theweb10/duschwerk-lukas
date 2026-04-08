@@ -23,7 +23,7 @@ export default function References() {
         </div>
       </div>
 
-      <main className="section-padding" style={{ background: '#F2F2F2' }}>
+      <main className="section-padding" style={{ background: '#ECEEF2' }}>
         <div className="container-max">
 
           {/* Placeholder */}

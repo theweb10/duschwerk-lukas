@@ -60,7 +60,7 @@ export default function Testimonials() {
               <footer className="flex items-center gap-3 mt-auto">
                 <div
                   className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0"
-                  style={{ background: '#F5F5F5' }}
+                  style={{ background: '#EEF1F8' }}
                 >
                   <span className="text-xs font-semibold text-gray-400">
                     {name.charAt(0)}

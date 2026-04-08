@@ -62,7 +62,7 @@ export default function Services() {
         </div>
       </div>
 
-      <main className="section-padding" style={{ background: '#F2F2F2' }}>
+      <main className="section-padding" style={{ background: '#ECEEF2' }}>
         <div className="container-max">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {services.map(({ id, title, description, features, icon }, index) => (
