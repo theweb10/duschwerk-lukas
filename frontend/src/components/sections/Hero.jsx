@@ -3,6 +3,49 @@ import { Link } from 'react-router-dom'
 import RegensburgSilhouette from './RegensburgSilhouette'
 import { useParallax } from '../../hooks/useParallax'
 
+function StarRating() {
+  const [step, setStep] = useState(0) // 0 = hidden, 1–5 = stars popping, 6 = final "5 ★"
+  const elRef = useRef(null)
+  const started = useRef(false)
+  useEffect(() => {
+    const el = elRef.current
+    if (!el) return
+    const obs = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting && !started.current) {
+        started.current = true
+        let i = 1
+        const next = () => {
+          setStep(i)
+          i++
+          if (i <= 6) setTimeout(next, i <= 5 ? 200 : 300)
+        }
+        setTimeout(next, 100)
+      }
+    }, { threshold: 0.5 })
+    obs.observe(el)
+    return () => obs.disconnect()
+  }, [])
+
+  if (step === 6) return <span ref={elRef}>5 ★</span>
+
+  return (
+    <span ref={elRef} style={{ display: 'inline-flex', gap: 2, alignItems: 'center' }}>
+      {Array.from({ length: 5 }).map((_, i) => (
+        <svg
+          key={i}
+          width="14" height="14" viewBox="0 0 20 20" fill={i < step ? '#F59E0B' : 'transparent'}
+          style={{
+            transition: 'fill 0.15s, transform 0.2s',
+            transform: i < step ? 'scale(1)' : 'scale(0.4)',
+          }}
+        >
+          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+        </svg>
+      ))}
+    </span>
+  )
+}
+
 function CountUp({ target, suffix = '', duration = 1300 }) {
   const [count, setCount] = useState(0)
   const elRef = useRef(null)
@@ -157,14 +200,14 @@ export default function Hero() {
               { label: 'Projekte',       num: 300, suffix: '+' },
               { label: 'Maßanfertigung', num: 100, suffix: '%' },
               { label: 'Reaktionszeit',  text: '24h' },
-              { label: 'Bewertung',      text: '5 ★' },
-            ].map(({ label, num, suffix, text }) => (
+              { label: 'Bewertung',      stars: true },
+            ].map(({ label, num, suffix, text, stars }) => (
               <div key={label} className="text-center">
                 <div
                   className="font-headline text-2xl text-primary font-semibold"
                   style={{ letterSpacing: '-0.03em' }}
                 >
-                  {num != null ? <CountUp target={num} suffix={suffix} /> : text}
+                  {stars ? <StarRating /> : num != null ? <CountUp target={num} suffix={suffix} /> : text}
                 </div>
                 <div className="text-gray-400 text-xs mt-1 tracking-wider uppercase font-medium">
                   {label}
