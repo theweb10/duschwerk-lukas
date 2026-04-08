@@ -1,273 +1,169 @@
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
 import * as THREE from 'three';
 
 /**
- * Realistische Badezimmer-Umgebung
- * - Fliesen-Boden mit Fugenraster
- * - Rückwand + Seitenwand (Ecke)
- * - Duschrinne / Ablauf-Markierung
- * - Referenzobjekte für Größenverständnis
+ * Bathroom context scene — Duka-style configurator
+ *
+ * Shows the shower in a realistic tiled corner:
+ *  - Back wall (tiled) directly behind the glass
+ *  - Left side wall (where the shower is mounted)
+ *  - Tiled floor + wet-area inset
+ *  - Shower tray (white stone)
+ *  - Drain channel
+ *
+ * Coordinate system (matches ShowerModel):
+ *  - Floor at y = -h
+ *  - Glass front face at z ≈ 0
+ *  - Back wall at z = -DEPTH
+ *  - Left wall at x = -w/2
  */
 
-const TILE_SIZE = 0.6;
-const GROUT_WIDTH = 0.008;
-const GROUT_COLOR = '#d0cec8';
+const DEPTH = 1.0; // front-to-back depth of the shower enclosure
 
-// Prozeduraler Fliesen-Boden via Canvas-Textur
-function useTileTexture(tileColor, groutColor, size, repeat) {
-  return useMemo(() => {
-    const canvas = document.createElement('canvas');
-    canvas.width = 512;
-    canvas.height = 512;
-    const ctx = canvas.getContext('2d');
-
-    // Fuge
-    ctx.fillStyle = groutColor;
-    ctx.fillRect(0, 0, 512, 512);
-
-    // Fliese
-    const groutPx = 8;
-    ctx.fillStyle = tileColor;
-    ctx.fillRect(groutPx, groutPx, 512 - groutPx * 2, 512 - groutPx * 2);
-
-    // Subtile Variation auf der Fliese (natürlicher Look)
-    for (let i = 0; i < 40; i++) {
-      const x = Math.random() * 512;
-      const y = Math.random() * 512;
-      const r = Math.random() * 30 + 5;
-      ctx.fillStyle = `rgba(0,0,0,${Math.random() * 0.03})`;
-      ctx.beginPath();
-      ctx.ellipse(x, y, r, r * 0.6, Math.random() * Math.PI, 0, Math.PI * 2);
-      ctx.fill();
+// ── Tile texture helpers ────────────────────────────────────
+function makeTileTexture(tileColor, groutColor, tilesU, tilesV) {
+  const canvas = document.createElement('canvas');
+  canvas.width = 512; canvas.height = 512;
+  const ctx = canvas.getContext('2d');
+  ctx.fillStyle = groutColor;
+  ctx.fillRect(0, 0, 512, 512);
+  const gp = 7;
+  const tw = 512 / tilesU;
+  const th = 512 / tilesV;
+  for (let r = 0; r < tilesV; r++) {
+    for (let c = 0; c < tilesU; c++) {
+      ctx.fillStyle = tileColor;
+      const x = c * tw + gp;
+      const y = r * th + gp;
+      ctx.fillRect(x, y, tw - gp * 2, th - gp * 2);
+      // subtle per-tile variation
+      const v = (Math.random() - 0.5) * 0.035;
+      ctx.fillStyle = v > 0 ? `rgba(255,255,255,${v})` : `rgba(0,0,0,${-v})`;
+      ctx.fillRect(x, y, tw - gp * 2, th - gp * 2);
     }
-
-    const tex = new THREE.CanvasTexture(canvas);
-    tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
-    tex.repeat.set(repeat, repeat);
-    tex.anisotropy = 8;
-    return tex;
-  }, [tileColor, groutColor, repeat]);
+  }
+  const tex = new THREE.CanvasTexture(canvas);
+  tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
+  tex.anisotropy = 8;
+  return tex;
 }
 
-function useWallTexture(tileColor, groutColor, cols, rows) {
-  return useMemo(() => {
-    const canvas = document.createElement('canvas');
-    canvas.width = 512;
-    canvas.height = 512;
-    const ctx = canvas.getContext('2d');
-
-    const tileW = 512 / cols;
-    const tileH = 512 / rows;
-    const groutPx = 4;
-
-    ctx.fillStyle = groutColor;
-    ctx.fillRect(0, 0, 512, 512);
-
-    for (let r = 0; r < rows; r++) {
-      for (let c = 0; c < cols; c++) {
-        // Leichtes offset jede zweite Reihe (Mauerverband)
-        const offsetX = r % 2 === 0 ? 0 : tileW * 0.5;
-        const x = c * tileW + offsetX;
-        const y = r * tileH;
-
-        ctx.fillStyle = tileColor;
-        ctx.fillRect(x + groutPx, y + groutPx, tileW - groutPx * 2, tileH - groutPx * 2);
-
-        // Subtile Farbvariation pro Fliese
-        const variation = (Math.random() - 0.5) * 0.04;
-        if (variation > 0) {
-          ctx.fillStyle = `rgba(255,255,255,${variation})`;
-        } else {
-          ctx.fillStyle = `rgba(0,0,0,${-variation})`;
-        }
-        ctx.fillRect(x + groutPx, y + groutPx, tileW - groutPx * 2, tileH - groutPx * 2);
-      }
-    }
-
-    const tex = new THREE.CanvasTexture(canvas);
-    tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
-    tex.anisotropy = 8;
-    return tex;
-  }, [tileColor, groutColor, cols, rows]);
+function useTile(tileColor, groutColor, u, v) {
+  return useMemo(() => makeTileTexture(tileColor, groutColor, u, v), [tileColor, groutColor, u, v]);
 }
 
-// Duschrinne (Ablauf im Boden)
-function DrainChannel({ w }) {
+// ── Drain channel ───────────────────────────────────────────
+function Drain({ w, floorY }) {
   return (
-    <group position={[0, 0.002, w / 2 + 0.1]}>
-      {/* Edelstahl-Abdeckung */}
+    <group position={[0, floorY + 0.002, -DEPTH * 0.12]}>
+      {/* Drain cover — stainless steel strip */}
       <mesh rotation={[-Math.PI / 2, 0, 0]}>
-        <planeGeometry args={[w * 0.8, 0.08]} />
-        <meshStandardMaterial
-          color="#b8b8b8"
-          metalness={0.9}
-          roughness={0.15}
-        />
+        <planeGeometry args={[w * 0.75, 0.065]} />
+        <meshStandardMaterial color="#b0b0b0" metalness={0.92} roughness={0.12} />
       </mesh>
-      {/* Einlass-Schatten */}
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.001, 0]}>
-        <planeGeometry args={[w * 0.8 + 0.02, 0.1]} />
-        <meshStandardMaterial color="#444" metalness={0.2} roughness={0.8} />
+      {/* Recess around drain */}
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, -0.001]}>
+        <planeGeometry args={[w * 0.75 + 0.025, 0.09]} />
+        <meshStandardMaterial color="#555" metalness={0.2} roughness={0.8} />
       </mesh>
     </group>
   );
 }
 
-// Handtuchhalter (Referenzobjekt — Größe verständlich machen)
-function TowelHolder({ position }) {
-  return (
-    <group position={position}>
-      {/* Halterung */}
-      <mesh>
-        <cylinderGeometry args={[0.012, 0.012, 0.5, 12]} />
-        <meshStandardMaterial color="#c0c0c0" metalness={0.95} roughness={0.08} />
-      </mesh>
-      {/* Wandhalter links */}
-      <mesh position={[0, 0.22, 0]}>
-        <boxGeometry args={[0.03, 0.03, 0.05]} />
-        <meshStandardMaterial color="#c0c0c0" metalness={0.95} roughness={0.08} />
-      </mesh>
-      {/* Wandhalter rechts */}
-      <mesh position={[0, -0.22, 0]}>
-        <boxGeometry args={[0.03, 0.03, 0.05]} />
-        <meshStandardMaterial color="#c0c0c0" metalness={0.95} roughness={0.08} />
-      </mesh>
-      {/* Handtuch (angedeutet) */}
-      <mesh position={[0.04, 0, 0]}>
-        <boxGeometry args={[0.015, 0.42, 0.35]} />
-        <meshStandardMaterial color="#e8e4df" roughness={0.9} />
-      </mesh>
-    </group>
-  );
-}
-
+// ── Main scene ──────────────────────────────────────────────
 export default function BathroomScene({ showerWidth = 1.2, showerHeight = 2.0 }) {
-  const w = showerWidth;
-  const h = showerHeight;
+  const w      = showerWidth;
+  const h      = showerHeight;
+  const floorY = -h;
+  const wallH  = h + 0.6;  // wall extends above shower
 
-  // Bodenfliesen: helles Grau, großformat
-  const floorTex = useTileTexture('#e8e5e0', GROUT_COLOR, 6, 6);
-  const floorNormal = useTileTexture('#8888aa', '#666688', 6, 6);
-
-  // Wandfliesen: weiß/hellgrau, rechteckig
-  const wallTex = useWallTexture('#f5f3ef', '#d5d3ce', 3, 6);
-  const sideWallTex = useWallTexture('#f2f0ec', '#d5d3ce', 3, 6);
-
-  // Duschbereich-Boden (etwas dunkler, Nassbereich)
-  const wetFloorTex = useTileTexture('#d5d2cc', '#bbb8b2', 4, 4);
-
-  const wallHeight = h + 0.5; // Wand etwas höher als Dusche
-  const floorY = -h;          // Boden auf Dusch-Unterkante
+  // Floor: large warm grey tiles
+  const floorTex = useTile('#dbd7d0', '#b8b4ac', 5, 5);
+  // Wet area inset: slightly darker
+  const wetTex   = useTile('#cec9c1', '#aaa69e', 4, 4);
+  // Wall: tall white/off-white tiles (3 wide × 6 tall per repeat)
+  const wallTex  = useTile('#efefec', '#d2cfca', 2, 4);
 
   return (
     <group>
-      {/* ── BODEN ───────────────────────────────── */}
-      {/* Haupt-Boden */}
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, floorY, 0]} receiveShadow>
-        <planeGeometry args={[5, 5]} />
-        <meshStandardMaterial
-          map={floorTex}
-          roughness={0.6}
-          metalness={0.05}
-          envMapIntensity={0.3}
-        />
+      {/* ── FLOOR ─────────────────────────────────────────── */}
+      {/* Main bathroom floor */}
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, floorY, -DEPTH * 0.5 + 0.15]}>
+        <planeGeometry args={[w + 2.0, DEPTH + 1.2]} />
+        <meshStandardMaterial map={floorTex} roughness={0.55} metalness={0.04} envMapIntensity={0.2} />
       </mesh>
 
-      {/* Nassbereich-Boden (unter der Dusche, leicht dunkler) */}
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, floorY + 0.003, -0.1]} receiveShadow>
-        <planeGeometry args={[w + 0.4, w * 0.8 + 0.3]} />
-        <meshStandardMaterial
-          map={wetFloorTex}
-          roughness={0.4}
-          metalness={0.08}
-          envMapIntensity={0.4}
-        />
+      {/* Wet-area inset (under shower, slightly elevated + darker) */}
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, floorY + 0.001, -DEPTH * 0.45]}>
+        <planeGeometry args={[w - 0.06, DEPTH - 0.15]} />
+        <meshStandardMaterial map={wetTex} roughness={0.45} metalness={0.05} envMapIntensity={0.25} />
       </mesh>
 
-      {/* ── RÜCKWAND ───────��────────────────────── */}
-      <mesh position={[0, floorY + wallHeight / 2, -w * 0.5]} receiveShadow>
-        <planeGeometry args={[3.5, wallHeight]} />
-        <meshStandardMaterial
-          map={wallTex}
-          roughness={0.45}
-          metalness={0.02}
-          envMapIntensity={0.2}
-          side={THREE.FrontSide}
-        />
+      {/* ── SHOWER TRAY ───────────────────────────────────── */}
+      <mesh position={[0, floorY + 0.025, -DEPTH * 0.45]}>
+        <boxGeometry args={[w - 0.06, 0.05, DEPTH - 0.15]} />
+        <meshStandardMaterial color="#f3f1ec" roughness={0.35} metalness={0.02} />
+      </mesh>
+      {/* Tray front lip (visible from camera) */}
+      <mesh position={[0, floorY + 0.025, 0.01]}>
+        <boxGeometry args={[w - 0.06, 0.05, 0.025]} />
+        <meshStandardMaterial color="#e8e5df" roughness={0.3} metalness={0.02} />
       </mesh>
 
-      {/* ── SEITENWAND (links) ──────────────────── */}
+      {/* ── DRAIN ─────────────────────────────────────────── */}
+      <Drain w={w} floorY={floorY} />
+
+      {/* ── BACK WALL ─────────────────────────────────────── */}
+      <mesh position={[0, floorY + wallH / 2, -DEPTH + 0.01]}>
+        <planeGeometry args={[w + 0.08, wallH]} />
+        <meshStandardMaterial map={wallTex} roughness={0.40} metalness={0.02} envMapIntensity={0.15} side={THREE.FrontSide} />
+      </mesh>
+      {/* extend behind walls left/right */}
+      <mesh position={[0, floorY + wallH / 2, -DEPTH + 0.01]}>
+        <planeGeometry args={[w + 2.5, wallH]} />
+        <meshStandardMaterial color="#eae8e3" roughness={0.5} metalness={0.01} side={THREE.FrontSide} />
+      </mesh>
+      {/* tile wall takes priority, re-render on top */}
+      <mesh position={[0, floorY + wallH / 2, -DEPTH + 0.015]}>
+        <planeGeometry args={[w + 0.08, wallH]} />
+        <meshStandardMaterial map={wallTex} roughness={0.40} metalness={0.02} envMapIntensity={0.15} side={THREE.FrontSide} />
+      </mesh>
+
+      {/* ── LEFT SIDE WALL ────────────────────────────────── */}
       <mesh
-        position={[-w / 2 - 0.25, floorY + wallHeight / 2, -w * 0.25 + 0.5]}
+        position={[-w / 2 - 0.01, floorY + wallH / 2, -DEPTH / 2 + 0.08]}
         rotation={[0, Math.PI / 2, 0]}
-        receiveShadow
       >
-        <planeGeometry args={[2.5, wallHeight]} />
-        <meshStandardMaterial
-          map={sideWallTex}
-          roughness={0.45}
-          metalness={0.02}
-          envMapIntensity={0.2}
-          side={THREE.FrontSide}
-        />
+        <planeGeometry args={[DEPTH + 0.05, wallH]} />
+        <meshStandardMaterial map={wallTex} roughness={0.40} metalness={0.02} envMapIntensity={0.15} side={THREE.FrontSide} />
       </mesh>
-
-      {/* ── DUSCHRINNE ──────────────────────────── */}
-      <DrainChannel w={w} />
-
-      {/* ── REFERENZ-OBJEKTE ────────────────────── */}
-      {/* Handtuchhalter an der Seitenwand */}
-      <TowelHolder
-        position={[-w / 2 - 0.22, floorY + h * 0.55, 0.6]}
-      />
-
-      {/* ── SUBTILE SCHATTEN / AMBIENT OCCLUSION ── */}
-      {/* Ecke Wand/Boden — dunkler Streifen */}
+      {/* Left wall extension (outside shower) */}
       <mesh
-        rotation={[-Math.PI / 2, 0, 0]}
-        position={[0, floorY + 0.001, -w * 0.5 + 0.15]}
+        position={[-w / 2 - 0.9, floorY + wallH / 2, -DEPTH / 2 + 0.08]}
+        rotation={[0, Math.PI / 2, 0]}
       >
-        <planeGeometry args={[3.5, 0.3]} />
-        <meshBasicMaterial color="#000000" transparent opacity={0.06} />
+        <planeGeometry args={[DEPTH + 1.4, wallH]} />
+        <meshStandardMaterial color="#eae8e3" roughness={0.5} metalness={0.01} side={THREE.FrontSide} />
       </mesh>
 
-      {/* ── BELEUCHTUNG (Badezimmer-typisch) ────── */}
-      {/* Deckenspot direkt über Dusche */}
-      <spotLight
-        position={[0, floorY + wallHeight + 0.5, 0.5]}
-        angle={0.6}
-        penumbra={0.8}
-        intensity={1.2}
-        castShadow
-        shadow-mapSize-width={2048}
-        shadow-mapSize-height={2048}
-        shadow-bias={-0.0002}
-        color="#fff5e8"
-      />
+      {/* ── CEILING (subtle — partial) ────────────────────── */}
+      <mesh rotation={[Math.PI / 2, 0, 0]} position={[0, floorY + wallH, -DEPTH / 2]}>
+        <planeGeometry args={[w + 3, DEPTH + 1]} />
+        <meshStandardMaterial color="#f5f5f3" roughness={0.9} metalness={0.0} side={THREE.FrontSide} />
+      </mesh>
 
-      {/* Indirektes Deckenlicht (warm) */}
-      <pointLight
-        position={[1.5, floorY + wallHeight, 1.5]}
-        intensity={0.4}
-        color="#ffe8d0"
-        distance={6}
-      />
-
-      {/* Seitliches Fill-Licht (kühler — Tageslicht-Simulation) */}
-      <pointLight
-        position={[2, floorY + h * 0.5, 2]}
-        intensity={0.25}
-        color="#d8e8ff"
-        distance={5}
-      />
-
-      {/* Boden-Reflexionslicht */}
-      <pointLight
-        position={[0, floorY + 0.1, 0.3]}
-        intensity={0.08}
-        color="#ffffff"
-        distance={2}
-      />
+      {/* ── FLOOR EDGE shadow strip (wall/floor junction) ─── */}
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, floorY + 0.001, -DEPTH + 0.08]}>
+        <planeGeometry args={[w + 2.5, 0.22]} />
+        <meshBasicMaterial color="#000000" transparent opacity={0.05} />
+      </mesh>
+      <mesh
+        position={[-w / 2, floorY + 0.001, -DEPTH / 2 + 0.1]}
+        rotation={[-Math.PI / 2, 0, 0]}
+      >
+        <planeGeometry args={[0.22, DEPTH + 0.2]} />
+        <meshBasicMaterial color="#000000" transparent opacity={0.04} />
+      </mesh>
     </group>
   );
 }

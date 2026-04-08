@@ -47,10 +47,9 @@ function mapToLegacyTyp({ einbausituation, tuersystem }) {
 
 function mapTuersystem(id) {
   switch (id) {
-    case 'schiebe': return 'Schiebetür';
-    case 'schwenk': return 'Drehtür';
-    case 'pendel':  return 'Drehtür';
-    case 'falt':    return 'Schiebetür';
-    default:        return 'Walk-in';
+    case 'drehtuer': return 'Drehtür';
+    case 'schiebe':  return 'Schiebetür';
+    case 'falt':     return 'Schiebetür';
+    default:         return 'Walk-in';
   }
 }

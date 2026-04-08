@@ -89,7 +89,7 @@ export const EINBAUSITUATIONEN = [
     description: 'Dusche zwischen zwei Wänden',
     icon: 'niche',
     kompatibleSerien: ['5000', '4000', '3000', '2000'],
-    kompatibleTuersysteme: ['Pendeltür', 'Schiebetür', 'Falttür', 'Schwenktür'],
+    kompatibleTuersysteme: ['Drehtür', 'Schiebetür', 'Falttür'],
   },
   {
     id: 'ecke',
@@ -97,7 +97,7 @@ export const EINBAUSITUATIONEN = [
     description: 'Dusche mit zwei Glaswänden',
     icon: 'corner',
     kompatibleSerien: ['5000', '4000', '3000', '2000'],
-    kompatibleTuersysteme: ['Pendeltür', 'Schiebetür', 'Falttür', 'Schwenktür'],
+    kompatibleTuersysteme: ['Drehtür', 'Schiebetür', 'Falttür'],
   },
   {
     id: 'walkin',
@@ -121,24 +121,16 @@ export const EINBAUSITUATIONEN = [
     description: 'Duschabtrennung auf bestehender Badewanne',
     icon: 'bathtub',
     kompatibleSerien: ['4000', '3000', 'badewanne'],
-    kompatibleTuersysteme: ['Pendeltür', 'Falttür'],
+    kompatibleTuersysteme: ['Drehtür', 'Falttür'],
   },
 ];
 
 // ─── Türsysteme ──────────────────────────────────────────────
 export const TUERSYSTEME = [
   {
-    id: 'falt',
-    name: 'Falttür',
-    description: 'Faltet sich platzsparend zusammen',
-    minBreite: 70,
-    maxBreite: 140,
-    kompatibleRahmentypen: ['teilgerahmt', 'vollgerahmt'],
-  },
-  {
-    id: 'pendel',
-    name: 'Pendeltür',
-    description: 'Öffnet nach innen und außen',
+    id: 'drehtuer',
+    name: 'Drehtür',
+    description: 'Klassische Öffnung nach außen',
     minBreite: 60,
     maxBreite: 120,
     kompatibleRahmentypen: ['rahmenlos', 'teilgerahmt', 'vollgerahmt'],
@@ -152,12 +144,12 @@ export const TUERSYSTEME = [
     kompatibleRahmentypen: ['teilgerahmt', 'vollgerahmt'],
   },
   {
-    id: 'schwenk',
-    name: 'Schwenktür',
-    description: 'Klassische Öffnung nach außen',
-    minBreite: 60,
-    maxBreite: 100,
-    kompatibleRahmentypen: ['rahmenlos', 'teilgerahmt', 'vollgerahmt'],
+    id: 'falt',
+    name: 'Falttür',
+    description: 'Faltet sich platzsparend zusammen',
+    minBreite: 70,
+    maxBreite: 140,
+    kompatibleRahmentypen: ['teilgerahmt', 'vollgerahmt'],
   },
 ];
 

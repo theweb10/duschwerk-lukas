@@ -3,7 +3,7 @@ import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { Environment, AdaptiveDpr } from '@react-three/drei';
 import ShowerModel from './ShowerModel';
 import MeasurementLines from './MeasurementLines';
-import StudioScene from './StudioScene';
+import BathroomScene from './BathroomScene';
 import { mapConfig } from './configurator/useShowerConfig';
 
 // ─────────────────────────────────────────────────────────────
@@ -26,11 +26,11 @@ function CameraSetup({ h, zoomRef }) {
     if (prevH.current === h) return;
     prevH.current = h;
 
-    const dist     = Math.max(3.2, h * 1.65 + 0.8);   // Weiter weg als vorher
-    const centerY  = -h / 2 + h * 0.08;
+    const dist     = Math.max(3.6, h * 1.80 + 0.9);
+    const centerY  = -h / 2 + h * 0.06;
 
     zoomRef.current = dist;
-    camera.position.set(0.15, centerY + h * 0.10, dist);
+    camera.position.set(0.4, centerY + h * 0.14, dist);
     camera.lookAt(0, centerY, 0);
     camera.updateProjectionMatrix();
   }, [h, camera]);
@@ -111,9 +111,9 @@ export default function ShowerCanvas({ config, isComplete }) {
             powerPreference:     'high-performance',
           }}
           frameloop="always"
-          camera={{ fov: 36, position: [0, 0, 4.5], near: 0.05, far: 80 }}
+          camera={{ fov: 40, position: [0, 0, 4.5], near: 0.05, far: 80 }}
           dpr={[1, 2]}
-          style={{ background: '#ffffff' }}
+          style={{ background: '#eae8e3' }}
           onPointerDown={() => setIsDragging(true)}
           onPointerUp={() => setIsDragging(false)}
           onPointerLeave={() => setIsDragging(false)}
@@ -126,22 +126,24 @@ export default function ShowerCanvas({ config, isComplete }) {
           {/* Zoom-Lerp (jeder Frame) */}
           <ZoomController h={mapped.h} zoomRef={zoomRef} />
 
-          {/* ── Beleuchtung — Studio-Photography-Setup ── */}
-          {/* Key light: soft from top-left front */}
-          <directionalLight position={[-2.5, 5, 3.5]} intensity={0.75} color="#ffffff" />
-          {/* Fill light: right side, cooler */}
-          <directionalLight position={[3.5, 2, 2]} intensity={0.35} color="#f0f4ff" />
-          {/* Rim light: from behind for chrome separation */}
-          <directionalLight position={[0, 3, -4]} intensity={0.20} color="#ffffff" />
-          {/* Ambient: very bright for product-white look */}
-          <ambientLight intensity={1.1} color="#ffffff" />
-          <hemisphereLight skyColor="#ffffff" groundColor="#eaecf0" intensity={0.5} />
+          {/* ── Beleuchtung — Badezimmer-Setup ── */}
+          {/* Overhead key light (ceiling spot) */}
+          <directionalLight position={[0.5, 5, 2.5]} intensity={0.70} color="#fffaf5" castShadow
+            shadow-mapSize-width={2048} shadow-mapSize-height={2048} shadow-bias={-0.0004}
+          />
+          {/* Fill from right / window side */}
+          <directionalLight position={[3, 2.5, 2]} intensity={0.30} color="#e8f0ff" />
+          {/* Rim from behind (chrome separation) */}
+          <directionalLight position={[-1, 2, -3]} intensity={0.18} color="#ffffff" />
+          {/* Ambient: balanced for tile reflections */}
+          <ambientLight intensity={0.85} color="#fff8f2" />
+          <hemisphereLight skyColor="#ffffff" groundColor="#d8d0c8" intensity={0.40} />
 
-          {/* Environment: apartment gives warm neutral reflections on chrome */}
+          {/* Environment: apartment — warm neutral chrome reflections */}
           <Environment preset="apartment" />
 
-          {/* Hintergrund */}
-          <StudioScene showerHeight={mapped.h} />
+          {/* Badezimmer-Szene */}
+          <BathroomScene showerWidth={mapped.w} showerHeight={mapped.h} />
 
           {/* Modell — NUR wenn Konfiguration abgeschlossen */}
           {isComplete && (

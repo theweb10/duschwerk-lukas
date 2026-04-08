@@ -6,27 +6,15 @@ function TuerIcon({ typ, active }) {
   const s = { width: '100%', height: '100%' };
 
   switch (typ) {
-    case 'falt':
+    case 'drehtuer':
       return (
         <svg viewBox="0 0 56 56" style={s} fill="none">
           <rect x="6" y="6" width="44" height="44" rx="2" stroke={c} strokeWidth="1.5" opacity="0.2"/>
           <line x1="6" y1="6" x2="6" y2="50" stroke={c} strokeWidth="2.5" strokeLinecap="round"/>
           <line x1="6" y1="50" x2="50" y2="50" stroke={c} strokeWidth="2.5" strokeLinecap="round"/>
-          <polyline points="10,8 16,28 10,48" stroke={c} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
-          <polyline points="16,8 22,28 16,48" stroke={c} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
-          <polyline points="22,8 28,28 22,48" stroke={c} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
-        </svg>
-      );
-    case 'pendel':
-      return (
-        <svg viewBox="0 0 56 56" style={s} fill="none">
-          <rect x="6" y="6" width="44" height="44" rx="2" stroke={c} strokeWidth="1.5" opacity="0.2"/>
-          <line x1="6" y1="6" x2="6" y2="50" stroke={c} strokeWidth="2.5" strokeLinecap="round"/>
-          <line x1="6" y1="50" x2="50" y2="50" stroke={c} strokeWidth="2.5" strokeLinecap="round"/>
-          <rect x="6" y="8" width="22" height="40" rx="1" stroke={c} strokeWidth="1.8"/>
-          <path d="M28 28 L40 20" stroke={c} strokeWidth="1.5" strokeDasharray="3 2.5" strokeLinecap="round"/>
-          <path d="M28 28 L40 36" stroke={c} strokeWidth="1.5" strokeDasharray="3 2.5" strokeLinecap="round"/>
-          <circle cx="25" cy="28" r="2" fill={c} opacity="0.6"/>
+          <rect x="6" y="8" width="28" height="40" rx="1" stroke={c} strokeWidth="1.8"/>
+          <path d="M34 8 Q50 8 50 28" stroke={c} strokeWidth="1.5" strokeDasharray="3 2.5" strokeLinecap="round" fill="none"/>
+          <circle cx="32" cy="28" r="2" fill={c} opacity="0.6"/>
         </svg>
       );
     case 'schiebe':
@@ -41,15 +29,15 @@ function TuerIcon({ typ, active }) {
           <circle cx="23" cy="28" r="1.5" fill={c} opacity="0.6"/>
         </svg>
       );
-    case 'schwenk':
+    case 'falt':
       return (
         <svg viewBox="0 0 56 56" style={s} fill="none">
           <rect x="6" y="6" width="44" height="44" rx="2" stroke={c} strokeWidth="1.5" opacity="0.2"/>
           <line x1="6" y1="6" x2="6" y2="50" stroke={c} strokeWidth="2.5" strokeLinecap="round"/>
           <line x1="6" y1="50" x2="50" y2="50" stroke={c} strokeWidth="2.5" strokeLinecap="round"/>
-          <rect x="6" y="8" width="20" height="40" rx="1" stroke={c} strokeWidth="1.8"/>
-          <path d="M26 8 Q42 8 42 28" stroke={c} strokeWidth="1.5" strokeDasharray="3 2.5" strokeLinecap="round" fill="none"/>
-          <circle cx="24" cy="28" r="2" fill={c} opacity="0.6"/>
+          <polyline points="10,8 16,28 10,48" stroke={c} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+          <polyline points="16,8 22,28 16,48" stroke={c} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+          <polyline points="22,8 28,28 22,48" stroke={c} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
         </svg>
       );
     default:
