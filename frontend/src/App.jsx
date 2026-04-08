@@ -3,6 +3,7 @@ import { useEffect } from 'react'
 import CookieConsent from 'react-cookie-consent'
 import Header from './components/layout/Header'
 import Footer from './components/layout/Footer'
+import ScrollToTopButton from './components/layout/ScrollToTopButton'
 import Home from './pages/Home'
 import Services from './pages/Services'
 import References from './pages/References'
@@ -63,6 +64,7 @@ export default function App() {
           </Routes>
         </main>
         <Footer />
+        <ScrollToTopButton />
         <CookieConsent
           location="bottom"
           buttonText="Akzeptieren"

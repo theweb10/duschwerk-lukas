@@ -1,7 +1,34 @@
-import { useRef, useCallback } from 'react'
+import { useRef, useCallback, useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import RegensburgSilhouette from './RegensburgSilhouette'
 import { useParallax } from '../../hooks/useParallax'
+
+function CountUp({ target, suffix = '', duration = 1300 }) {
+  const [count, setCount] = useState(0)
+  const elRef = useRef(null)
+  const started = useRef(false)
+  useEffect(() => {
+    const el = elRef.current
+    if (!el) return
+    const obs = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting && !started.current) {
+        started.current = true
+        let t0 = null
+        const step = (ts) => {
+          if (!t0) t0 = ts
+          const p = Math.min((ts - t0) / duration, 1)
+          const eased = 1 - Math.pow(1 - p, 3)
+          setCount(Math.round(eased * target))
+          if (p < 1) requestAnimationFrame(step)
+        }
+        requestAnimationFrame(step)
+      }
+    }, { threshold: 0.5 })
+    obs.observe(el)
+    return () => obs.disconnect()
+  }, [target, duration])
+  return <span ref={elRef}>{count}{suffix}</span>
+}
 
 export default function Hero() {
   const parallax   = useParallax()
@@ -127,17 +154,17 @@ export default function Hero() {
             style={{ borderTop: '1px solid rgba(0,0,0,0.07)' }}
           >
             {[
-              { value: '300+', label: 'Projekte' },
-              { value: '100%', label: 'Maßanfertigung' },
-              { value: '24h',  label: 'Reaktionszeit' },
-              { value: '5 ★',  label: 'Bewertung' },
-            ].map(({ value, label }) => (
+              { label: 'Projekte',       num: 300, suffix: '+' },
+              { label: 'Maßanfertigung', num: 100, suffix: '%' },
+              { label: 'Reaktionszeit',  text: '24h' },
+              { label: 'Bewertung',      text: '5 ★' },
+            ].map(({ label, num, suffix, text }) => (
               <div key={label} className="text-center">
                 <div
                   className="font-headline text-2xl text-primary font-semibold"
                   style={{ letterSpacing: '-0.03em' }}
                 >
-                  {value}
+                  {num != null ? <CountUp target={num} suffix={suffix} /> : text}
                 </div>
                 <div className="text-gray-400 text-xs mt-1 tracking-wider uppercase font-medium">
                   {label}

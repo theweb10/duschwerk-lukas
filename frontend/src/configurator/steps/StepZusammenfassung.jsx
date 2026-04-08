@@ -102,6 +102,26 @@ export default function StepZusammenfassung({ summary, validation, onSubmit, onR
         <p>Alles auf einen Blick – und dann direkt Angebot anfragen.</p>
       </div>
 
+      {/* Config overview card */}
+      {validation.valid && summary.einbausituation && (
+        <div className="summary-overview">
+          <div className="summary-overview-icon">
+            <svg width="22" height="22" fill="none" viewBox="0 0 24 24">
+              <path d="M5 13l4 4L19 7" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </div>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div className="summary-overview-title">{summary.einbausituation}</div>
+            <div className="summary-overview-chips">
+              {summary.rahmentyp && <span className="summary-chip">{summary.rahmentyp}</span>}
+              {summary.tuersystem && summary.tuersystem !== '—' && <span className="summary-chip">{summary.tuersystem}</span>}
+              {summary.profilfarbe && <span className="summary-chip">{summary.profilfarbe}</span>}
+              {summary.glasstaerke && <span className="summary-chip">{summary.glasstaerke}</span>}
+            </div>
+          </div>
+        </div>
+      )}
+
       {!validation.valid && (
         <div className="corrections-list">
           {validation.errors.map((err, i) => (
@@ -140,7 +160,10 @@ export default function StepZusammenfassung({ summary, validation, onSubmit, onR
 
       {/* Kontaktformular */}
       <form className="summary-form" onSubmit={handleSubmit}>
-        <div className="summary-form-title">Angebot anfragen</div>
+        <div className="summary-form-section-header">
+          <span className="summary-form-section-title">Angebot anfragen</span>
+          <span className="summary-form-divider" />
+        </div>
 
         {error && (
           <div className="correction-item correction-item--error">
