@@ -33,17 +33,17 @@ function getSatinatoMap() {
 export function useGlassMaterial() {
   const mat = useRef(
     new THREE.MeshPhysicalMaterial({
-      color:             new THREE.Color('#cdeef8'),
-      transmission:      0,        // opacity-basiert, kein PBR-Transmission-Pass
+      color:             new THREE.Color('#e8f6fc'),
+      transmission:      0,
       roughness:         0.0,
       metalness:         0.0,
       ior:               1.52,
-      thickness:         0,
-      envMapIntensity:   1.80,
-      specularIntensity: 1.20,
+      thickness:         0.008,
+      envMapIntensity:   2.20,
+      specularIntensity: 1.40,
       transparent:       true,
-      opacity:           0.18,
-      side:              THREE.FrontSide,
+      opacity:           0.16,
+      side:              THREE.DoubleSide,
       depthWrite:        false,
     })
   );
@@ -62,8 +62,9 @@ export function updateGlassMaterial(mat, glass, t, opacity = 1.0) {
   mat.normalMap           = null;
   mat.metalness           = 0.0;
   mat.ior                 = 1.52;
-  mat.specularIntensity   = 1.20;
-  mat.envMapIntensity     = 1.80;
+  mat.specularIntensity   = 1.40;
+  mat.envMapIntensity     = 2.20;
+  mat.side                = THREE.DoubleSide;
 
   const glasTyp      = glass?.glasTyp      ?? 'klarglas';
   const catalogColor = glass?.color        ?? null;
@@ -118,11 +119,11 @@ export function updateGlassMaterial(mat, glass, t, opacity = 1.0) {
     // ── Klarglas / UltraClear (default) ───────────────────────
     default: {
       const isUltraClear = (catalogTrans ?? 0.97) > 0.96;
-      mat.color.set(catalogColor ?? (isUltraClear ? '#cdeef8' : '#c8e8f5'));
+      mat.color.set(catalogColor ?? (isUltraClear ? '#e8f6fc' : '#ddf0f8'));
       mat.roughness         = 0.0;
-      mat.envMapIntensity   = 1.80;
-      mat.specularIntensity = 1.20;
-      mat.opacity           = (isUltraClear ? 0.18 : 0.22) * op;
+      mat.envMapIntensity   = 2.20;
+      mat.specularIntensity = 1.40;
+      mat.opacity           = (isUltraClear ? 0.16 : 0.20) * op;
     }
   }
 

@@ -9,29 +9,12 @@ import { mapConfig } from './configurator/useShowerConfig';
 // ─────────────────────────────────────────────────────────────
 //  Gradient-Hintergrund (studio look: dunkel oben → dunkelblau-grau unten)
 // ─────────────────────────────────────────────────────────────
-function BackgroundGradient() {
+function BackgroundColor() {
   const { scene } = useThree();
-
   useEffect(() => {
-    const W = 4, H = 512;
-    const canvas = document.createElement('canvas');
-    canvas.width = W; canvas.height = H;
-    const ctx = canvas.getContext('2d');
-    const g = ctx.createLinearGradient(0, 0, 0, H);
-    g.addColorStop(0.00, '#ffffff');   // oben: reines Weiß
-    g.addColorStop(0.40, '#f8f9fb');   // mitte: kaum erkennbares Grau
-    g.addColorStop(0.80, '#f2f3f6');   // mitte-unten
-    g.addColorStop(1.00, '#ebebef');   // unten: Bodenton
-    ctx.fillStyle = g;
-    ctx.fillRect(0, 0, W, H);
-
-    const tex = new THREE.CanvasTexture(canvas);
-    tex.needsUpdate = true;
-    scene.background = tex;
-
-    return () => { tex.dispose(); scene.background = null; };
+    scene.background = new THREE.Color('#e8e6e0');  // warmes Off-White — Zimmerambiente
+    return () => { scene.background = null; };
   }, [scene]);
-
   return null;
 }
 
@@ -144,13 +127,13 @@ export default function ShowerCanvas({ config, isComplete }) {
           frameloop="always"
           camera={{ fov: 34, position: [0, 0, 4.5], near: 0.05, far: 80 }}
           dpr={[1, 2]}
-          style={{ background: '#ffffff' }}
+          style={{ background: '#e8e6e0' }}
           onPointerDown={() => setIsDragging(true)}
           onPointerUp={() => setIsDragging(false)}
           onPointerLeave={() => setIsDragging(false)}
         >
           <AdaptiveDpr pixelated />
-          <BackgroundGradient />
+          <BackgroundColor />
 
           <CameraSetup h={mapped.h} zoomRef={zoomRef} />
           <ZoomController h={mapped.h} zoomRef={zoomRef} />
@@ -175,6 +158,13 @@ export default function ShowerCanvas({ config, isComplete }) {
           {/* Ambientes Licht — niedrig für Kontrast */}
           <ambientLight intensity={0.65} color="#f5f5ff" />
           <hemisphereLight skyColor="#ffffff" groundColor="#d0ccc8" intensity={0.40} />
+
+          {/* Fensterlicht: Tageslicht von rechts (simuliert Badezimmerfenster) */}
+          <pointLight position={[3.8, 0.2, -0.35]} intensity={2.0} color="#c8e0ff" distance={7} decay={2} />
+          {/* Deckenspot über der Dusche */}
+          <pointLight position={[0.3, 0.50, -0.4]} intensity={1.4} color="#fff8f0" distance={4} decay={2} />
+          {/* Deckenspot rechts im Badezimmer */}
+          <pointLight position={[2.2, 0.50, -0.4]} intensity={0.8} color="#fff8f0" distance={3.5} decay={2} />
 
           {/* Environment: studio — scharfe, saubere Reflexionen (Produktfoto-Look) */}
           <Environment preset="studio" />
