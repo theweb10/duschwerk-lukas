@@ -85,7 +85,7 @@ export default function StepZusammenfassung({ summary, validation, onSubmit, onR
           </svg>
         </div>
         <h2 className="success-title">Anfrage gesendet!</h2>
-        <p className="success-sub">Wir melden uns innerhalb von 24 Stunden mit einem persönlichen Angebot.</p>
+        <p className="success-sub">Wir melden uns so schnell wie möglich mit einem persönlichen Angebot.</p>
         <div className="success-actions">
           <button className="btn-outline-sm" onClick={printConfig}>Drucken</button>
           <button className="btn-primary-sm" onClick={onReset}>Neu konfigurieren</button>

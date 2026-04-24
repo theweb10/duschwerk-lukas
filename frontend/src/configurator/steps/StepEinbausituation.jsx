@@ -26,8 +26,14 @@ function GrundrissIcon({ typ, active }) {
           <line x1="12" y1="12" x2="12" y2="56" stroke={wall} strokeWidth="4" strokeLinecap="round"/>
           <line x1="12" y1="56" x2="56" y2="56" stroke={wall} strokeWidth="4" strokeLinecap="round"/>
           <line x1="12" y1="12" x2="46" y2="12" stroke={glass} strokeWidth="3" strokeLinecap="round"/>
-          <line x1="46" y1="12" x2="46" y2="40" stroke={glass} strokeWidth="3" strokeLinecap="round"/>
+          <line x1="46" y1="12" x2="46" y2="46" stroke={glass} strokeWidth="3" strokeLinecap="round"/>
           <circle cx="28" cy="36" r="3" fill="none" stroke={wall} strokeWidth="1.2" opacity="0.4"/>
+          {/* Breite-Bemaßung */}
+          <line x1="12" y1="8" x2="46" y2="8" stroke={glass} strokeWidth="0.8" strokeDasharray="2,2" opacity="0.7"/>
+          <text x="29" y="6.5" textAnchor="middle" fontSize="5" fill={glass} opacity="0.8">Breite</text>
+          {/* Tiefe-Bemaßung */}
+          <line x1="48" y1="12" x2="48" y2="46" stroke={glass} strokeWidth="0.8" strokeDasharray="2,2" opacity="0.7"/>
+          <text x="54" y="31" textAnchor="middle" fontSize="5" fill={glass} opacity="0.8" transform="rotate(90,54,31)">Tiefe</text>
         </svg>
       );
     case 'walkin':

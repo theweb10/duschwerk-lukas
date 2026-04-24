@@ -6,7 +6,7 @@ export default function References() {
     <>
       <Helmet>
         <title>Referenzen | Duschwerk Bayern Regensburg</title>
-        <meta name="description" content="Referenzprojekte von Duschwerk Bayern: Maßgefertigte Duschabtrennungen und Badumbauten in Regensburg und ganz Bayern." />
+        <meta name="description" content="Referenzprojekte von Duschwerk Bayern: Maßgefertigte Duschabtrennungen und Badumbauten in Regensburg und Umgebung." />
         <link rel="canonical" href="https://www.duschwerk-bayern.de/referenzen" />
       </Helmet>
 

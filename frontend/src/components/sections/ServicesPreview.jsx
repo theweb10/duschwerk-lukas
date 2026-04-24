@@ -8,7 +8,7 @@ const services = [
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 7H6a2 2 0 00-2 2v9a2 2 0 002 2h9a2 2 0 002-2v-3M16 3h5m0 0v5m0-5l-7 7" />
       </svg>
     ),
-    title: 'Präzisionsaufmessung',
+    title: 'Präzisionsaufmaß',
     description: 'Exakte Maßaufnahme vor Ort – für eine passgenaue Duschabtrennung ohne Nacharbeiten.',
   },
   {

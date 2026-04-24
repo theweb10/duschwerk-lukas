@@ -1,36 +1,60 @@
 import React from 'react';
 
 function BauartIcon({ typ, active }) {
-  const c = active ? '#1F2E4A' : '#8892A4';
-  const g = active ? '#2E7FBF' : '#A8BFCF';
+  const wall  = active ? '#8892A4' : '#C0C8D4';
+  const frame = active ? '#1F2E4A' : '#8892A4';
+  const glass = active ? 'rgba(46,127,191,0.10)' : 'rgba(180,210,235,0.12)';
+  const glassStroke = active ? '#2E7FBF' : '#A8BFCF';
+  const bracket = active ? '#1F2E4A' : '#8892A4';
   const s = { width: '100%', height: '100%' };
 
   switch (typ) {
     case 'vollgerahmt':
+      // Vollständiger Rahmen rund um das Glas
       return (
         <svg viewBox="0 0 56 56" style={s} fill="none">
-          <rect x="10" y="8" width="36" height="40" rx="2" stroke={c} strokeWidth="3"/>
-          <rect x="13" y="11" width="30" height="34" rx="1" stroke={g} strokeWidth="1.5" fill={active ? 'rgba(46,127,191,0.06)' : 'rgba(0,0,0,0.02)'}/>
+          {/* Wand links */}
+          <rect x="4" y="4" width="7" height="48" fill={wall} rx="1" opacity="0.5"/>
+          {/* Kompletter Rahmen */}
+          <rect x="11" y="6" width="38" height="44" rx="2" stroke={frame} strokeWidth="3.5" fill={glass}/>
+          {/* Glasfläche innen */}
+          <rect x="15" y="10" width="30" height="36" rx="1" stroke={glassStroke} strokeWidth="1" fill={glass} strokeDasharray="0"/>
         </svg>
       );
     case 'teilgerahmt':
+      // Profil NUR an der Wand (links), freie Seite (rechts) ohne Rahmen
       return (
         <svg viewBox="0 0 56 56" style={s} fill="none">
-          <rect x="13" y="8" width="30" height="40" rx="1" stroke={g} strokeWidth="1.5" fill={active ? 'rgba(46,127,191,0.06)' : 'rgba(0,0,0,0.02)'}/>
-          <line x1="10" y1="8" x2="46" y2="8" stroke={c} strokeWidth="3" strokeLinecap="round"/>
-          <line x1="10" y1="8" x2="10" y2="48" stroke={c} strokeWidth="3" strokeLinecap="round"/>
-          <line x1="46" y1="8" x2="46" y2="48" stroke={c} strokeWidth="3" strokeLinecap="round"/>
-          {/* Kein Rahmen unten */}
-          <line x1="10" y1="48" x2="18" y2="48" stroke={c} strokeWidth="2" strokeLinecap="round" opacity="0.3"/>
-          <line x1="38" y1="48" x2="46" y2="48" stroke={c} strokeWidth="2" strokeLinecap="round" opacity="0.3"/>
+          {/* Wand links */}
+          <rect x="4" y="4" width="7" height="48" fill={wall} rx="1" opacity="0.5"/>
+          {/* Wandprofil – U-Schiene nur an der Wandseite */}
+          <rect x="11" y="6" width="5" height="44" fill={frame} rx="1"/>
+          {/* Oben: Profil nur bis zur Wand (kurzer Riegel) */}
+          <rect x="11" y="6" width="30" height="4" fill={frame} rx="1"/>
+          {/* Unten: Profil nur bis zur Wand (kurzer Riegel) */}
+          <rect x="11" y="46" width="30" height="4" fill={frame} rx="1"/>
+          {/* Glas – freie rechte Seite KEIN Rahmen */}
+          <rect x="16" y="10" width="28" height="36" fill={glass} stroke={glassStroke} strokeWidth="1"/>
+          {/* Freie rechte Kante (nur Glaskante, kein Profil) */}
+          <line x1="44" y1="10" x2="44" y2="46" stroke={glassStroke} strokeWidth="1.5" strokeLinecap="round"/>
         </svg>
       );
     case 'rahmenlos':
+      // Nur Befestigungswinkel an der Wand – kein sichtbarer Rahmen
       return (
         <svg viewBox="0 0 56 56" style={s} fill="none">
-          <rect x="13" y="8" width="30" height="40" rx="1" stroke={g} strokeWidth="2.5" fill={active ? 'rgba(46,127,191,0.06)' : 'rgba(0,0,0,0.02)'}/>
-          <line x1="13" y1="8" x2="13" y2="48" stroke={c} strokeWidth="1.5" strokeLinecap="round"/>
-          <line x1="43" y1="8" x2="43" y2="48" stroke={c} strokeWidth="1.5" strokeLinecap="round"/>
+          {/* Wand links */}
+          <rect x="4" y="4" width="7" height="48" fill={wall} rx="1" opacity="0.5"/>
+          {/* Winkel oben (Glashalter) */}
+          <rect x="10" y="9" width="10" height="5" fill={bracket} rx="1"/>
+          <rect x="10" y="9" width="5" height="10" fill={bracket} rx="1"/>
+          {/* Winkel unten (Glashalter) */}
+          <rect x="10" y="42" width="10" height="5" fill={bracket} rx="1"/>
+          <rect x="10" y="37" width="5" height="10" fill={bracket} rx="1"/>
+          {/* Glas völlig rahmenlos */}
+          <rect x="15" y="10" width="32" height="36" fill={glass} stroke={glassStroke} strokeWidth="1.5" rx="0.5"/>
+          {/* Stabilisationsstange oben (typisch bei rahmenlos) */}
+          <line x1="15" y1="14" x2="47" y2="14" stroke={frame} strokeWidth="1.5" strokeLinecap="round" opacity="0.5"/>
         </svg>
       );
     default:

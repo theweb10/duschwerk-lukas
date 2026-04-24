@@ -72,7 +72,7 @@ export default function About() {
                     { label: 'Erfahrung', value: 'Über 20 Jahre im Bereich Duschkabinen' },
                     { label: 'Ausstellung', value: 'Prüfeninger Straße 73, 93049 Regensburg' },
                     { label: 'Beratung', value: 'Beim Kunden oder in der Ausstellung' },
-                    { label: 'Einsatzgebiet', value: 'Großraum Regensburg & ganz Bayern' },
+                    { label: 'Einsatzgebiet', value: 'Großraum Regensburg & Umgebung' },
                   ].map(({ label, value }, i, arr) => (
                     <div
                       key={label}

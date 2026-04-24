@@ -75,8 +75,8 @@ export default function Footer() {
             <address className="not-italic text-sm text-white/40 space-y-2.5 font-light">
               <p>Prüfeninger Straße 73, 93049 Regensburg</p>
               <p>
-                <a href="tel:+491234567890" className="hover:text-red-500 transition-colors duration-200">
-                  +49 (0) 123 456789
+                <a href="tel:+4915163373563" className="hover:text-red-500 transition-colors duration-200">
+                  +49 151 63373563
                 </a>
               </p>
               <p>

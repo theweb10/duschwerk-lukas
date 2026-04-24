@@ -105,7 +105,7 @@ export default function ConfiguratorForm({ config }) {
           Vielen Dank.
         </h3>
         <p className="text-gray-400 text-sm font-light">
-          Ihre Anfrage ist eingegangen.<br />Wir melden uns innerhalb von 24 Stunden.
+          Ihre Anfrage ist eingegangen.<br />Wir melden uns so schnell wie möglich bei Ihnen.
         </p>
       </div>
     )
@@ -201,7 +201,7 @@ export default function ConfiguratorForm({ config }) {
       </button>
 
       <p className="text-xs text-gray-300 text-center font-light">
-        * Pflichtfelder · Antwort innerhalb von 24 Stunden
+        * Pflichtfelder · Nur nach Terminabsprache
       </p>
     </form>
   )

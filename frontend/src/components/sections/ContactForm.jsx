@@ -41,7 +41,7 @@ export default function ContactForm() {
           Vielen Dank.
         </h3>
         <p className="text-gray-400 text-sm font-light">
-          Ihre Anfrage ist eingegangen.<br />Wir melden uns innerhalb von 24 Stunden.
+          Ihre Anfrage ist eingegangen.<br />Wir melden uns so schnell wie möglich bei Ihnen.
         </p>
       </div>
     )
@@ -143,7 +143,7 @@ export default function ContactForm() {
       </button>
 
       <p className="text-xs text-center font-light" style={{ color: '#8892A4' }}>
-        <span style={{ color: '#C62828' }}>*</span> Pflichtfelder · Antwort innerhalb von 24 Stunden
+        <span style={{ color: '#C62828' }}>*</span> Pflichtfelder · Nur nach Terminabsprache
       </p>
     </form>
   )
