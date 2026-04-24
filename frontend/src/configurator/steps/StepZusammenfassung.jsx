@@ -5,9 +5,9 @@ const SUMMARY_LABELS = {
   tuersystem:      'Türart',
   rahmentyp:       'Bauart',
   breite:          'Breite',
+  tiefe:           'Tiefe',
   hoehe:           'Höhe',
   glastyp:         'Glasfarbe',
-  glasstaerke:     'Glasstärke',
   profilfarbe:     'Profilfarbe',
 };
 
@@ -116,7 +116,6 @@ export default function StepZusammenfassung({ summary, validation, onSubmit, onR
               {summary.rahmentyp && <span className="summary-chip">{summary.rahmentyp}</span>}
               {summary.tuersystem && summary.tuersystem !== '—' && <span className="summary-chip">{summary.tuersystem}</span>}
               {summary.profilfarbe && <span className="summary-chip">{summary.profilfarbe}</span>}
-              {summary.glasstaerke && <span className="summary-chip">{summary.glasstaerke}</span>}
             </div>
           </div>
         </div>
@@ -135,6 +134,21 @@ export default function StepZusammenfassung({ summary, validation, onSubmit, onR
           ))}
         </div>
       )}
+
+      {/* Disclaimer generierte Modelle */}
+      <div className="notice-box notice-box--info" style={{ marginBottom: 12 }}>
+        <div className="notice-icon">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+            <circle cx="9" cy="9" r="8" stroke="#1F2E4A" strokeWidth="1.4"/>
+            <path d="M9 8v5" stroke="#1F2E4A" strokeWidth="1.4" strokeLinecap="round"/>
+            <circle cx="9" cy="5.5" r="0.8" fill="#1F2E4A"/>
+          </svg>
+        </div>
+        <div>
+          <div className="notice-title">Hinweis zum 3D-Modell</div>
+          <div className="notice-desc">Die Darstellung ist ein generiertes Modell. Scharniere, Profile und Farben können vom echten Produkt abweichen. Bei einem Fixteil (festes Glasteil zwischen Tür und Wand) ist stets eine Stabilisationsstange erforderlich.</div>
+        </div>
+      </div>
 
       {/* Summary Tabelle */}
       <div className="summary-card">

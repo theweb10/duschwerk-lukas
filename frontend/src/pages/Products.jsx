@@ -6,36 +6,43 @@ const artwegerProducts = [
     id: 'artweger-one',
     name: 'Artweger ONE',
     desc: 'Vielseitige Duschlösung für unterschiedlichste Einbausituationen mit modernem Design, stabiler Konstruktion und langlebiger Technik. Ideal für Neubau sowie Renovierung.',
+    url: 'https://www.artweger.at/de/product-line/artweger-one_70714',
   },
   {
     id: 'artweger-prestige',
     name: 'Artweger PRESTIGE',
     desc: 'Designorientierte Duschabtrennungen mit eleganter Profilgestaltung und hochwertigen Glasflächen. Entwickelt in Zusammenarbeit mit Studio F. A. Porsche für gehobene Badkonzepte.',
+    url: 'https://www.artweger.at/de/product-line/prestige_69623',
   },
   {
     id: 'artweger-dynamic',
     name: 'Artweger DYNAMIC',
     desc: 'Flexible Pendeltür- und Walk-In-Lösungen mit robuster Technik, moderner Optik und vielseitigen Anpassungsmöglichkeiten an unterschiedliche Raumgrößen.',
+    url: 'https://www.artweger.at/de/product-line/dynamic_18671',
   },
   {
     id: 'artweger-move',
     name: 'Artweger MOVE',
     desc: 'Platzsparende Schiebetürsysteme mit leichtgängiger Lauftechnik. Besonders geeignet für kleinere Badezimmer oder schwierige Grundrisse.',
+    url: 'https://www.artweger.at/de/product-line/artweger-move_37352',
   },
   {
     id: 'artweger-joice',
     name: 'Artweger JOICE Walk-In',
     desc: 'Offene und großzügige Duschlösungen mit reduzierter Formensprache. Unterstützt moderne, barrierearme und minimalistische Badgestaltung.',
+    url: 'https://www.artweger.at/de/product-line/joice_59822',
   },
   {
     id: 'artstone',
     name: 'ARTSTONE Duschwannen',
     desc: 'Hochwertige Mineralguss-Duschwannen mit angenehmer Oberfläche, hoher Stabilität und moderner flacher Bauweise für bodennahe Einbaulösungen.',
+    url: 'https://www.artweger.at/de/produkte/duschwannen-acryl-undmineralguss/artstone-duschwannen-aus-mineralguss',
   },
   {
     id: 'artwall',
     name: 'Artwall Wandpaneele',
     desc: 'Pflegeleichte Wandverkleidungssysteme zur schnellen und sauberen Renovierung von Duschbereichen. Häufig können bestehende Fliesen überdeckt werden.',
+    url: 'https://www.artweger.at/de/product-line/artwall-neu_70780',
   },
 ]
 
@@ -44,16 +51,19 @@ const radawayProducts = [
     id: 'radaway-modo',
     name: 'Radaway Modo New II',
     desc: 'Moderne Walk-In- und Rahmendusch­lösungen mit klarer Linienführung und stabiler Bauweise für stilvolle Badkonzepte.',
+    url: 'https://www.radaway.de/kategoria/modo-new-ii/',
   },
   {
     id: 'radaway-nes6',
     name: 'Radaway Nes 6',
-    desc: 'Zeitlose Duschabtrennungen mit vielfältigen Einbaumöglichkeiten und funktionalen Türvarianten für individuelle Raumlösungen.',
+    desc: 'Zeitlose Duschabtrennungen mit vielfältigen Einbaumöglichkeiten und funktionalen Türvarianten für individuelle Raumlösungen. In mehreren Farben erhältlich (u.a. Chrom und Schwarz).',
+    url: 'https://www.radaway.de/typ/prostokatne-wejscie-z-boku/',
   },
   {
     id: 'radaway-wannen',
     name: 'Radaway Duschwannen',
     desc: 'Breites Sortiment an Duschwannen in verschiedenen Materialien, Formen und Einbauhöhen zur Umsetzung klassischer oder bodengleicher Duschen.',
+    url: 'https://www.radaway.de/typ/brodziki-kwadratowe/',
   },
 ]
 
@@ -94,14 +104,23 @@ export default function Products() {
               <p className="eyebrow mb-2">Partnerfirma</p>
               <h2 className="font-headline text-3xl text-primary" style={{ letterSpacing: '-0.03em' }}>Artweger</h2>
               <p className="text-gray-500 text-sm font-light mt-2 max-w-xl">
-                Österreichischer Hersteller hochwertiger Dusch- und Badlösungen mit jahrzehntelanger Erfahrung in Design und Technik.
+                Österreichischer Hersteller hochwertiger Dusch- und Badlösungen mit jahrzehntelanger Erfahrung in Design und Technik. <span className="font-medium text-gray-600">Made in Austria.</span>
               </p>
             </header>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-              {artwegerProducts.map(({ id, name, desc }) => (
-                <article key={id} className="card-3d p-7">
+              {artwegerProducts.map(({ id, name, desc, url }) => (
+                <article key={id} className="card-3d p-7 flex flex-col">
                   <h3 className="font-headline text-base text-primary font-semibold tracking-tight mb-3">{name}</h3>
-                  <p className="text-gray-500 text-sm font-light leading-relaxed">{desc}</p>
+                  <p className="text-gray-500 text-sm font-light leading-relaxed mb-4">{desc}</p>
+                  <a
+                    href={url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-auto text-xs font-medium transition-colors duration-200"
+                    style={{ color: '#C62828' }}
+                  >
+                    Zum Hersteller →
+                  </a>
                 </article>
               ))}
             </div>
@@ -115,16 +134,43 @@ export default function Products() {
               <p className="eyebrow mb-2">Partnerfirma</p>
               <h2 className="font-headline text-3xl text-primary" style={{ letterSpacing: '-0.03em' }}>Radaway</h2>
               <p className="text-gray-500 text-sm font-light mt-2 max-w-xl">
-                Europäischer Anbieter moderner Duschabtrennungen mit vielfältigen Einbaumöglichkeiten und breitem Produktsortiment.
+                Europäischer Anbieter moderner Duschabtrennungen mit vielfältigen Einbaumöglichkeiten und breitem Produktsortiment. <span className="font-medium text-gray-600">Made in Poland.</span>
               </p>
             </header>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-              {radawayProducts.map(({ id, name, desc }) => (
-                <article key={id} className="card-3d p-7">
+              {radawayProducts.map(({ id, name, desc, url }) => (
+                <article key={id} className="card-3d p-7 flex flex-col">
                   <h3 className="font-headline text-base text-primary font-semibold tracking-tight mb-3">{name}</h3>
-                  <p className="text-gray-500 text-sm font-light leading-relaxed">{desc}</p>
+                  <p className="text-gray-500 text-sm font-light leading-relaxed mb-4">{desc}</p>
+                  <a
+                    href={url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-auto text-xs font-medium transition-colors duration-200"
+                    style={{ color: '#C62828' }}
+                  >
+                    Zum Hersteller →
+                  </a>
                 </article>
               ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Hinweise */}
+        <section className="section-padding bg-white">
+          <div className="container-max space-y-4">
+            <div className="card-3d p-7">
+              <p className="font-semibold text-primary text-sm mb-2">Ausstellungsprodukte & Verfügbarkeit</p>
+              <p className="text-gray-500 text-sm font-light leading-relaxed">
+                Die aufgelisteten Produkte sind die Modelle, die in unserer Ausstellung ausgestellt sind. Selbstverständlich sind alle weiteren Kabinen, Wannen, Wandpaneele und anderes Zubehör, die auf den jeweiligen Herstellerseiten aufgeführt sind, ebenfalls über uns erhältlich – allerdings nicht zum Live-Anschauen.
+              </p>
+            </div>
+            <div className="card-3d p-7">
+              <p className="font-semibold text-primary text-sm mb-2">Integrierter Handtuchhalter</p>
+              <p className="text-gray-500 text-sm font-light leading-relaxed">
+                Einige ausgewählte Modelle sind mit einem integrierten Handtuchhalter im Glas erhältlich. Sprechen Sie uns gerne darauf an.
+              </p>
             </div>
           </div>
         </section>

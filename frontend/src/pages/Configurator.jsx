@@ -10,7 +10,6 @@ function isConfigurationComplete(config) {
   if (!config.rahmentyp)       return false;
   if (!config.breite || !config.hoehe) return false;
   if (!config.glastyp)         return false;
-  if (!config.glasstaerke)     return false;
   if (!config.profilfarbe)     return false;
 
   const einbau = EINBAUSITUATIONEN.find(e => e.id === config.einbausituation);

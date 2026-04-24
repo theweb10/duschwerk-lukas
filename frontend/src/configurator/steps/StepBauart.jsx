@@ -88,6 +88,20 @@ export default function StepBauart({ config, setField, options }) {
           </div>
         </div>
       )}
+
+      <div className="notice-box notice-box--info" style={{ marginTop: 16 }}>
+        <div className="notice-icon">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+            <circle cx="9" cy="9" r="8" stroke="#1F2E4A" strokeWidth="1.4"/>
+            <path d="M9 8v5" stroke="#1F2E4A" strokeWidth="1.4" strokeLinecap="round"/>
+            <circle cx="9" cy="5.5" r="0.8" fill="#1F2E4A"/>
+          </svg>
+        </div>
+        <div>
+          <div className="notice-title">Fixteil & Stabilisationsstange</div>
+          <div className="notice-desc">Wenn Sie ein Fixteil haben (festes Glasteil zwischen Türe und Wand), ist stets eine Stabilisationsstange erforderlich. Es gibt Modelle sowohl mit Fixteil als auch mit Türe direkt an der Wand.</div>
+        </div>
+      </div>
     </div>
   );
 }

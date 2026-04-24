@@ -164,7 +164,7 @@ export default function Hero() {
               }}
             >
               <span className="eyebrow" style={{ letterSpacing: '0.14em' }}>
-                Regensburg &amp; ganz Bayern
+                Regensburg &amp; Umgebung
               </span>
             </div>
           </div>
@@ -181,7 +181,7 @@ export default function Hero() {
             >
               Ihre Experten für<br />
               <span style={{ color: '#2E4C7D' }}>maßgeschneiderte</span><br />
-              Badverglasungen
+              Duschabtrennungen
             </h1>
           </div>
 
@@ -194,7 +194,7 @@ export default function Hero() {
               data-reveal-delay="160"
               className="text-gray-500 text-lg sm:text-xl max-w-xl mx-auto mb-10 font-light leading-relaxed"
             >
-              Präzise aufgemessen. Hochwertige Materialien.<br className="hidden sm:block" />
+              Präzisionsaufmaß. Hochwertige Materialien.<br className="hidden sm:block" />
               Fachgerecht montiert – aus einer Hand.
             </p>
           </div>
@@ -218,13 +218,12 @@ export default function Hero() {
           <div
             data-reveal
             data-reveal-delay="320"
-            className="mt-16 grid grid-cols-2 sm:grid-cols-4 gap-8 max-w-xl mx-auto pt-10"
+            className="mt-16 grid grid-cols-3 gap-8 max-w-xl mx-auto pt-10"
             style={{ borderTop: '1px solid rgba(0,0,0,0.07)' }}
           >
             {[
               { label: 'Projekte',       num: 300, suffix: '+', delay: 700 },
               { label: 'Maßanfertigung', num: 100, suffix: '%', delay: 700 },
-              { label: 'Reaktionszeit',  text: '24h',           delay: 1800 },
               { label: 'Bewertung',      stars: true },
             ].map(({ label, num, suffix, text, stars, delay }) => (
               <div key={label} className="text-center">

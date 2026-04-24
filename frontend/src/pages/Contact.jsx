@@ -20,8 +20,8 @@ const contactItems = [
       </svg>
     ),
     content: (
-      <a href="tel:+491234567890" className="text-primary hover:text-gray-500 transition-colors font-light text-sm">
-        +49 (0) 123 456789
+      <a href="tel:+4915163373563" className="text-primary hover:text-gray-500 transition-colors font-light text-sm">
+        +49 151 63373563
       </a>
     ),
   },
@@ -45,7 +45,7 @@ export default function Contact() {
     <>
       <Helmet>
         <title>Kontakt & Aufmaß | Duschwerk Bayern Regensburg</title>
-        <meta name="description" content="Kostenloses Aufmaß für Ihre maßgeschneiderte Duschabtrennung buchen. Duschwerk Bayern Regensburg – Antwort innerhalb von 24 Stunden." />
+        <meta name="description" content="Kostenloses Aufmaß für Ihre maßgeschneiderte Duschabtrennung buchen. Duschwerk Bayern Regensburg – nur nach Terminabsprache." />
         <link rel="canonical" href="https://www.duschwerk-bayern.de/kontakt" />
       </Helmet>
 
@@ -57,7 +57,7 @@ export default function Contact() {
             Jetzt Aufmaß buchen.
           </h1>
           <p className="text-gray-500 max-w-lg text-base font-light leading-relaxed">
-            Kostenloses und unverbindliches Aufmaß – wir melden uns innerhalb von 24 Stunden.
+            Kostenloses und unverbindliches Aufmaß – Beratung nur nach Terminabsprache.
           </p>
         </div>
       </div>
@@ -114,7 +114,15 @@ export default function Contact() {
               >
                 <p className="text-xs font-semibold text-white mb-1.5">Kostenloses Aufmaß</p>
                 <p className="text-xs text-white/50 font-light leading-relaxed">
-                  Beratung und Aufmessung kostenlos und unverbindlich – bei Ihnen vor Ort in Regensburg und ganz Bayern.
+                  Beratung und Aufmaß kostenlos und unverbindlich – bei Ihnen vor Ort in Regensburg und Umgebung.
+                </p>
+              </div>
+
+              {/* Ausstellung Hinweis */}
+              <div className="card-3d p-5">
+                <p className="text-gray-400 text-[10px] uppercase tracking-widest font-medium mb-2">Ausstellung</p>
+                <p className="text-gray-500 text-sm font-light leading-relaxed">
+                  Unsere Ausstellung ist nicht immer besetzt. Besichtigung und Beratung erfolgen ausschließlich nach Terminabsprache.
                 </p>
               </div>
             </aside>

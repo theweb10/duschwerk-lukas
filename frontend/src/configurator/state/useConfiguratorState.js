@@ -20,9 +20,9 @@ const INITIAL_CONFIG = {
   tuersystem: null,
   rahmentyp: null,
   breite: 90,
+  tiefe: 90,
   hoehe: 200,
   glastyp: 'klarglas',
-  glasstaerke: '8mm',
   profilfarbe: 'metall-hg',
 };
 

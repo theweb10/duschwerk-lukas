@@ -9,9 +9,9 @@ const GlassShardScene = lazy(() => import('../3d/GlassShardScene'))
 const SCENES = [
   {
     num: '01',
-    label: 'Aufmessung',
-    title: ['Präzisions-', 'aufmessung.'],
-    sub: 'Jeder Millimeter zählt. Wir messen präzise bei Ihnen vor Ort – für eine Badverglasung, die auf den Punkt passt.',
+    label: 'Präzisionsaufmaß',
+    title: ['Präzisions-', 'aufmaß.'],
+    sub: 'Jeder Millimeter zählt. Wir messen präzise bei Ihnen vor Ort – für eine Duschabtrennung, die auf den Punkt passt.',
     stat: '100 %',
     statLabel: 'Passgenauigkeit',
     bg: '#F0F5FF',
@@ -22,9 +22,9 @@ const SCENES = [
     num: '02',
     label: 'Sicherheitsglas',
     title: ['Premium', 'Sicherheitsglas.'],
-    sub: 'Nur geprüftes ESG nach DIN – klar, bruchsicher und langlebig. Kein Kompromiss bei Materialien.',
-    stat: '10 mm',
-    statLabel: 'ESG-Stärke',
+    sub: 'Nur geprüftes Sicherheitsglas nach DIN – klar, bruchsicher und langlebig. Kein Kompromiss bei Materialien.',
+    stat: 'DIN',
+    statLabel: 'Geprüft',
     bg: '#E6EEF8',
     text: '#1A2E5A',
     accent: '#1A2E5A',
@@ -34,8 +34,8 @@ const SCENES = [
     label: 'Montage',
     title: ['Fachgerechte', 'Montage.'],
     sub: 'Unser Team montiert sauber, termintreu und ohne Folgeschäden – vom ersten Schrauben bis zur Einweisung.',
-    stat: '24 h',
-    statLabel: 'Reaktionszeit',
+    stat: '100 %',
+    statLabel: 'Termintreu',
     bg: '#1A3570',
     text: '#FFFFFF',
     accent: '#E53935',
@@ -299,7 +299,7 @@ function GlassPanel({ sceneP, sceneIdx, p }) {
                 <line x1="287" y1="308" x2="293" y2="308" stroke={ac} strokeWidth="0.8"/>
                 <text x="294" y="168" textAnchor="start" transform="rotate(90,294,168)">200 cm</text>
                 {/* Glasdicke */}
-                <text x="214" y="34" textAnchor="middle" opacity="0.65">⬡ 10 mm ESG</text>
+                <text x="214" y="34" textAnchor="middle" opacity="0.65">⬡ ESG Sicherheitsglas</text>
               </g>
             )
           })()}

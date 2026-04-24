@@ -18,7 +18,7 @@ export default function StepDesign({ config, setField, options, corrections }) {
       <div className="step-header">
         <div className="step-eyebrow">Schritt 5</div>
         <h2>Design</h2>
-        <p>Glasfarbe, Glasstärke und Profilfarbe wählen.</p>
+        <p>Glasfarbe und Profilfarbe wählen.</p>
       </div>
 
       {corrections.length > 0 && (
@@ -68,33 +68,6 @@ export default function StepDesign({ config, setField, options, corrections }) {
             );
           })}
         </div>
-      </div>
-
-      {/* ── Glasstärke ────────────────────────── */}
-      <div className="design-group">
-        <div className="design-group-label">Glasstärke</div>
-        <div className="thickness-row">
-          {options.glasstaerken.map(gs => {
-            const active = config.glasstaerke === gs.id;
-            return (
-              <button
-                key={gs.id}
-                className={`thickness-btn${active ? ' active' : ''}`}
-                onClick={() => setField('glasstaerke', gs.id)}
-              >
-                <div className="thickness-visual">
-                  <div className="thickness-bar" style={{ width: `${gs.dicke * 2.2}px` }} />
-                </div>
-                <span>{gs.name}</span>
-              </button>
-            );
-          })}
-        </div>
-        {config.hoehe > 180 && (
-          <p className="safety-hint-inline">
-            ⚠ Ab 180 cm Höhe mind. 10 mm erforderlich.
-          </p>
-        )}
       </div>
 
       {/* ── Profilfarbe ───────────────────────── */}

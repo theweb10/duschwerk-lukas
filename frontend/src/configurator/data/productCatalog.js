@@ -108,14 +108,6 @@ export const EINBAUSITUATIONEN = [
     kompatibleTuersysteme: [], // Walk-In hat keine Tür
   },
   {
-    id: 'glaswand',
-    name: 'Glaswand',
-    description: 'Glaswand auf einer einzelnen Wand',
-    icon: 'special',
-    kompatibleSerien: ['5000', '4000'],
-    kompatibleTuersysteme: [],
-  },
-  {
     id: 'badewanne',
     name: 'Badewannenaufsatz',
     description: 'Duschabtrennung auf bestehender Badewanne',
@@ -234,8 +226,8 @@ export const GLASSTAERKEN = [
 // ─── Rahmentypen ─────────────────────────────────────────────
 export const RAHMENTYPEN = [
   { id: 'vollgerahmt',  name: 'Vollrahmen',    description: 'Kompletter Rahmen rundum' },
-  { id: 'teilgerahmt',  name: 'Teilgerahmt',   description: 'Profile oben und an den Seiten' },
-  { id: 'rahmenlos',    name: 'Rahmenlos',     description: 'Minimalistisch, Glas pur (nur auf Anfrage)' },
+  { id: 'teilgerahmt',  name: 'Teilgerahmt',   description: 'Nur an der Wand ein Rahmen (modellabhängig auch zwischen den Gläsern)' },
+  { id: 'rahmenlos',    name: 'Rahmenlos',     description: 'Befestigungswinkel am Glas zur Wandmontage – kein sichtbarer Rahmen (nur auf Anfrage)' },
 ];
 
 // ─── Montagearten ────────────────────────────────────────────

@@ -67,7 +67,7 @@ export function getMassConstraints(einbausituationId, tuersystemId) {
   let constraints;
   if (einbausituationId === 'badewanne') {
     constraints = { ...MASS_CONSTRAINTS.badewanne };
-  } else if (einbausituationId === 'walkin' || einbausituationId === 'glaswand') {
+  } else if (einbausituationId === 'walkin') {
     constraints = { ...MASS_CONSTRAINTS.walkin };
   } else {
     constraints = { ...MASS_CONSTRAINTS.standard };
@@ -122,15 +122,6 @@ export function validateConfig(config) {
     if (!verfuegbar.find(g => g.id === config.glastyp)) {
       errors.push({ field: 'glastyp', message: 'Dieser Glastyp ist nicht verfügbar.' });
     }
-  }
-
-  if (config.glasstaerke) {
-    const verfuegbar = getVerfuegbareGlasstaerken(config.hoehe);
-    if (!verfuegbar.find(gs => gs.id === config.glasstaerke)) {
-      errors.push({ field: 'glasstaerke', message: 'Sicherheitsanforderung: Mindestens 10 mm bei dieser Höhe.' });
-    }
-  } else {
-    errors.push({ field: 'glasstaerke', message: 'Bitte wählen Sie eine Glasstärke.' });
   }
 
   if (!config.profilfarbe) {
@@ -191,14 +182,6 @@ export function autoCorrect(config) {
     }
   }
 
-  if (corrected.glasstaerke) {
-    const verfuegbar = getVerfuegbareGlasstaerken(corrected.hoehe);
-    if (!verfuegbar.find(gs => gs.id === corrected.glasstaerke)) {
-      corrected.glasstaerke = verfuegbar[verfuegbar.length - 1]?.id || '8mm';
-      changes.push({ field: 'glasstaerke', reason: 'Glasstärke aus Sicherheitsgründen angepasst' });
-    }
-  }
-
   return { config: corrected, changes };
 }
 
@@ -216,7 +199,7 @@ export function isStepComplete(step, config) {
     }
     case 3: return !!config.rahmentyp;
     case 4: return config.breite > 0 && config.hoehe > 0;
-    case 5: return !!config.glastyp && !!config.glasstaerke && !!config.profilfarbe;
+    case 5: return !!config.glastyp && !!config.profilfarbe;
     case 6: return true; // Zusammenfassung
     default: return false;
   }
@@ -234,12 +217,12 @@ export function generateSummary(config) {
 
   return {
     einbausituation: einbau?.name  || '—',
-    tuersystem:      tuer?.name    || 'Kein Türsystem (Walk-In / Glaswand)',
+    tuersystem:      tuer?.name    || 'Kein Türsystem (Walk-In)',
     rahmentyp:       rahmen?.name  || '—',
     glastyp:         glas?.name    || '—',
-    glasstaerke:     staerke?.name || '—',
     profilfarbe:     profil?.name  || '—',
     breite:          `${config.breite} cm`,
+    tiefe:           config.einbausituation === 'ecke' ? `${config.tiefe} cm` : null,
     hoehe:           `${config.hoehe} cm`,
   };
 }

@@ -3,8 +3,10 @@ import React from 'react';
 export default function StepMasse({ config, setField, options }) {
   const { massConstraints } = options;
   const { breite, hoehe } = massConstraints;
+  const isEcke = config.einbausituation === 'ecke';
 
   const breitePercent = ((config.breite - breite.min) / (breite.max - breite.min)) * 100;
+  const tiefePct      = ((config.tiefe  - breite.min) / (breite.max - breite.min)) * 100;
   const hoehePercent  = ((config.hoehe  - hoehe.min)  / (hoehe.max  - hoehe.min))  * 100;
 
   return (
@@ -51,6 +53,42 @@ export default function StepMasse({ config, setField, options }) {
           </div>
         </div>
 
+        {isEcke && (
+          <div className="dim-card">
+            <div className="dim-card-label">Tiefe</div>
+            <div className="dim-card-value-row">
+              <input
+                type="number"
+                className="dim-number-input"
+                value={config.tiefe}
+                min={breite.min}
+                max={breite.max}
+                onChange={e => {
+                  const v = Math.min(breite.max, Math.max(breite.min, Number(e.target.value) || breite.min));
+                  setField('tiefe', v);
+                }}
+              />
+              <span className="dim-unit">cm</span>
+            </div>
+            <div className="dim-slider-wrapper">
+              <input
+                type="range"
+                className="dim-slider"
+                min={breite.min}
+                max={breite.max}
+                step={breite.step}
+                value={config.tiefe}
+                style={{ '--pct': `${tiefePct}%` }}
+                onChange={e => setField('tiefe', Number(e.target.value))}
+              />
+            </div>
+            <div className="dim-range-row">
+              <span>{breite.min} cm</span>
+              <span>{breite.max} cm</span>
+            </div>
+          </div>
+        )}
+
         <div className="dim-card">
           <div className="dim-card-label">Höhe</div>
           <div className="dim-card-value-row">
@@ -92,6 +130,15 @@ export default function StepMasse({ config, setField, options }) {
           <span className="dim-live-label">Breite</span>
           <span className="dim-live-value">{config.breite * 10} <span className="dim-live-unit">mm</span></span>
         </div>
+        {isEcke && (
+          <>
+            <div className="dim-live-sep">×</div>
+            <div className="dim-live-chip">
+              <span className="dim-live-label">Tiefe</span>
+              <span className="dim-live-value">{config.tiefe * 10} <span className="dim-live-unit">mm</span></span>
+            </div>
+          </>
+        )}
         <div className="dim-live-sep">×</div>
         <div className="dim-live-chip">
           <span className="dim-live-label">Höhe</span>
@@ -109,8 +156,8 @@ export default function StepMasse({ config, setField, options }) {
             </svg>
           </div>
           <div>
-            <div className="notice-title">Sicherheitshinweis</div>
-            <div className="notice-desc">Bei Höhen über 180 cm ist mindestens 10 mm Glasstärke erforderlich.</div>
+            <div className="notice-title">Hinweis</div>
+            <div className="notice-desc">Bei größeren Höhen entscheidet der Hersteller über die erforderliche Glasstärke zur Gewährleistung der Stabilität.</div>
           </div>
         </div>
       )}

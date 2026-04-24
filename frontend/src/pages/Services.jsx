@@ -12,7 +12,7 @@ const services = [
     id: 'duschabtrennungen',
     title: 'Maßgefertigte Duschabtrennungen',
     description: 'Der Schwerpunkt von Duschwerk Bayern liegt auf der Planung und Umsetzung maßgefertigter Duschabtrennungen. Jede Dusche wird individuell an die räumlichen Gegebenheiten sowie an die gestalterischen Vorstellungen der Kunden angepasst.',
-    features: ['Nischenlösung', 'Eckdusche', 'Walk-In Dusche', 'Glaswand (einzelne Wand)', 'Badewannenaufsatz', 'Beratung & Aufmaß vor Ort'],
+    features: ['Nischenlösung', 'Eckdusche', 'Walk-In Dusche', 'Badewannenaufsatz', 'Beratung & Aufmaß vor Ort'],
     icon: (
       <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 4.5v15m6-15v15m-10.875 0h15.75c.621 0 1.125-.504 1.125-1.125V5.625c0-.621-.504-1.125-1.125-1.125H4.125C3.504 4.5 3 5.004 3 5.625v12.75c0 .621.504 1.125 1.125 1.125z" />
@@ -48,7 +48,7 @@ const ablaufSteps = [
   { nr: '02', title: 'Beratung', desc: 'Persönliche Beratung direkt bei Ihnen oder in unserer Ausstellung in Regensburg.' },
   { nr: '03', title: 'Aufmaß', desc: 'Präzises Aufmaß durch unser Fachpersonal vor Ort – für eine passgenaue Planung.' },
   { nr: '04', title: 'Angebot', desc: 'Sie erhalten ein individuelles Angebot auf Basis Ihrer Wünsche und des Aufmaßes.' },
-  { nr: '05', title: 'Bestellung', desc: 'Nach Ihrer Freigabe wird die Duschlösung bestellt und termingerecht geliefert.' },
+  { nr: '05', title: 'Bestellung', desc: 'Nach Ihrer Freigabe wird die Duschabtrennung bestellt und termingerecht geliefert.' },
   { nr: '06', title: 'Montage', desc: 'Fachgerechte Montage durch erfahrene Monteure – sauber und termintreu.' },
 ]
 

@@ -12,7 +12,7 @@ const usps = [
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 7H6a2 2 0 00-2 2v9a2 2 0 002 2h9a2 2 0 002-2v-3M16 3h5m0 0v5m0-5l-7 7" />
       </svg>
     ),
-    title: 'Präzisionsaufmessung vor Ort',
+    title: 'Präzisionsaufmaß vor Ort',
     desc: 'Exakte Maßaufnahme bei Ihnen – für eine passgenaue Duschabtrennung ohne Kompromisse.',
   },
   {
@@ -130,7 +130,7 @@ export default function Home() {
             Bereit für Ihre neue Duschabtrennung?
           </h2>
           <p className="text-white/50 max-w-md mx-auto mb-10 font-light text-sm leading-relaxed">
-            Kostenloses und unverbindliches Aufmaß –<br />wir melden uns innerhalb von 24 Stunden.
+            Kostenloses und unverbindliches Aufmaß –<br />wir beraten Sie persönlich vor Ort.
           </p>
           <Link to="/kontakt" className="btn-silver px-10 py-4 text-sm">
             Jetzt Aufmaß buchen
