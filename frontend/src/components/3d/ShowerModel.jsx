@@ -456,64 +456,82 @@ function Schiebetuer({ w, h, t, glassMat, metalMat, rahmentyp, doorOpen }) {
 }
 
 // ── Falttür ──────────────────────────────────────────────────
+// Korrekte Falttür-Mechanik:
+//   - Wandscharnier an der linken Kante des linken Paneels
+//   - Faltgelenk in der Mitte (rechte Kante des linken Paneels)
+//   - Beim Öffnen: linkes Paneel dreht sich ins Bad (wallHinge +alpha)
+//     rechtes Paneel dreht sich relativ dazu zurück (-2*alpha)
+//   → Beide hälften falten sich wie ein echtes Buch / eine echte Falttür
 function Falttuer({ w, h, t, glassMat, metalMat, rahmentyp, doorOpen }) {
-  const voll   = rahmentyp === 'vollgerahmt';
-  const pw     = voll ? P * 1.7 : P;
-  const innerW = rahmentyp === 'rahmenlos' ? w : w - pw * 2;
-  const panelW = (innerW - P) / 2;
-  const glassH = rahmentyp === 'rahmenlos' ? h : h - pw * 2;
-  const off    = rahmentyp === 'rahmenlos' ? 0 : pw;
-  // Faltgelenk-Pivot = linke Kante des rechten Paneels ≈ P/2
-  const foldPivotX = P / 2;
+  const voll       = rahmentyp === 'vollgerahmt';
+  const pw         = voll ? P * 1.7 : P;
+  const innerW     = rahmentyp === 'rahmenlos' ? w : w - pw * 2;
+  const panelW     = (innerW - P) / 2;
+  const glassH     = rahmentyp === 'rahmenlos' ? h : h - pw * 2;
+  const off        = rahmentyp === 'rahmenlos' ? 0 : pw;
 
-  const foldRef      = useRef();
-  const foldAngleRef = useRef(0);
+  // Wandscharnier: linke Kante des linken Paneels
+  const wallHingeX   = -w / 2 + off;
+  // Faltgelenk: rechte Kante des linken Paneels (in Wandscharnier-Lokalraum)
+  const foldHingeX   = panelW + P / 2;
+
+  const wallRef  = useRef();   // dreht linkes Paneel + ganzen Rest
+  const foldRef  = useRef();   // dreht rechtes Paneel relativ zum linken
+  const alphaRef = useRef(0);
 
   useFrame(() => {
-    const target = doorOpen ? Math.PI * 0.78 : 0;
-    foldAngleRef.current += (target - foldAngleRef.current) * 0.07;
-    if (foldRef.current) {
-      foldRef.current.rotation.y = foldAngleRef.current;
-    }
+    const target = doorOpen ? Math.PI * 0.40 : 0;
+    alphaRef.current += (target - alphaRef.current) * 0.07;
+    const a = alphaRef.current;
+    // Wandscharnier dreht BEIDE Paneele ins Bad
+    if (wallRef.current)  wallRef.current.rotation.y  =  a;
+    // Faltgelenk dreht rechtes Paneel zurück → Faltform entsteht
+    if (foldRef.current)  foldRef.current.rotation.y  = -2 * a;
   });
 
   return (
     <group>
-      {/* Festes Paneel (links) */}
-      <mesh castShadow position={[-w / 2 + off + panelW / 2, 0, 0]}>
-        <boxGeometry args={[panelW, glassH, t]} />
-        <primitive object={glassMat} attach="material" />
-      </mesh>
+      {/* ── Wandscharnier-Gruppe (pivot = linke Wand) ────────── */}
+      <group ref={wallRef} position={[wallHingeX, 0, 0]}>
 
-      {/* Türpaneel (rechts) — faltet um Faltgelenk-Pivot */}
-      <group ref={foldRef} position={[foldPivotX, 0, t * 0.4]}>
+        {/* Linkes Glas-Paneel */}
         <mesh castShadow position={[panelW / 2, 0, 0]}>
           <boxGeometry args={[panelW, glassH, t]} />
           <primitive object={glassMat} attach="material" />
         </mesh>
-        {/* Griff am Türpaneel */}
-        <mesh position={[panelW * 0.88, 0, t / 2 + 0.020]}>
-          <cylinderGeometry args={[0.008, 0.008, 0.20, 10]} />
-          <primitive object={metalMat} attach="material" />
-        </mesh>
+
+        {/* Faltgelenk-Gruppe (pivot = Mitte der Tür) */}
+        <group position={[foldHingeX, 0, 0]}>
+
+          {/* Faltprofil — bewegt sich mit dem Gelenk */}
+          <mesh position={[0, 0, t * 0.15]}>
+            <boxGeometry args={[P, h - (rahmentyp === 'rahmenlos' ? 0 : pw * 2), PH * 1.2]} />
+            <primitive object={metalMat} attach="material" />
+          </mesh>
+          {[h * 0.25, 0, -h * 0.25].map((y, i) => (
+            <mesh key={i} position={[0, y, t * 0.15 + PH * 0.6]}>
+              <cylinderGeometry args={[0.010, 0.010, 0.04, 8]} />
+              <primitive object={metalMat} attach="material" />
+            </mesh>
+          ))}
+
+          {/* Rechtes Paneel dreht sich relativ zum linken */}
+          <group ref={foldRef}>
+            <mesh castShadow position={[panelW / 2, 0, 0]}>
+              <boxGeometry args={[panelW, glassH, t]} />
+              <primitive object={glassMat} attach="material" />
+            </mesh>
+            {/* Griff an der Außenkante */}
+            <mesh position={[panelW * 0.82, 0, t / 2 + 0.020]}>
+              <cylinderGeometry args={[0.008, 0.008, 0.20, 10]} />
+              <primitive object={metalMat} attach="material" />
+            </mesh>
+          </group>
+        </group>
       </group>
 
-      {/* Rahmen */}
+      {/* Rahmen (statisch) */}
       <FrameProfiles w={w} h={h} rahmentyp={rahmentyp} metalMat={metalMat} />
-
-      {/* Mittelprofil (Faltgelenk) */}
-      <mesh position={[0, 0, t * 0.2]}>
-        <boxGeometry args={[P, h - (rahmentyp === 'rahmenlos' ? 0 : pw * 2), PH * 1.2]} />
-        <primitive object={metalMat} attach="material" />
-      </mesh>
-
-      {/* Faltgelenk-Zylinder */}
-      {[h * 0.25, 0, -h * 0.25].map((y, i) => (
-        <mesh key={i} position={[0, y, t * 0.2 + PH * 0.6]}>
-          <cylinderGeometry args={[0.010, 0.010, 0.04, 8]} />
-          <primitive object={metalMat} attach="material" />
-        </mesh>
-      ))}
     </group>
   );
 }
