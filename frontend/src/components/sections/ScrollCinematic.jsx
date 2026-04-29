@@ -14,9 +14,9 @@ const SCENES = [
     sub: 'Jeder Millimeter zählt. Wir messen präzise bei Ihnen vor Ort – für eine Duschabtrennung, die auf den Punkt passt.',
     stat: '100 %',
     statLabel: 'Passgenauigkeit',
-    bg: '#F0F5FF',
-    text: '#1A2E5A',
-    accent: '#2B5AA8',
+    bg: '#F2EDE5',
+    text: '#1C1814',
+    accent: '#8B6F4E',
   },
   {
     num: '02',
@@ -25,9 +25,9 @@ const SCENES = [
     sub: 'Nur geprüftes Sicherheitsglas nach DIN – klar, bruchsicher und langlebig. Kein Kompromiss bei Materialien.',
     stat: 'DIN',
     statLabel: 'Geprüft',
-    bg: '#E6EEF8',
-    text: '#1A2E5A',
-    accent: '#1A2E5A',
+    bg: '#E8E2D8',
+    text: '#1C1814',
+    accent: '#6B5A42',
   },
   {
     num: '03',
@@ -36,20 +36,20 @@ const SCENES = [
     sub: 'Unser Team montiert sauber, termintreu und ohne Folgeschäden – vom ersten Schrauben bis zur Einweisung.',
     stat: '100 %',
     statLabel: 'Termintreu',
-    bg: '#1A3570',
-    text: '#FFFFFF',
-    accent: '#E53935',
+    bg: '#1A1714',
+    text: '#F0EAE0',
+    accent: '#C8A86A',
   },
   {
     num: '04',
     label: 'Ergebnis',
     title: ['Ihr perfektes', 'Bad.'],
     sub: 'Maßgeschneidert. Hochwertig. Dauerhaft. Das ist Duschwerk Bayern.',
-    stat: '300 +',
+    stat: '300+',
     statLabel: 'Projekte',
-    bg: '#0D1F45',
-    text: '#FFFFFF',
-    accent: '#E53935',
+    bg: '#0E0C0A',
+    text: '#F0EAE0',
+    accent: '#C8A86A',
   },
 ]
 
@@ -385,6 +385,9 @@ export default function ScrollCinematic() {
   // Applied to inner content so background stays full-bleed
   const zoom = lerp(1.0, 1.08, ease(p))
 
+  // Whether current scene is light background
+  const isLight = sceneIdx < 2
+
   return (
     /* Outer: tall scroll container */
     <div ref={containerRef} style={{ height: `${total * 80}vh` }}>
@@ -394,10 +397,51 @@ export default function ScrollCinematic() {
         className="sticky top-0 h-screen overflow-hidden"
         style={{ background: bg, willChange: 'background' }}
       >
+        {/* ── Grain overlay for premium texture ── */}
+        <div
+          aria-hidden="true"
+          style={{
+            position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 1,
+            backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E")`,
+            opacity: isLight ? 0.028 : 0.045,
+            mixBlendMode: 'overlay',
+          }}
+        />
+
+        {/* ── Ghost numeral behind content ── */}
+        <div
+          aria-hidden="true"
+          style={{
+            position: 'absolute',
+            bottom: '-0.15em',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            fontSize: 'clamp(18rem, 38vw, 32rem)',
+            fontFamily: 'var(--font-headline, serif)',
+            fontWeight: 700,
+            lineHeight: 1,
+            letterSpacing: '-0.06em',
+            color: isLight ? '#000' : '#fff',
+            opacity: isLight ? 0.032 : 0.05,
+            userSelect: 'none',
+            pointerEvents: 'none',
+            zIndex: 0,
+            whiteSpace: 'nowrap',
+            transition: 'opacity 0.4s ease',
+          }}
+        >
+          {scene.num}
+        </div>
+
         {/* ── Layout (zoom wrapper) ── */}
         <div
-          className="h-full grid grid-cols-1 lg:grid-cols-2 items-center container-max px-4 sm:px-6 lg:px-8 gap-8"
-          style={{ transform: `scale(${zoom})`, transformOrigin: 'center center', willChange: 'transform' }}
+          className="relative h-full grid grid-cols-1 lg:grid-cols-2 items-center container-max px-8 sm:px-12 lg:px-16 gap-8"
+          style={{
+            transform: `scale(${zoom})`,
+            transformOrigin: 'center center',
+            willChange: 'transform',
+            zIndex: 2,
+          }}
         >
 
           {/* ── Left: Text ── */}
@@ -409,18 +453,40 @@ export default function ScrollCinematic() {
               willChange: 'transform, opacity',
             }}
           >
-            {/* Chapter label */}
-            <div className="flex items-center gap-3 mb-6">
+            {/* Chapter label row */}
+            <div className="flex items-center gap-4 mb-8">
               <span
-                className="font-headline text-[10px] tracking-widest uppercase font-semibold"
-                style={{ color: accentColor, opacity: 0.7 }}
+                style={{
+                  fontFamily: 'var(--font-headline, serif)',
+                  fontSize: '0.68rem',
+                  letterSpacing: '0.22em',
+                  textTransform: 'uppercase',
+                  color: accentColor,
+                  fontWeight: 600,
+                  opacity: 0.9,
+                }}
               >
                 {scene.num}
               </span>
-              <div className="h-px flex-1 max-w-[40px]" style={{ background: accentColor, opacity: 0.3 }} />
+              {/* Accent line — draws in */}
+              <div style={{
+                width: `${ease(clamp(sceneP * 4, 0, 1)) * 48}px`,
+                height: '1px',
+                background: accentColor,
+                opacity: 0.45,
+                transition: 'width 0.3s ease',
+                flexShrink: 0,
+              }} />
               <span
-                className="font-body text-[10px] tracking-widest uppercase"
-                style={{ color: textColor, opacity: 0.4 }}
+                style={{
+                  fontFamily: 'var(--font-body, sans-serif)',
+                  fontSize: '0.62rem',
+                  letterSpacing: '0.24em',
+                  textTransform: 'uppercase',
+                  color: textColor,
+                  opacity: 0.35,
+                  fontWeight: 500,
+                }}
               >
                 {scene.label}
               </span>
@@ -428,40 +494,78 @@ export default function ScrollCinematic() {
 
             {/* Headline */}
             <h2
-              className="font-headline leading-none mb-6"
               style={{
-                fontSize: 'clamp(2.8rem, 6vw, 5.5rem)',
-                letterSpacing: '-0.04em',
+                fontFamily: 'var(--font-headline, serif)',
+                fontSize: 'clamp(3rem, 5.5vw, 5.8rem)',
+                fontWeight: 700,
+                lineHeight: 0.95,
+                letterSpacing: '-0.045em',
                 color: textColor,
+                marginBottom: '1.75rem',
               }}
             >
               {scene.title[0]}<br />
-              <span style={{ color: accentColor }}>{scene.title[1]}</span>
+              <span style={{ color: accentColor, fontStyle: 'italic' }}>{scene.title[1]}</span>
             </h2>
+
+            {/* Thin divider */}
+            <div style={{
+              width: 40,
+              height: 1,
+              background: accentColor,
+              opacity: 0.3,
+              marginBottom: '1.5rem',
+            }} />
 
             {/* Sub */}
             <p
-              className="font-body font-light leading-relaxed mb-8 max-w-md"
-              style={{ fontSize: '1rem', color: textColor, opacity: 0.65 }}
+              style={{
+                fontFamily: 'var(--font-body, sans-serif)',
+                fontSize: '0.975rem',
+                fontWeight: 300,
+                lineHeight: 1.7,
+                color: textColor,
+                opacity: 0.6,
+                maxWidth: '26rem',
+                marginBottom: '2.5rem',
+                letterSpacing: '0.01em',
+              }}
             >
               {scene.sub}
             </p>
 
-            {/* Stat */}
-            <div className="flex items-end gap-3 mb-10">
+            {/* Stat block */}
+            <div style={{
+              display: 'flex',
+              alignItems: 'flex-end',
+              gap: '0.75rem',
+              marginBottom: '2.5rem',
+              paddingTop: '1.25rem',
+              borderTop: `1px solid ${accentColor}22`,
+            }}>
               <span
-                className="font-headline leading-none"
                 style={{
-                  fontSize: 'clamp(2rem, 4vw, 3.5rem)',
-                  letterSpacing: '-0.04em',
+                  fontFamily: 'var(--font-headline, serif)',
+                  fontSize: 'clamp(2.2rem, 4vw, 3.8rem)',
+                  fontWeight: 700,
+                  lineHeight: 1,
+                  letterSpacing: '-0.05em',
                   color: accentColor,
                 }}
               >
                 {scene.stat}
               </span>
               <span
-                className="font-body text-xs uppercase tracking-widest pb-1.5 font-medium"
-                style={{ color: textColor, opacity: 0.45 }}
+                style={{
+                  fontFamily: 'var(--font-body, sans-serif)',
+                  fontSize: '0.62rem',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.22em',
+                  color: textColor,
+                  opacity: 0.4,
+                  paddingBottom: '0.4rem',
+                  fontWeight: 500,
+                }}
               >
                 {scene.statLabel}
               </span>
@@ -470,8 +574,36 @@ export default function ScrollCinematic() {
             {/* CTA (only last scene) */}
             {sceneIdx === total - 1 && (
               <div style={{ opacity: ease(clamp((sceneP - 0.5) * 2, 0, 1)) }}>
-                <Link to="/kontakt" className="btn-primary text-sm px-8 py-3">
+                <Link
+                  to="/kontakt"
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '0.75rem',
+                    fontFamily: 'var(--font-body, sans-serif)',
+                    fontSize: '0.75rem',
+                    fontWeight: 500,
+                    letterSpacing: '0.18em',
+                    textTransform: 'uppercase',
+                    color: textColor,
+                    border: `1px solid ${accentColor}`,
+                    padding: '0.9rem 2rem',
+                    transition: 'background 0.3s, color 0.3s',
+                    textDecoration: 'none',
+                  }}
+                  onMouseEnter={e => {
+                    e.currentTarget.style.background = accentColor
+                    e.currentTarget.style.color = isLight ? '#fff' : '#0E0C0A'
+                  }}
+                  onMouseLeave={e => {
+                    e.currentTarget.style.background = 'transparent'
+                    e.currentTarget.style.color = textColor
+                  }}
+                >
                   Jetzt Aufmaß buchen
+                  <svg width="16" height="10" viewBox="0 0 16 10" fill="none" style={{ opacity: 0.7 }}>
+                    <path d="M0 5h14M10 1l4 4-4 4" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
                 </Link>
               </div>
             )}
@@ -501,56 +633,162 @@ export default function ScrollCinematic() {
           </div>
         </div>
 
-        {/* ── Progress Dots ────────────────────────── */}
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-3">
+        {/* ── Side chapter navigation (right edge) ── */}
+        <div
+          style={{
+            position: 'absolute',
+            right: '2rem',
+            top: '50%',
+            transform: 'translateY(-50%)',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'flex-end',
+            gap: '1.2rem',
+            zIndex: 10,
+          }}
+        >
           {SCENES.map((s, i) => {
             const active = i === sceneIdx
             const done   = i < sceneIdx
             return (
               <div
                 key={s.num}
-                className="rounded-full transition-all duration-500"
                 style={{
-                  width:  active ? 24 : 6,
-                  height: 6,
-                  background: active || done ? accentColor : textColor,
-                  opacity: active ? 1 : done ? 0.5 : 0.2,
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.5rem',
+                  transition: 'opacity 0.4s ease',
+                  opacity: active ? 1 : done ? 0.35 : 0.18,
                 }}
-              />
+              >
+                {active && (
+                  <span style={{
+                    fontFamily: 'var(--font-body, sans-serif)',
+                    fontSize: '0.58rem',
+                    letterSpacing: '0.2em',
+                    textTransform: 'uppercase',
+                    color: textColor,
+                    opacity: 0.55,
+                  }}>
+                    {s.label}
+                  </span>
+                )}
+                <div style={{
+                  width: active ? 20 : 4,
+                  height: 1,
+                  background: active ? accentColor : textColor,
+                  transition: 'width 0.4s ease, background 0.4s ease',
+                }} />
+              </div>
             )
           })}
         </div>
 
-        {/* ── Vertical progress bar (right edge) ────── */}
-        <div
-          className="absolute right-0 top-0 w-0.5 origin-top"
-          style={{
-            height: `${(p) * 100}%`,
+        {/* ── Vertical progress track (far right) ── */}
+        <div style={{
+          position: 'absolute',
+          right: 0,
+          top: 0,
+          bottom: 0,
+          width: 2,
+          background: `${textColor}0a`,
+          zIndex: 9,
+        }}>
+          <div style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            height: `${p * 100}%`,
             background: accentColor,
-            opacity: 0.4,
-            transition: 'height 0.05s linear',
-          }}
-        />
+            opacity: 0.5,
+            transition: 'height 0.06s linear',
+          }} />
+        </div>
+
+        {/* ── Bottom: scene counter ── */}
+        <div style={{
+          position: 'absolute',
+          bottom: '2rem',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '1rem',
+          zIndex: 10,
+        }}>
+          <span style={{
+            fontFamily: 'var(--font-headline, serif)',
+            fontSize: '0.7rem',
+            letterSpacing: '0.15em',
+            color: accentColor,
+            opacity: 0.8,
+            fontWeight: 600,
+          }}>
+            {scene.num}
+          </span>
+          <div style={{
+            width: 60,
+            height: 1,
+            background: `${textColor}20`,
+            position: 'relative',
+          }}>
+            <div style={{
+              position: 'absolute',
+              top: 0, left: 0, bottom: 0,
+              width: `${((sceneIdx + sceneP) / total) * 100}%`,
+              background: accentColor,
+              opacity: 0.6,
+            }} />
+          </div>
+          <span style={{
+            fontFamily: 'var(--font-headline, serif)',
+            fontSize: '0.7rem',
+            letterSpacing: '0.15em',
+            color: textColor,
+            opacity: 0.25,
+            fontWeight: 600,
+          }}>
+            {String(total).padStart(2, '0')}
+          </span>
+        </div>
 
         {/* ── Scroll hint (fades after first scene) ─── */}
         <div
-          className="absolute bottom-8 right-8 flex flex-col items-center gap-2"
-          style={{ opacity: clamp(1 - p * 8, 0, 1) }}
+          style={{
+            position: 'absolute',
+            bottom: '2rem',
+            left: '2rem',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: '0.5rem',
+            opacity: clamp(1 - p * 9, 0, 1),
+            zIndex: 10,
+          }}
         >
-          <span
-            className="font-body text-[10px] uppercase tracking-widest"
-            style={{ color: textColor, opacity: 0.4 }}
-          >
+          <span style={{
+            fontFamily: 'var(--font-body, sans-serif)',
+            fontSize: '0.58rem',
+            letterSpacing: '0.25em',
+            textTransform: 'uppercase',
+            color: textColor,
+            opacity: 0.35,
+            writingMode: 'vertical-lr',
+            transform: 'rotate(180deg)',
+          }}>
             Scroll
           </span>
-          <div
-            className="w-px h-8 origin-top"
-            style={{
-              background: textColor,
-              opacity: 0.25,
-              animation: 'scroll-hint 1.6s ease-in-out infinite',
-            }}
-          />
+          <div style={{
+            width: 1,
+            height: 32,
+            background: accentColor,
+            opacity: 0.3,
+            animation: 'scroll-hint 1.6s ease-in-out infinite',
+          }} />
+          <svg width="8" height="12" viewBox="0 0 8 12" fill="none" style={{ opacity: 0.3, color: accentColor }}>
+            <path d="M4 0v10M1 7l3 4 3-4" stroke={accentColor} strokeWidth="1" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
         </div>
       </div>
     </div>
