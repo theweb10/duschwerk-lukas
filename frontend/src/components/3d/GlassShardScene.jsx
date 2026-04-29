@@ -25,7 +25,7 @@
  */
 import { useRef, useMemo, useEffect, memo, Suspense } from 'react'
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
-import { AdaptiveDpr } from '@react-three/drei'
+import { AdaptiveDpr, Environment } from '@react-three/drei'
 import * as THREE from 'three'
 
 /* ─── Helpers ────────────────────────────────────────────────── */
@@ -76,14 +76,21 @@ function GlassFace({ g, e, w, h }) {
   )
 }
 
-// Cylindrical hinge with two flanges (rotated on its side)
+// Premium cylindrical hinge with thick flanges + chamfer detail
 function Hinge({ m, y }) {
   const rot = [0, 0, Math.PI / 2]
   return (
     <group position={[0, y, 0]}>
-      <mesh material={m} rotation={rot}><cylinderGeometry args={[0.020, 0.020, 0.055, 10]} /></mesh>
-      <mesh material={m} position={[-0.018, 0, 0]} rotation={rot}><cylinderGeometry args={[0.028, 0.028, 0.009, 10]} /></mesh>
-      <mesh material={m} position={[ 0.018, 0, 0]} rotation={rot}><cylinderGeometry args={[0.028, 0.028, 0.009, 10]} /></mesh>
+      {/* Main barrel */}
+      <mesh material={m} rotation={rot}><cylinderGeometry args={[0.022, 0.022, 0.060, 16]} /></mesh>
+      {/* Flanges — larger for premium look */}
+      <mesh material={m} position={[-0.022, 0, 0]} rotation={rot}><cylinderGeometry args={[0.034, 0.034, 0.010, 16]} /></mesh>
+      <mesh material={m} position={[ 0.022, 0, 0]} rotation={rot}><cylinderGeometry args={[0.034, 0.034, 0.010, 16]} /></mesh>
+      {/* Screw detail on each flange */}
+      <mesh material={m} position={[-0.027, 0.014, 0]} rotation={rot}><cylinderGeometry args={[0.004, 0.004, 0.005, 8]} /></mesh>
+      <mesh material={m} position={[-0.027,-0.014, 0]} rotation={rot}><cylinderGeometry args={[0.004, 0.004, 0.005, 8]} /></mesh>
+      <mesh material={m} position={[ 0.027, 0.014, 0]} rotation={rot}><cylinderGeometry args={[0.004, 0.004, 0.005, 8]} /></mesh>
+      <mesh material={m} position={[ 0.027,-0.014, 0]} rotation={rot}><cylinderGeometry args={[0.004, 0.004, 0.005, 8]} /></mesh>
     </group>
   )
 }
@@ -99,14 +106,39 @@ function WallMount({ m, y }) {
   )
 }
 
-// D-shaped door handle: vertical bar + two mounting brackets
+// Premium D-bar door handle — Hansgrohe/Axor style
+// Oval cross-section bar + flat mounting plates with rounded edges
 function Handle({ m }) {
-  const bx = MW / 2 - 0.022
+  const bx   = MW / 2 - 0.022
+  const barH = 0.32
+  const reach = 0.042  // how far bar stands off glass
   return (
-    <group position={[bx, 0.05, GT/2 + 0.030]}>
-      <mesh material={m}><cylinderGeometry args={[0.009, 0.009, 0.30, 8]} /></mesh>
-      <mesh material={m} position={[0,  0.16, -0.028]}><boxGeometry args={[0.016, 0.016, 0.056]} /></mesh>
-      <mesh material={m} position={[0, -0.16, -0.028]}><boxGeometry args={[0.016, 0.016, 0.056]} /></mesh>
+    <group position={[bx, 0.04, GT / 2 + reach]}>
+      {/* Main bar — oval cross-section (slightly flattened cylinder) */}
+      <mesh material={m} scale={[1, 1, 0.60]}>
+        <cylinderGeometry args={[0.011, 0.011, barH, 16]} />
+      </mesh>
+      {/* Sphere end-caps for premium rounded finish */}
+      <mesh material={m} position={[0,  barH/2, 0]} scale={[1, 0.6, 0.6]}>
+        <sphereGeometry args={[0.011, 12, 8]} />
+      </mesh>
+      <mesh material={m} position={[0, -barH/2, 0]} scale={[1, 0.6, 0.6]}>
+        <sphereGeometry args={[0.011, 12, 8]} />
+      </mesh>
+      {/* Upper mounting plate */}
+      <mesh material={m} position={[0, barH/2 - 0.022, -reach/2]} rotation={[Math.PI/2, 0, 0]}>
+        <cylinderGeometry args={[0.014, 0.014, 0.006, 16]} />
+      </mesh>
+      <mesh material={m} position={[0, barH/2 - 0.022, -(reach + 0.003)]}>
+        <boxGeometry args={[0.026, 0.036, reach - 0.004]} />
+      </mesh>
+      {/* Lower mounting plate */}
+      <mesh material={m} position={[0, -barH/2 + 0.022, -reach/2]} rotation={[Math.PI/2, 0, 0]}>
+        <cylinderGeometry args={[0.014, 0.014, 0.006, 16]} />
+      </mesh>
+      <mesh material={m} position={[0, -barH/2 + 0.022, -(reach + 0.003)]}>
+        <boxGeometry args={[0.026, 0.036, reach - 0.004]} />
+      </mesh>
     </group>
   )
 }
@@ -126,68 +158,78 @@ const ShowerScene = memo(function ShowerScene({ scrollRef }) {
   const wallRef   = useRef()
 
   /* ── Materials — each material instance created once ─────── */
+
+  // Premium clear safety glass — very clear, slight blue-green tint
   const glassMat = useMemo(() => new THREE.MeshStandardMaterial({
-    color:             new THREE.Color('#c8dff0'),
+    color:             new THREE.Color('#d8eef6'),
     transparent:       true,
-    opacity:           0.22,
+    opacity:           0.30,
+    roughness:         0.01,
+    metalness:         0.10,
+    side:              THREE.DoubleSide,
+    depthWrite:        false,
+    emissive:          new THREE.Color('#0a2a50'),
+    emissiveIntensity: 0.03,
+    envMapIntensity:   1.8,
+  }), [])
+
+  // Glass edges — characteristic polished glass-edge green
+  const edgeMat = useMemo(() => new THREE.MeshStandardMaterial({
+    color:             new THREE.Color('#a8d4bc'),
+    transparent:       true,
+    opacity:           0.72,
     roughness:         0.04,
-    metalness:         0.05,
+    metalness:         0.12,
     side:              THREE.FrontSide,
     depthWrite:        false,
-    emissive:          new THREE.Color('#1a3a6a'),
-    emissiveIntensity: 0.04,
+    envMapIntensity:   1.2,
   }), [])
 
-  const edgeMat = useMemo(() => new THREE.MeshStandardMaterial({
-    color:       new THREE.Color('#9ab8d0'),
-    transparent: true,
-    opacity:     0.55,
-    roughness:   0.08,
-    metalness:   0.15,
-    side:        THREE.FrontSide,
-    depthWrite:  false,
-  }), [])
-
-  // Chrome for panels (always visible)
+  // Polished chrome — high metalness, near-mirror
   const chromeMat = useMemo(() => new THREE.MeshStandardMaterial({
-    color:     new THREE.Color('#dce8f4'),
-    metalness: 0.90,
-    roughness: 0.10,
+    color:           new THREE.Color('#e8eff5'),
+    metalness:       0.96,
+    roughness:       0.06,
+    envMapIntensity: 2.2,
   }), [])
 
-  // Hardware: starts hidden, fades in as explode reveals it
+  // Hardware chrome (hinges) — starts hidden, fades in as explode reveals it
   const hingeMat = useMemo(() => new THREE.MeshStandardMaterial({
-    color:       new THREE.Color('#b0c4d8'),
-    metalness:   0.92,
-    roughness:   0.08,
-    transparent: true,
-    opacity:     0.0,
+    color:           new THREE.Color('#d0dce8'),
+    metalness:       0.95,
+    roughness:       0.05,
+    transparent:     true,
+    opacity:         0.0,
+    envMapIntensity: 2.0,
   }), [])
 
   // Wall mount hardware (same fade-in behavior)
   const wallHardMat = useMemo(() => new THREE.MeshStandardMaterial({
-    color:       new THREE.Color('#c8d8e8'),
-    metalness:   0.88,
-    roughness:   0.12,
-    transparent: true,
-    opacity:     0.0,
+    color:           new THREE.Color('#dce8f0'),
+    metalness:       0.94,
+    roughness:       0.07,
+    transparent:     true,
+    opacity:         0.0,
+    envMapIntensity: 1.8,
   }), [])
 
+  // Silicone seal — matte translucent white
   const sealMat = useMemo(() => new THREE.MeshStandardMaterial({
-    color:       new THREE.Color('#e8eeee'),
+    color:       new THREE.Color('#eef2f2'),
     transparent: true,
-    opacity:     0.80,
-    roughness:   0.95,
+    opacity:     0.85,
+    roughness:   0.90,
     metalness:   0.0,
   }), [])
 
-  // Floor plane material
+  // Floor — polished stone/marble tile
   const floorMat = useMemo(() => new THREE.MeshStandardMaterial({
-    color:       new THREE.Color('#d8e4ee'),
-    transparent: true,
-    opacity:     0.18,
-    roughness:   0.85,
-    metalness:   0.05,
+    color:           new THREE.Color('#c8d4de'),
+    transparent:     true,
+    opacity:         0.30,
+    roughness:       0.15,
+    metalness:       0.30,
+    envMapIntensity: 1.2,
   }), [])
 
   useEffect(() => () => {
@@ -262,10 +304,10 @@ const ShowerScene = memo(function ShowerScene({ scrollRef }) {
       wallRef.current.position.x += (targetX - wallRef.current.position.x) * 0.06
     }
 
-    /* ── Glass tint: shifts to cleaner blue as explode reveals quality ── */
-    const glassOpacity = lerp(0.22, 0.28, ease(exT))
-    glassMat.opacity   = glassOpacity
-    glassMat.emissiveIntensity = lerp(0.04, 0.06, ease(exT))
+    /* ── Glass: becomes more defined as explode reveals material quality ── */
+    glassMat.opacity           = lerp(0.30, 0.38, ease(exT))
+    glassMat.emissiveIntensity = lerp(0.03, 0.05, ease(exT))
+    glassMat.envMapIntensity   = lerp(1.8,  2.4,  ease(exT))
   })
 
   return (
@@ -341,13 +383,29 @@ const ShowerScene = memo(function ShowerScene({ scrollRef }) {
       </group>
 
       {/* ─── FLOOR PLANE ─────────────────────────────────────
-          Thin reflective surface for visual grounding */}
+          Polished stone floor for visual grounding */}
       <mesh
         material={floorMat}
         position={[0, -MH/2 - 0.022, SW/4]}
         rotation={[-Math.PI / 2, 0, 0]}
       >
-        <planeGeometry args={[1.4, 0.9]} />
+        <planeGeometry args={[1.8, 1.2]} />
+      </mesh>
+
+      {/* ─── WALL BACKDROP ────────────────────────────────────
+          Subtle large-format tile wall behind the installation */}
+      <mesh
+        position={[0.08, 0.04, -SW * 0.9]}
+        rotation={[0, 0, 0]}
+      >
+        <planeGeometry args={[2.2, 2.2]} />
+        <meshStandardMaterial
+          color="#dde4ec"
+          roughness={0.55}
+          metalness={0.04}
+          transparent
+          opacity={0.32}
+        />
       </mesh>
 
     </group>
@@ -373,12 +431,13 @@ export default function GlassShardScene({ scrollP = 0, active = true }) {
     <Canvas
       camera={{ fov: 38, position: CAMS[0].pos, near: 0.05, far: 14 }}
       gl={{
-        antialias:           false,
+        antialias:           true,
         alpha:               true,
         powerPreference:     'high-performance',
         toneMapping:         THREE.ACESFilmicToneMapping,
-        toneMappingExposure: 1.0,
+        toneMappingExposure: 1.05,
       }}
+      shadows
       dpr={[1, 1.5]}
       frameloop="always"
       style={{ background: 'transparent', width: '100%', height: '100%' }}
@@ -386,11 +445,27 @@ export default function GlassShardScene({ scrollP = 0, active = true }) {
       <AdaptiveDpr pixelated />
       <FrameloopController active={active} />
 
-      {/* 3-light setup: ambient + key + fill + subtle under-rim */}
-      <ambientLight intensity={0.60} />
-      <directionalLight position={[4, 6, 4]}  intensity={1.10} color="#ffffff" />
-      <directionalLight position={[-2, 2, -1]} intensity={0.28} color="#b0d0f0" />
-      <directionalLight position={[0, -3, 2]}  intensity={0.12} color="#e0e8f0" />
+      {/* Environment map — critical for glass + chrome reflections */}
+      <Environment preset="studio" />
+
+      {/* Key light — warm from upper-right, casts crisp shadows on chrome */}
+      <directionalLight
+        position={[3.5, 5.0, 3.5]}
+        intensity={1.20}
+        color="#fff8f0"
+        castShadow
+        shadow-mapSize-width={1024}
+        shadow-mapSize-height={1024}
+        shadow-bias={-0.0005}
+      />
+      {/* Fill — cool diffuse from left */}
+      <directionalLight position={[-3, 2.5, 1.5]} intensity={0.35} color="#c8dff4" />
+      {/* Rim — behind for edge-lighting on chrome profiles */}
+      <directionalLight position={[0.5, 1.5, -3.0]} intensity={0.22} color="#e8f0f8" />
+      {/* Under-bounce — subtle floor reflection */}
+      <directionalLight position={[0, -4, 2]} intensity={0.10} color="#dce8f0" />
+      {/* Ambient — very low, preserve shadow depth */}
+      <ambientLight intensity={0.18} color="#e8f2ff" />
 
       <Suspense fallback={null}>
         <ShowerScene scrollRef={scrollRef} />
