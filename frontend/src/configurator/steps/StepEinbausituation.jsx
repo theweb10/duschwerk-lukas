@@ -48,17 +48,6 @@ function GrundrissIcon({ typ, active }) {
           <circle cx="26" cy="36" r="3" fill="none" stroke={wall} strokeWidth="1.2" opacity="0.4"/>
         </svg>
       );
-    case 'glaswand':
-      return (
-        <svg viewBox="0 0 72 72" style={s}>
-          <line x1="12" y1="12" x2="12" y2="60" stroke={wall} strokeWidth="4" strokeLinecap="round"/>
-          <line x1="12" y1="60" x2="60" y2="60" stroke={wall} strokeWidth="4" strokeLinecap="round"/>
-          <line x1="12" y1="36" x2="52" y2="36" stroke={glass} strokeWidth="3" strokeLinecap="round"/>
-          <line x1="52" y1="30" x2="52" y2="42" stroke={glass} strokeWidth="2.5" strokeLinecap="round"/>
-          <rect x="14" y="38" width="36" height="20" fill={fill} rx="1"/>
-          <path d="M26 44 L26 52" stroke={wall} strokeWidth="1.2" strokeDasharray="3 3" opacity="0.3"/>
-        </svg>
-      );
     case 'badewanne':
       return (
         <svg viewBox="0 0 72 72" style={s}>

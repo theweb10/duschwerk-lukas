@@ -15,7 +15,6 @@ const SERIE_VISUALS = {
   '3000': { gradient: ['#2d3436', '#636e72'], accent: '#74b9ff', icon: '▣' },
   '2000': { gradient: ['#3d3d3d', '#555555'], accent: '#dfe6e9', icon: '□' },
   'walkin':    { gradient: ['#0c2461', '#1e3799'], accent: '#48dbfb', icon: '⊏' },
-  'badewanne': { gradient: ['#2c3e50', '#34495e'], accent: '#a29bfe', icon: '⊔' },
 };
 
 export default function StepSerie({ config, setField }) {

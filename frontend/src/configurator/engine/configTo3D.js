@@ -38,9 +38,7 @@ export function configTo3D(wizardConfig) {
 }
 
 function mapToTyp({ einbausituation, tuersystem }) {
-  if (einbausituation === 'walkin')    return 'Walk-in';
-  if (einbausituation === 'glaswand')  return 'Walk-in';
-  if (einbausituation === 'badewanne') return 'Badewanne';
+  if (einbausituation === 'walkin') return 'Walk-in';
   return mapTuersystem(tuersystem);
 }
 

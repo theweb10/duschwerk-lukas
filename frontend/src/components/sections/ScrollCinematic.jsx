@@ -298,8 +298,6 @@ function GlassPanel({ sceneP, sceneIdx, p }) {
                 <line x1="287" y1="20"  x2="293" y2="20"  stroke={ac} strokeWidth="0.8"/>
                 <line x1="287" y1="308" x2="293" y2="308" stroke={ac} strokeWidth="0.8"/>
                 <text x="294" y="168" textAnchor="start" transform="rotate(90,294,168)">200 cm</text>
-                {/* Glasdicke */}
-                <text x="214" y="34" textAnchor="middle" opacity="0.65">⬡ ESG Sicherheitsglas</text>
               </g>
             )
           })()}

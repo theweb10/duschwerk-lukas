@@ -67,18 +67,6 @@ export const SERIEN = [
     profilFarben: ['Chrom poliert', 'Edelstahl gebürstet', 'Schwarz matt', 'Gold gebürstet'],
     beschichtung: true,
   },
-  {
-    id: 'badewanne',
-    name: 'Badewannenlösungen',
-    label: 'Badewanne',
-    description: 'Aufsätze und Duschwände für Badewannen',
-    preisklasse: 'komfort',
-    rahmentypen: ['rahmenlos', 'teilgerahmt'],
-    glasOptionen: ['Klarglas', 'Satinato', 'Parsol Grau'],
-    glasStaerken: ['6mm', '8mm'],
-    profilFarben: ['Chrom poliert', 'Edelstahl gebürstet', 'Schwarz matt'],
-    beschichtung: true,
-  },
 ];
 
 // ─── Einbausituationen ───────────────────────────────────────
@@ -106,14 +94,6 @@ export const EINBAUSITUATIONEN = [
     icon: 'walkin',
     kompatibleSerien: ['5000', '4000', 'walkin'],
     kompatibleTuersysteme: [], // Walk-In hat keine Tür
-  },
-  {
-    id: 'badewanne',
-    name: 'Badewannenaufsatz',
-    description: 'Duschabtrennung auf bestehender Badewanne',
-    icon: 'bathtub',
-    kompatibleSerien: ['4000', '3000', 'badewanne'],
-    kompatibleTuersysteme: ['Drehtür', 'Falttür'],
   },
 ];
 
@@ -235,7 +215,6 @@ export const MONTAGEARTEN = [
   { id: 'wand',        name: 'Wandmontage' },
   { id: 'ecke',        name: 'Eckeinbau' },
   { id: 'freistehend', name: 'Freistehend' },
-  { id: 'badewanne',   name: 'Badewannenintegration' },
 ];
 
 // ─── Maß-Constraints ────────────────────────────────────────
@@ -243,10 +222,6 @@ export const MASS_CONSTRAINTS = {
   standard: {
     breite: { min: 60, max: 200, step: 1 },
     hoehe:  { min: 180, max: 220, step: 1 },
-  },
-  badewanne: {
-    breite: { min: 60, max: 160, step: 1 },
-    hoehe:  { min: 120, max: 160, step: 1 },
   },
   walkin: {
     breite: { min: 80, max: 200, step: 1 },

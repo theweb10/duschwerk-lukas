@@ -18,38 +18,44 @@ const TH  = 0.055;   // Wanenhöhe
 let _wallTex = null;
 function getWallTex() {
   if (_wallTex) return _wallTex;
-  // 256×256 — ausreichend für 3D-Viewer, keine UI-Blockade
-  const W = 256, H = 256;
+  // 512×512 — 4K-Qualität Feinsteinzeug 60×120 cm
+  const W = 512, H = 512;
   const canvas = document.createElement('canvas');
   canvas.width = W; canvas.height = H;
   const ctx = canvas.getContext('2d');
   const img = ctx.createImageData(W, H);
   const d = img.data;
-  const cl = (v) => v < 80 ? 80 : v > 248 ? 248 : v;
+  const cl = (v) => Math.max(80, Math.min(252, v)) | 0;
+
+  // 2 Fliesen horizontal × 4 vertikal (60×120 cm Format)
+  const TILES_X = 2, TILES_Y = 4;
+  const TILE_PX = W / TILES_X, TILE_PY = H / TILES_Y;
+  const GROUT = 3; // 3px scharfe Fuge
 
   for (let y = 0; y < H; y++) {
     for (let x = 0; x < W; x++) {
-      const nx = x / W, ny = y / H;
-
-      // Großformatige Fliesen 60×120 cm: 2 Fliesen horizontal, 4 vertikal
-      const tileW = 1.0 / 2.0;
-      const tileH = 1.0 / 4.0;
-      const fx = nx % tileW, fy = ny % tileH;
-      const groutPx = 2.5 / W;   // ~2.5px Fuge = ca. 2.5mm Fuge bei 256px
-      const isGrout = fx < groutPx || fy < groutPx;
-
-      // Minimales Oberflächenrauschen (hochwertiger Feinsteinzeug-Look)
-      const grain = Math.sin(nx * 83 + ny * 127) * 1.8 + Math.sin(nx * 197 - ny * 173) * 1.2;
-
-      // Fliese: reines Weiß mit minimalem Warmton; Fuge: hellgrau
-      const base = isGrout ? 205 : 248;
-      const v    = base + grain;
-
+      const tileX = Math.floor(x / TILE_PX);
+      const tileY = Math.floor(y / TILE_PY);
+      const gx = x % TILE_PX, gy = y % TILE_PY;
+      const isGrout = gx < GROUT || gy < GROUT;
+      // Lokale Koordinaten für einheitliches Muster pro Fliese
+      const lx = gx < GROUT ? 0 : (gx - GROUT) / (TILE_PX - GROUT);
+      const ly = gy < GROUT ? 0 : (gy - GROUT) / (TILE_PY - GROUT);
+      // Minimale Farbvariation pro Fliese
+      const hash = Math.abs(Math.sin(tileX * 127.1 + tileY * 311.7) * 43758.5453) % 1;
+      const tileVar = (hash - 0.5) * 6;
+      let r, g, b;
+      if (isGrout) {
+        r = 196; g = 193; b = 189; // Hellgrau Fuge
+      } else {
+        const grain  = Math.sin(lx * 83  + ly * 127) * 1.6 + Math.sin(lx * 197 - ly * 173) * 1.0;
+        const cloud  = Math.sin(lx * 3.2 + ly * 2.8) * 2.8 + Math.sin(lx * 1.9 - ly * 4.1) * 1.8;
+        const micro  = Math.sin(lx * 389 + ly * 421) * 0.3;
+        const base   = 248 + tileVar + grain * 0.4 + cloud * 0.25 + micro;
+        r = cl(base + 2); g = cl(base + 1); b = cl(base - 2);
+      }
       const i = (y * W + x) * 4;
-      d[i]   = cl(v + 1)  | 0;   // R leicht wärmer
-      d[i+1] = cl(v)      | 0;
-      d[i+2] = cl(v - 3)  | 0;   // B minimal kühler
-      d[i+3] = 255;
+      d[i] = r; d[i+1] = g; d[i+2] = b; d[i+3] = 255;
     }
   }
   ctx.putImageData(img, 0, 0);
@@ -141,18 +147,18 @@ function ShowerEnclosure({ w, h, einbausituation = 'nische' }) {
       {/* Rückwand */}
       <mesh receiveShadow position={[0, 0, backZ]}>
         <boxGeometry args={[hasRightWall ? w + WT * 2 : w + WT, h, WT]} />
-        <meshStandardMaterial map={wallTex} roughness={0.08} metalness={0.02} envMapIntensity={0.35} />
+        <meshStandardMaterial map={wallTex} roughness={0.05} metalness={0.02} envMapIntensity={0.60} />
       </mesh>
       {/* Linke Wand */}
       <mesh receiveShadow position={[leftX, 0, sideZ]}>
         <boxGeometry args={[WT, h, D]} />
-        <meshStandardMaterial map={wallTex} roughness={0.08} metalness={0.02} envMapIntensity={0.35} />
+        <meshStandardMaterial map={wallTex} roughness={0.05} metalness={0.02} envMapIntensity={0.60} />
       </mesh>
       {/* Rechte Wand — nur Nische */}
       {hasRightWall && (
         <mesh receiveShadow position={[rightX, 0, sideZ]}>
           <boxGeometry args={[WT, h, D]} />
-          <meshStandardMaterial map={wallTex} roughness={0.08} metalness={0.02} envMapIntensity={0.35} />
+          <meshStandardMaterial map={wallTex} roughness={0.05} metalness={0.02} envMapIntensity={0.60} />
         </mesh>
       )}
 
@@ -643,12 +649,12 @@ function GlaswandModel({ w, h, t, glassMat, metalMat, rahmentyp }) {
       {/* Rückwand */}
       <mesh receiveShadow position={[0, 0, backZ]}>
         <boxGeometry args={[w + WT, h, WT]} />
-        <meshStandardMaterial map={wallTex} roughness={0.06} metalness={0.03} envMapIntensity={0.30} />
+        <meshStandardMaterial map={wallTex} roughness={0.05} metalness={0.02} envMapIntensity={0.60} />
       </mesh>
       {/* Linke Wand */}
       <mesh receiveShadow position={[leftX, 0, -(D / 2)]}>
         <boxGeometry args={[WT, h, D]} />
-        <meshStandardMaterial map={wallTex} roughness={0.06} metalness={0.03} envMapIntensity={0.30} />
+        <meshStandardMaterial map={wallTex} roughness={0.05} metalness={0.02} envMapIntensity={0.60} />
       </mesh>
       {/* Duschwanne im Nassbereich (hinter dem Glas) */}
       <mesh receiveShadow position={[0, floorY, wetCZ]}>
@@ -731,30 +737,24 @@ export default function ShowerModel({ config }) {
 
   return (
     <group ref={groupRef} position={[0, -h / 2, 0]}>
-      {einbausituation === 'badewanne' ? (
-        <BathtubModel w={w} h={h} t={t} glassMat={glassMat.current} metalMat={metalMat.current} />
-      ) : einbausituation === 'glaswand' ? (
-        <GlaswandModel w={w} h={h} t={t} glassMat={glassMat.current} metalMat={metalMat.current} rahmentyp={rahmentyp} />
-      ) : (
-        <>
-          <ShowerEnclosure w={w} h={h} einbausituation={einbausituation} />
-          <ShowerFixture h={h} />
-          <TypeComponent
+      <>
+        <ShowerEnclosure w={w} h={h} einbausituation={einbausituation} />
+        <ShowerFixture h={h} />
+        <TypeComponent
+          w={w} h={h} t={t}
+          glassMat={glassMat.current}
+          metalMat={metalMat.current}
+          rahmentyp={rahmentyp}
+        />
+        {einbausituation === 'ecke' && (
+          <EckeSideGlass
             w={w} h={h} t={t}
             glassMat={glassMat.current}
             metalMat={metalMat.current}
             rahmentyp={rahmentyp}
           />
-          {einbausituation === 'ecke' && (
-            <EckeSideGlass
-              w={w} h={h} t={t}
-              glassMat={glassMat.current}
-              metalMat={metalMat.current}
-              rahmentyp={rahmentyp}
-            />
-          )}
-        </>
-      )}
+        )}
+      </>
     </group>
   );
 }

@@ -234,7 +234,7 @@ export default function ShowerCanvas({ config, isComplete }) {
           {/* Badezimmer-Szene */}
           <BathroomScene
             showerWidth={mapped.w}
-            showerHeight={config?.einbausituation === 'badewanne' ? mapped.h + 0.16 : mapped.h}
+            showerHeight={mapped.h}
           />
 
           {/* Modell — NUR wenn Konfiguration abgeschlossen */}

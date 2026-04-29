@@ -58,43 +58,63 @@ const TROPICAL_LEAVES = [
 let _floorTex = null;
 function getGrayFloorTex() {
   if (_floorTex) return _floorTex;
-  const W = 512, H = 512;
+  const W = 1024, H = 1024;
   const cv = document.createElement('canvas');
   cv.width = W; cv.height = H;
   const ctx = cv.getContext('2d');
   const img = ctx.createImageData(W, H);
   const d = img.data;
   const cl = v => Math.max(0, Math.min(255, v)) | 0;
+  // 2×2 großformatige Porzellan-Fliesen (60×60 cm) pro Textur-Repeat
+  const TILE_PX = W / 2, TILE_PY = H / 2;
+  const GROUT = 5; // 5px Fuge — klar und sauber
   for (let y = 0; y < H; y++) {
     for (let x = 0; x < W; x++) {
-      const nx = x / W, ny = y / H;
-      const tx = nx % 0.5, ty = ny % 0.5;
-      const isGrout = tx < 2.0 / W || ty < 2.0 / W;
-      const grain = Math.sin(nx * 89 + ny * 143) * 2.2 + Math.sin(nx * 211 - ny * 179) * 1.4;
-      const micro = Math.sin(nx * 317 + ny * 251) * 0.7 + Math.sin(nx * 431 - ny * 397) * 0.4;
-      const band  = Math.sin(ny * 9 + nx * 2.1) * 1.5 + Math.sin(ny * 22 + nx * 0.5) * 0.8;
-      const base  = isGrout ? 96 : 146;
-      const v     = base + grain + micro + band;
-      const i     = (y * W + x) * 4;
-      d[i]   = cl(v);
-      d[i+1] = cl(v + 1);
-      d[i+2] = cl(v + 4);
-      d[i+3] = 255;
+      const tileX = Math.floor(x / TILE_PX);
+      const tileY = Math.floor(y / TILE_PY);
+      const gx = x % TILE_PX;
+      const gy = y % TILE_PY;
+      const isGrout = gx < GROUT || gy < GROUT;
+      // Deterministisches Per-Fliesen-Rauschen: jede Fliese leicht individuell
+      const hash = Math.abs(Math.sin(tileX * 127.1 + tileY * 311.7) * 43758.5453) % 1;
+      const tileVar = (hash - 0.5) * 14;
+      // Lokale Fliesenkoordinaten (0–1) für einheitliches internes Muster
+      const lx = gx < GROUT ? 0 : (gx - GROUT) / (TILE_PX - GROUT);
+      const ly = gy < GROUT ? 0 : (gy - GROUT) / (TILE_PY - GROUT);
+      let r, g, b;
+      if (isGrout) {
+        r = 150; g = 146; b = 140;
+      } else {
+        // Einheitliche interne Maserung pro Fliese (exakt gleiches Muster in jeder Fliese)
+        const grain  = Math.sin(lx * 79  + ly * 131) * 1.8
+                     + Math.sin(lx * 197 - ly * 163) * 1.1
+                     + Math.sin(lx * 311 + ly * 239) * 0.55;
+        // Großflächige Wolken-Variation (polierter Stein-Look)
+        const cloud  = Math.sin(lx * 4.8  + ly * 3.6) * 4.2
+                     + Math.sin(lx * 2.9  - ly * 5.3) * 2.6
+                     + Math.sin(lx * 7.1  + ly * 2.0) * 1.3;
+        const micro  = Math.sin(lx * 421  + ly * 383) * 0.35;
+        const base   = 194 + tileVar + grain + cloud + micro;
+        // Warmer Creme-Beige-Ton (Feinsteinzeug Natur)
+        r = cl(base + 10); g = cl(base + 6); b = cl(base - 6);
+      }
+      const i = (y * W + x) * 4;
+      d[i] = r; d[i+1] = g; d[i+2] = b; d[i+3] = 255;
     }
   }
   ctx.putImageData(img, 0, 0);
   const tex = new THREE.CanvasTexture(cv);
   tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
-  tex.repeat.set(3.5, 2.5);
+  tex.repeat.set(4.0, 3.0); // 8×6 Fliesen gesamt
   tex.anisotropy = 16;
   return (_floorTex = tex);
 }
 
-// Crema-Marfil-Marmor — warmes Creme/Beige, braun-goldene Äderung, kein reines Weiß
+// Calacatta-Marmor — dramatische Äderung, tiefes Elfenbein-Weiß, luxuriöse Tiefe
 let _marbleTex = null;
 function getMarbleTex() {
   if (_marbleTex) return _marbleTex;
-  const W = 512, H = 512;
+  const W = 1024, H = 1024;
   const cv = document.createElement('canvas');
   cv.width = W; cv.height = H;
   const ctx = cv.getContext('2d');
@@ -104,35 +124,43 @@ function getMarbleTex() {
   for (let y = 0; y < H; y++) {
     for (let x = 0; x < W; x++) {
       const nx = x / W, ny = y / H;
-      const w1    = Math.sin(nx * 6.8 + ny * 3.4) * 0.85;
-      const w2    = Math.sin(nx * 2.5 - ny * 5.0) * 0.55;
-      const w3    = Math.sin(nx * 4.5 + ny * 1.4) * 0.38;
-      const vein1 = Math.abs(Math.sin((nx + ny * 0.60 + w1) * 11.8)) * 20;
-      const vein2 = Math.abs(Math.sin((nx * 0.36 - ny    + w2 * 0.62) * 6.8)) * 12;
-      const vein3 = Math.abs(Math.sin((nx * 1.1  + ny * 1.0  + w3)  * 18.0)) * 4;
-      const micro = Math.sin(nx * 193 + ny * 271) * 1.2 + Math.sin(nx * 337 - ny * 301) * 0.7;
-      const vd    = vein1 + vein2 + vein3;
-      const base  = 218 - vd * 0.78 + micro;
-      const i     = (y * W + x) * 4;
-      d[i]   = cl(base + 16);   // R: warm golden
-      d[i+1] = cl(base + 5);    // G: mid
-      d[i+2] = cl(base - 18);   // B: kalt unterdrückt → warmer Beige-Ton
+      // Domain-Warping für natürlichen Äder-Fluss
+      const w1 = Math.sin(nx * 5.2  + ny * 2.8)  * 0.95;
+      const w2 = Math.sin(nx * 2.1  - ny * 4.6)  * 0.62;
+      const w3 = Math.sin(nx * 3.8  + ny * 1.2)  * 0.44;
+      // Hauptadern (breit, dramatisch — Calacatta-typisch)
+      const vMain1 = Math.abs(Math.sin((nx + ny * 0.55 + w1) * 9.5)) * 30;
+      const vMain2 = Math.abs(Math.sin((nx * 0.42 - ny + w2 * 0.68) * 5.5)) * 22;
+      // Sekundäradern (fein, verzweigt)
+      const vSec1  = Math.abs(Math.sin((nx * 1.8  + ny * 0.8 + w3)        * 15.0)) * 11;
+      const vSec2  = Math.abs(Math.sin((nx * 0.6  + ny * 2.2 + w1 * 0.4)  * 11.0)) *  7;
+      const vSec3  = Math.abs(Math.sin((nx * 2.4  - ny * 1.5 + w2 * 0.3)  * 19.0)) *  5;
+      // Gold-Akzent-Ader
+      const vGold  = Math.abs(Math.sin((nx * 1.3  - ny * 0.7 + w2 * 0.5)  * 13.0)) *  9;
+      // Mikro-Oberfläche (Polierstein-Tiefe)
+      const micro  = Math.sin(nx * 211 + ny * 283) * 1.5 + Math.sin(nx * 337 - ny * 317) * 0.9;
+      const base   = 248 - vMain1 * 0.84 - vMain2 * 0.70
+                       - vSec1 * 0.42 - vSec2 * 0.30 - vSec3 * 0.18 + micro;
+      const i = (y * W + x) * 4;
+      d[i]   = cl(base +  8 - vGold * 0.28);  // R: warm ivory
+      d[i+1] = cl(base +  2 - vGold * 0.55);  // G
+      d[i+2] = cl(base - 20 - vGold * 0.80);  // B: kalt unterdrückt
       d[i+3] = 255;
     }
   }
   ctx.putImageData(img, 0, 0);
   const tex = new THREE.CanvasTexture(cv);
   tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
-  tex.repeat.set(1.2, 0.65);
+  tex.repeat.set(1.0, 0.75);
   tex.anisotropy = 16;
   return (_marbleTex = tex);
 }
 
-// Dunkles Nussbaum-Holz — warme Maserung, luxuriöse Tiefe
+// Dunkles Nussbaum-Holz — warme Maserung, luxuriöse Tiefe (1024px für 4K)
 let _woodTex = null;
 function getWoodTex() {
   if (_woodTex) return _woodTex;
-  const W = 512, H = 512;
+  const W = 1024, H = 1024;
   const cv = document.createElement('canvas');
   cv.width = W; cv.height = H;
   const ctx = cv.getContext('2d');
@@ -142,21 +170,23 @@ function getWoodTex() {
   for (let y = 0; y < H; y++) {
     for (let x = 0; x < W; x++) {
       const nx = x / W, ny = y / H;
-      // Breite Jahresringe
-      const g1 = Math.sin(ny * 44 + Math.sin(nx * 4.2) * 2.8) * 14;
+      // Breite Jahresringe mit organischer Verzerrung
+      const g1 = Math.sin(ny * 44  + Math.sin(nx * 4.2) * 3.2) * 16;
       // Feine Maserung
-      const g2 = Math.sin(ny * 98 + Math.sin(nx * 7.8) * 1.6) * 7;
-      // Sehr feine Textur
-      const g3 = Math.sin(ny * 210 + nx * 1.8) * 2.5;
-      // Quer-Variation (verhindert zu gleichmäßige Streifen)
-      const g4 = Math.sin(nx * 31 + ny * 8.4) * 3.5;
-      // Makelligkeit / Unregelmäßigkeit
-      const g5 = Math.sin(nx * 73 + ny * 127) * 1.8 + Math.sin(nx * 151 - ny * 89) * 1.2;
-      const grain = g1 + g2 + g3 + g4 + g5;
+      const g2 = Math.sin(ny * 98  + Math.sin(nx * 7.8) * 2.0) * 8;
+      // Sehr feine Holzfasern
+      const g3 = Math.sin(ny * 218 + nx * 2.1) * 3.0;
+      // Quer-Variation
+      const g4 = Math.sin(nx * 31  + ny * 8.4) * 4.0;
+      // Astigkeit / Makeln
+      const g5 = Math.sin(nx * 73  + ny * 127) * 2.2 + Math.sin(nx * 151 - ny * 89) * 1.4;
+      // Glanzpunkte (poliertes Holz)
+      const g6 = Math.sin(nx * 7.2 + ny * 3.1) * 3.5 + Math.sin(nx * 2.8 - ny * 9.4) * 2.0;
+      const grain = g1 + g2 + g3 + g4 + g5 + g6;
       const i = (y * W + x) * 4;
-      d[i]   = cl(118 + grain * 1.05);  // warmes Nussbraun
-      d[i+1] = cl(78  + grain * 0.80);
-      d[i+2] = cl(44  + grain * 0.45);
+      d[i]   = cl(120 + grain * 1.08);  // warmes Nussbraun
+      d[i+1] = cl(80  + grain * 0.82);
+      d[i+2] = cl(46  + grain * 0.46);
       d[i+3] = 255;
     }
   }
@@ -201,17 +231,16 @@ function getStoneTex() {
   return (_stoneTex = tex);
 }
 
-// Blatt-Textur — zugespitztes Oval, Farbverlauf, Rippen (Canvas-Alpha-Maske)
+// Blatt-Textur — zugespitztes Oval, reicher Farbverlauf, Rippen, Oberflächendetail (128px)
 let _leafTex = null;
 function getLeafTex() {
   if (_leafTex) return _leafTex;
-  const W = 64, H = 128;
+  const W = 128, H = 256;
   const cv = document.createElement('canvas');
   cv.width = W; cv.height = H;
   const ctx = cv.getContext('2d');
-  ctx.clearRect(0, 0, W, H);  // transparenter Hintergrund
+  ctx.clearRect(0, 0, W, H);
 
-  // Blattform-Clip: zugespitztes Oval via Bezier
   ctx.save();
   ctx.beginPath();
   ctx.moveTo(W / 2, H - 1);
@@ -220,40 +249,49 @@ function getLeafTex() {
   ctx.closePath();
   ctx.clip();
 
-  // Farbverlauf: dunkelgrün an Basis → hellgrün an Spitze
+  // Satter Farbverlauf: tiefes Dunkelgrün → lebendiges Grasgrün
   const grad = ctx.createLinearGradient(W / 2, H, W / 2, 0);
-  grad.addColorStop(0.00, '#1e3d12');
-  grad.addColorStop(0.30, '#2d5a1c');
-  grad.addColorStop(0.65, '#3c7228');
-  grad.addColorStop(1.00, '#4e8c36');
+  grad.addColorStop(0.00, '#193810');
+  grad.addColorStop(0.25, '#265219');
+  grad.addColorStop(0.55, '#356b22');
+  grad.addColorStop(0.80, '#447d2e');
+  grad.addColorStop(1.00, '#58943c');
   ctx.fillStyle = grad;
   ctx.fill();
 
-  // Seitliche Aufhellung (Lichteinfall von links simuliert)
+  // Leichte radiale Aufhellung in der Mitte (3D-Wölbung)
+  const radGrad = ctx.createRadialGradient(W/2, H*0.45, 0, W/2, H*0.45, W*0.55);
+  radGrad.addColorStop(0,   'rgba(180,255,120,0.13)');
+  radGrad.addColorStop(0.5, 'rgba(180,255,120,0.05)');
+  radGrad.addColorStop(1,   'rgba(0,0,0,0.08)');
+  ctx.fillStyle = radGrad;
+  ctx.fill();
+
+  // Seitliche Aufhellung (Lichteinfall simuliert)
   const sideGrad = ctx.createLinearGradient(0, 0, W, 0);
-  sideGrad.addColorStop(0.0, 'rgba(255,255,200,0.04)');
-  sideGrad.addColorStop(0.4, 'rgba(255,255,200,0.10)');
-  sideGrad.addColorStop(0.6, 'rgba(255,255,200,0.10)');
-  sideGrad.addColorStop(1.0, 'rgba(255,255,200,0.04)');
+  sideGrad.addColorStop(0.0, 'rgba(255,255,200,0.06)');
+  sideGrad.addColorStop(0.38, 'rgba(255,255,200,0.14)');
+  sideGrad.addColorStop(0.62, 'rgba(255,255,200,0.14)');
+  sideGrad.addColorStop(1.0, 'rgba(255,255,200,0.06)');
   ctx.fillStyle = sideGrad;
   ctx.fill();
 
-  // Mittelrippe
-  ctx.strokeStyle = 'rgba(220,255,160,0.26)';
-  ctx.lineWidth = 1.8;
+  // Mittelrippe (stärker, realistischer)
+  ctx.strokeStyle = 'rgba(210,255,140,0.34)';
+  ctx.lineWidth = 2.2;
   ctx.beginPath();
   ctx.moveTo(W / 2, H - 1);
-  ctx.lineTo(W / 2, 1);
+  ctx.quadraticCurveTo(W / 2 + 3, H * 0.5, W / 2, 1);
   ctx.stroke();
 
-  // Seitenrippen (achsensymmetrisch, in Blattmitte breiter)
-  ctx.lineWidth = 0.9;
-  for (let i = 2; i <= 8; i++) {
-    const fy = i / 9;
+  // Seitenrippen
+  ctx.lineWidth = 1.1;
+  for (let i = 2; i <= 12; i++) {
+    const fy = i / 13;
     const py = fy * H;
-    const spread = (W / 2 - 2) * 0.80 * Math.sin(Math.PI * fy);
-    const dy = -H * 0.062;
-    ctx.strokeStyle = `rgba(220,255,160,${0.05 + 0.10 * Math.sin(Math.PI * fy)})`;
+    const spread = (W / 2 - 3) * 0.82 * Math.sin(Math.PI * fy);
+    const dy = -H * 0.055;
+    ctx.strokeStyle = `rgba(210,255,140,${0.06 + 0.13 * Math.sin(Math.PI * fy)})`;
     ctx.beginPath(); ctx.moveTo(W / 2, py); ctx.lineTo(W / 2 - spread, py + dy); ctx.stroke();
     ctx.beginPath(); ctx.moveTo(W / 2, py); ctx.lineTo(W / 2 + spread, py + dy); ctx.stroke();
   }
@@ -319,12 +357,12 @@ function BathroomPlant({ position, scale = 1 }) {
             <planeGeometry args={[w * scale, len * scale]} />
             <meshStandardMaterial
               map={leafTex}
-              roughness={0.58}
-              metalness={0.01}
+              roughness={0.62}
+              metalness={0.0}
               side={THREE.DoubleSide}
               transparent
-              alphaTest={0.35}
-              envMapIntensity={0.12}
+              alphaTest={0.30}
+              envMapIntensity={0.18}
             />
           </mesh>
         );
@@ -344,17 +382,17 @@ function BathStool({ position }) {
       {/* Sitzfläche */}
       <mesh castShadow position={[0, legH + 0.025, 0]}>
         <boxGeometry args={[0.38, 0.046, 0.26]} />
-        <meshStandardMaterial map={woodTex} roughness={0.48} metalness={0.0} envMapIntensity={0.2} />
+        <meshStandardMaterial map={woodTex} roughness={0.38} metalness={0.0} envMapIntensity={0.45} />
       </mesh>
       {/* Abrundung Oberkante (schmale Leiste vorne) */}
       <mesh position={[0, legH + 0.044, 0.128]}>
         <cylinderGeometry args={[0.010, 0.010, 0.36, 12]} rotation={[0, 0, Math.PI / 2]} />
-        <meshStandardMaterial map={woodTex} roughness={0.50} metalness={0.0} />
+        <meshStandardMaterial map={woodTex} roughness={0.40} metalness={0.0} envMapIntensity={0.40} />
       </mesh>
       {/* Querstrebe */}
       <mesh position={[0, legH * 0.38, 0]}>
         <boxGeometry args={[0.290, 0.018, 0.016]} />
-        <meshStandardMaterial map={woodTex} roughness={0.58} metalness={0.0} />
+        <meshStandardMaterial map={woodTex} roughness={0.45} metalness={0.0} envMapIntensity={0.40} />
       </mesh>
       {/* 4 Beine */}
       {[[-0.155, -0.100], [0.155, -0.100], [-0.155, 0.100], [0.155, 0.100]].map(([x, z], i) => (
@@ -381,14 +419,14 @@ function WoodenLadder({ position }) {
     <group position={position} rotation={[0, 0, 0.09]}>
       {[-SPAN / 2, SPAN / 2].map((x, i) => (
         <mesh key={i} castShadow position={[x, RAIL_H / 2, 0]}>
-          <cylinderGeometry args={[0.022, 0.022, RAIL_H, 12]} />
-          <meshStandardMaterial map={woodTex} roughness={0.55} metalness={0.0} />
+          <cylinderGeometry args={[0.022, 0.022, RAIL_H, 16]} />
+          <meshStandardMaterial map={woodTex} roughness={0.42} metalness={0.0} envMapIntensity={0.40} />
         </mesh>
       ))}
       {LADDER_RUNGS.map((ry, i) => (
         <mesh key={i} castShadow rotation={[0, 0, Math.PI / 2]} position={[0, ry, 0]}>
-          <cylinderGeometry args={[0.016, 0.016, SPAN, 12]} />
-          <meshStandardMaterial map={woodTex} roughness={0.55} metalness={0.0} />
+          <cylinderGeometry args={[0.016, 0.016, SPAN, 14]} />
+          <meshStandardMaterial map={woodTex} roughness={0.42} metalness={0.0} envMapIntensity={0.40} />
         </mesh>
       ))}
       {/* Handtuch (groß, natürlich drapiert) */}
@@ -468,8 +506,8 @@ export default function BathroomScene({ showerWidth = 1.2, showerHeight = 2.0 })
   const skH = 0.090, skT = 0.014;
   const skY = floorY + skH / 2;
 
-  // Marmor-Material — poliert aber nicht plastisch (Crema Marfil)
-  const M_WALL = { map: marbleTex, roughness: 0.12, metalness: 0.02, envMapIntensity: 0.55 };
+  // Calacatta-Marmor — ultra-poliert, tiefer Glanz
+  const M_WALL = { map: marbleTex, roughness: 0.06, metalness: 0.01, envMapIntensity: 0.90 };
   const M_CHR  = { color: '#cdcdcd', metalness: 0.94, roughness: 0.06, envMapIntensity: 1.6 };
   const M_BRASS= { color: '#c8a030', metalness: 0.88, roughness: 0.18, envMapIntensity: 1.4 };
 
@@ -486,17 +524,17 @@ export default function BathroomScene({ showerWidth = 1.2, showerHeight = 2.0 })
       {/* Links der Nische */}
       <mesh receiveShadow rotation={[-Math.PI / 2, 0, 0]} position={[(roomL + nisLeftX) / 2, floorY, roomCZ]}>
         <planeGeometry args={[nisLeftX - roomL, roomD]} />
-        <meshStandardMaterial map={floorTex} roughness={0.22} metalness={0.04} envMapIntensity={0.45} />
+        <meshStandardMaterial map={floorTex} roughness={0.07} metalness={0.03} envMapIntensity={0.80} />
       </mesh>
       {/* Rechts der Nische */}
       <mesh receiveShadow rotation={[-Math.PI / 2, 0, 0]} position={[(nisRightX + roomR) / 2, floorY, roomCZ]}>
         <planeGeometry args={[roomR - nisRightX, roomD]} />
-        <meshStandardMaterial map={floorTex} roughness={0.22} metalness={0.04} envMapIntensity={0.45} />
+        <meshStandardMaterial map={floorTex} roughness={0.07} metalness={0.03} envMapIntensity={0.80} />
       </mesh>
       {/* Mitte vor der Dusche (nisBackZ..roomFZ exkl. Nische) */}
       <mesh receiveShadow rotation={[-Math.PI / 2, 0, 0]} position={[(nisLeftX + nisRightX) / 2, floorY, roomFZ / 2]}>
         <planeGeometry args={[nisRightX - nisLeftX, roomFZ]} />
-        <meshStandardMaterial map={floorTex} roughness={0.22} metalness={0.04} envMapIntensity={0.45} />
+        <meshStandardMaterial map={floorTex} roughness={0.07} metalness={0.03} envMapIntensity={0.80} />
       </mesh>
       {/* AO-Schatten an Wand-Boden-Übergängen */}
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[roomCX, floorY + 0.002, nisBackZ + 0.060]}>
@@ -837,8 +875,8 @@ export default function BathroomScene({ showerWidth = 1.2, showerHeight = 2.0 })
       {/* Großer Topfbaum: hintere linke Ecke */}
       <BathroomPlant position={[roomL + 0.32, floorY, nisBackZ + 0.50]} scale={1.55} />
 
-      {/* Mittlere Pflanze: links neben Dusche */}
-      <BathroomPlant position={[nisLeftX - 0.60, floorY, 0.74]} scale={0.90} />
+      {/* Mittlere Pflanze: links neben Dusche — weit genug von Hocker und Leiter */}
+      <BathroomPlant position={[nisLeftX - 0.58, floorY, 1.25]} scale={0.90} />
 
       {/* Mini-Pflanze auf linker Fensterbank */}
       <BathroomPlant
@@ -883,8 +921,8 @@ export default function BathroomScene({ showerWidth = 1.2, showerHeight = 2.0 })
         <meshBasicMaterial color="#0a0704" transparent opacity={0.22} />
       </mesh>
 
-      {/* Holz-Leiter-Handtuchhalter */}
-      <WoodenLadder position={[roomL + 0.24, floorY, 0.74]} />
+      {/* Holz-Leiter-Handtuchhalter — 0.42m von linker Wand, kein Clipping */}
+      <WoodenLadder position={[roomL + 0.42, floorY, 0.74]} />
 
       {/* Rollen-Handtücher auf kleinem Holztablett (auf dem Boden) */}
       <mesh castShadow position={[nisLeftX - 0.70, floorY + 0.010, 0.30]}>

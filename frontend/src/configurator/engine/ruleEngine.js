@@ -65,9 +65,7 @@ export function getVerfuegbareEinbausituationenBySerie() {
 
 export function getMassConstraints(einbausituationId, tuersystemId) {
   let constraints;
-  if (einbausituationId === 'badewanne') {
-    constraints = { ...MASS_CONSTRAINTS.badewanne };
-  } else if (einbausituationId === 'walkin') {
+  if (einbausituationId === 'walkin') {
     constraints = { ...MASS_CONSTRAINTS.walkin };
   } else {
     constraints = { ...MASS_CONSTRAINTS.standard };
