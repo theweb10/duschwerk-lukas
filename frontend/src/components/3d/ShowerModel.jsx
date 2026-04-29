@@ -153,14 +153,14 @@ function RainShower({ w, h }) {
 
   return (
     <group>
-      {/* Deckenanschluss-Rosette */}
-      <mesh position={[0, topY - 0.006, -(D - armLen)]}>
+      {/* Deckenanschluss-Rosette — bündig an der Rückwand (z = -D) */}
+      <mesh position={[0, topY - 0.006, -D + 0.007]}>
         <cylinderGeometry args={[0.022, 0.022, 0.012, 18]} />
         <meshStandardMaterial {...MC} />
       </mesh>
-      {/* Deckrohr (rund, poliert) */}
-      <mesh position={[0, topY - 0.012, -(D - armLen / 2)]}>
-        <cylinderGeometry args={[0.010, 0.010, armLen, 14]} rotation={[Math.PI / 2, 0, 0]} />
+      {/* Deckrohr — rotation auf mesh, nicht auf geometry */}
+      <mesh rotation={[Math.PI / 2, 0, 0]} position={[0, topY - 0.012, -(D - armLen / 2)]}>
+        <cylinderGeometry args={[0.010, 0.010, armLen, 14]} />
         <meshStandardMaterial {...MC} />
       </mesh>
       {/* Knickstück oben */}
