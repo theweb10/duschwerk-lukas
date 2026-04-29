@@ -141,31 +141,64 @@ function getTrayTex() {
 // Inline JSX-Materialien werden weiter unten direkt in den Meshes definiert.
 // Keine Singletons für statische Materialien — verhindert R3F-Cleanup-Crash.
 
-// ── Decken-Regendusche (schwarzes Design) ────────────────────
+// ── Decken-Regendusche — Premium Quadrat-Kopf (Axor/Hansgrohe) ──────
 function RainShower({ w, h }) {
-  const headW  = Math.min(w * 0.42, 0.38);
-  const headD  = Math.min(D * 0.44, 0.28);
-  const armLen = 0.28;
+  const headW  = Math.min(w * 0.44, 0.40);
+  const headD  = Math.min(D * 0.46, 0.30);
+  const armLen = 0.32;
   const topY   = h / 2;
   const headZ  = -(D - armLen) + 0.01;
+  const MC = { color: '#dcdcdc', metalness: 0.97, roughness: 0.03, envMapIntensity: 2.2 };
+  const MF = { color: '#909090', metalness: 0.97, roughness: 0.06, envMapIntensity: 1.8 };
 
   return (
     <group>
-      <mesh position={[0, topY - 0.018, -(D - armLen / 2)]}>
-        <boxGeometry args={[0.020, 0.020, armLen]} />
-        <meshStandardMaterial color="#d8d8d8" metalness={0.92} roughness={0.10} envMapIntensity={1.2} />
+      {/* Deckenanschluss-Rosette */}
+      <mesh position={[0, topY - 0.006, -(D - armLen)]}>
+        <cylinderGeometry args={[0.022, 0.022, 0.012, 18]} />
+        <meshStandardMaterial {...MC} />
       </mesh>
-      <mesh position={[0, topY - 0.055, headZ]}>
-        <boxGeometry args={[0.020, 0.074, 0.020]} />
-        <meshStandardMaterial color="#d8d8d8" metalness={0.92} roughness={0.10} envMapIntensity={1.2} />
+      {/* Deckrohr (rund, poliert) */}
+      <mesh position={[0, topY - 0.012, -(D - armLen / 2)]}>
+        <cylinderGeometry args={[0.010, 0.010, armLen, 14]} rotation={[Math.PI / 2, 0, 0]} />
+        <meshStandardMaterial {...MC} />
       </mesh>
-      <mesh castShadow position={[0, topY - 0.094, headZ]}>
-        <boxGeometry args={[headW, 0.016, headD]} />
-        <meshStandardMaterial color="#d0d0d0" metalness={0.92} roughness={0.10} envMapIntensity={1.2} />
+      {/* Knickstück oben */}
+      <mesh position={[0, topY - 0.022, headZ]}>
+        <sphereGeometry args={[0.013, 12, 10]} />
+        <meshStandardMaterial {...MC} />
       </mesh>
-      <mesh position={[0, topY - 0.103, headZ]}>
-        <boxGeometry args={[headW - 0.012, 0.002, headD - 0.012]} />
-        <meshStandardMaterial color="#b8b8b8" metalness={0.96} roughness={0.06} envMapIntensity={1.5} />
+      {/* Vertikales Verbindungsrohr */}
+      <mesh position={[0, topY - 0.050, headZ]}>
+        <cylinderGeometry args={[0.009, 0.009, 0.058, 14]} />
+        <meshStandardMaterial {...MC} />
+      </mesh>
+      {/* Brausekopf-Körper (flacher Quader mit abgerundeten Ecken durch Zylinder-Trick) */}
+      <mesh castShadow position={[0, topY - 0.086, headZ]}>
+        <boxGeometry args={[headW, 0.018, headD - 0.03 * 2]} />
+        <meshStandardMaterial {...MC} />
+      </mesh>
+      <mesh castShadow position={[0, topY - 0.086, headZ]}>
+        <boxGeometry args={[headW - 0.03 * 2, 0.018, headD]} />
+        <meshStandardMaterial {...MC} />
+      </mesh>
+      {/* Düsenfläche (dunkel, mit feiner Textur-Andeutung) */}
+      <mesh position={[0, topY - 0.096, headZ]}>
+        <boxGeometry args={[headW - 0.008, 0.003, headD - 0.008 - 0.03 * 2]} />
+        <meshStandardMaterial {...MF} />
+      </mesh>
+      <mesh position={[0, topY - 0.096, headZ]}>
+        <boxGeometry args={[headW - 0.008 - 0.03 * 2, 0.003, headD - 0.008]} />
+        <meshStandardMaterial {...MF} />
+      </mesh>
+      {/* Chromring aussen */}
+      <mesh position={[0, topY - 0.082, headZ]}>
+        <boxGeometry args={[headW, 0.004, headD - 0.03 * 2]} />
+        <meshStandardMaterial color="#c8c8c8" metalness={0.98} roughness={0.02} envMapIntensity={2.5} />
+      </mesh>
+      <mesh position={[0, topY - 0.082, headZ]}>
+        <boxGeometry args={[headW - 0.03 * 2, 0.004, headD]} />
+        <meshStandardMaterial color="#c8c8c8" metalness={0.98} roughness={0.02} envMapIntensity={2.5} />
       </mesh>
     </group>
   );
@@ -536,70 +569,108 @@ function Falttuer({ w, h, t, glassMat, metalMat, rahmentyp, doorOpen }) {
   );
 }
 
-// ── Duscharmatur: Rückwand, schwarz, unter Regendusche ───────
-// Alle Meshes mit inline-Material → kein primitive-Sharing-Problem
+// ── Duscharmatur: Premium-Thermostat + Handbrause (Hansgrohe/Axor) ──
 function ShowerFixture({ h }) {
-  // An Rückwand (innere Fläche z = -D), mittig (x=0), direkt unter Regendusche
-  const z      = -D + 0.024;      // 24 mm vor Rückwand
-  const tY     = -h / 2 + 1.00;  // Thermostat 100 cm ab Boden
-  const barCY  = -h / 2 + 0.62;  // Stangen-Mitte
+  const z       = -D + 0.026;
+  const tY      = -h / 2 + 1.02;   // Thermostat-Mitte 102 cm
+  const barTopY = -h / 2 + 1.00;
+  const barBotY = -h / 2 + 0.36;
+  const barCY   = (barTopY + barBotY) / 2;
+  const barH    = barTopY - barBotY;
+  const barX    = 0.095;            // Wandstange rechts vom Thermostat
 
-  const C = '#d4d4d4';  // Chrom/Silber
-  const M = { color: C, metalness: 0.94, roughness: 0.08, envMapIntensity: 1.3 };
+  const MC  = { color: '#dcdcdc', metalness: 0.97, roughness: 0.03, envMapIntensity: 2.2 };
+  const MCA = { color: '#c0c0c0', metalness: 0.98, roughness: 0.02, envMapIntensity: 2.6 };
+  const MCD = { color: '#888888', metalness: 0.96, roughness: 0.08, envMapIntensity: 1.6 };
 
   return (
     <group>
-      {/* ── Thermostatarmatur ── */}
+      {/* ── Thermostatarmatur (Hansgrohe ShowerSelect-Stil) ── */}
+      {/* Hauptkörper: schlankes Rechteckprofil */}
       <mesh position={[0, tY, z]}>
-        <boxGeometry args={[0.140, 0.062, 0.040]} />
-        <meshStandardMaterial {...M} />
+        <boxGeometry args={[0.195, 0.072, 0.038]} />
+        <meshStandardMaterial {...MC} />
       </mesh>
-      {/* Knopf Temperatur (links) */}
-      <mesh rotation={[Math.PI / 2, 0, 0]} position={[-0.040, tY + 0.010, z + 0.032]}>
-        <cylinderGeometry args={[0.020, 0.020, 0.024, 16]} />
-        <meshStandardMaterial {...M} />
+      {/* Obere Zier-Kante */}
+      <mesh position={[0, tY + 0.033, z + 0.012]}>
+        <boxGeometry args={[0.195, 0.003, 0.026]} />
+        <meshStandardMaterial {...MCA} />
       </mesh>
-      {/* Knopf Menge (rechts) */}
-      <mesh rotation={[Math.PI / 2, 0, 0]} position={[0.040, tY + 0.010, z + 0.032]}>
-        <cylinderGeometry args={[0.015, 0.015, 0.024, 16]} />
-        <meshStandardMaterial {...M} />
+      {/* Untere Zier-Kante */}
+      <mesh position={[0, tY - 0.033, z + 0.012]}>
+        <boxGeometry args={[0.195, 0.003, 0.026]} />
+        <meshStandardMaterial {...MCA} />
       </mesh>
-      {/* Auslaufstutzen unten */}
-      <mesh rotation={[Math.PI / 2, 0, 0]} position={[0, tY - 0.018, z + 0.030]}>
-        <cylinderGeometry args={[0.009, 0.009, 0.018, 10]} />
-        <meshStandardMaterial {...M} />
+      {/* Großer Walzengriff Temperatur (links) */}
+      <mesh rotation={[Math.PI / 2, 0, 0]} position={[-0.055, tY, z + 0.030]}>
+        <cylinderGeometry args={[0.024, 0.024, 0.032, 20]} />
+        <meshStandardMaterial {...MC} />
+      </mesh>
+      {/* Griff-Markierung (Strich oben) */}
+      <mesh rotation={[Math.PI / 2, 0, 0]} position={[-0.055, tY + 0.014, z + 0.047]}>
+        <boxGeometry args={[0.004, 0.032, 0.003]} />
+        <meshStandardMaterial {...MCD} />
+      </mesh>
+      {/* Kleiner Walzengriff Durchfluss (rechts) */}
+      <mesh rotation={[Math.PI / 2, 0, 0]} position={[0.055, tY, z + 0.030]}>
+        <cylinderGeometry args={[0.017, 0.017, 0.032, 16]} />
+        <meshStandardMaterial {...MC} />
+      </mesh>
+      {/* Wandrosetten (links + rechts) */}
+      {[-0.078, 0.078].map((dx, i) => (
+        <mesh key={i} rotation={[Math.PI / 2, 0, 0]} position={[dx, tY, z - 0.004]}>
+          <cylinderGeometry args={[0.013, 0.013, 0.006, 14]} />
+          <meshStandardMaterial {...MC} />
+        </mesh>
+      ))}
+      {/* Verbindungsrohr Thermostat → Wandstange (unten) */}
+      <mesh position={[(0 + barX) / 2, tY - 0.028, z + 0.010]}>
+        <cylinderGeometry args={[0.006, 0.006, 0.100, 10]} rotation={[0, 0, Math.PI / 2]} />
+        <meshStandardMaterial {...MC} />
       </mesh>
 
-      {/* ── Wandstange ── */}
-      <mesh position={[0, barCY, z]}>
-        <cylinderGeometry args={[0.010, 0.010, 0.58, 10]} />
-        <meshStandardMaterial {...M} />
+      {/* ── Wandstange (polierter Chrom-Rundstab) ── */}
+      <mesh position={[barX, barCY, z]}>
+        <cylinderGeometry args={[0.007, 0.007, barH, 14]} />
+        <meshStandardMaterial {...MC} />
       </mesh>
-      {/* Halterung oben */}
-      <mesh rotation={[Math.PI / 2, 0, 0]} position={[0, barCY + 0.26, z - 0.004]}>
-        <cylinderGeometry args={[0.016, 0.016, 0.020, 10]} />
-        <meshStandardMaterial {...M} />
+      {/* Wandhalterung oben */}
+      <mesh rotation={[Math.PI / 2, 0, 0]} position={[barX, barTopY, z - 0.005]}>
+        <cylinderGeometry args={[0.013, 0.013, 0.020, 14]} />
+        <meshStandardMaterial {...MC} />
       </mesh>
-      {/* Halterung unten */}
-      <mesh rotation={[Math.PI / 2, 0, 0]} position={[0, barCY - 0.26, z - 0.004]}>
-        <cylinderGeometry args={[0.016, 0.016, 0.020, 10]} />
-        <meshStandardMaterial {...M} />
+      {/* Wandhalterung unten */}
+      <mesh rotation={[Math.PI / 2, 0, 0]} position={[barX, barBotY, z - 0.005]}>
+        <cylinderGeometry args={[0.013, 0.013, 0.020, 14]} />
+        <meshStandardMaterial {...MC} />
       </mesh>
 
       {/* ── Handbrausen-Schlitten ── */}
-      <mesh position={[0, barCY + 0.08, z + 0.004]}>
-        <boxGeometry args={[0.034, 0.044, 0.034]} />
-        <meshStandardMaterial {...M} />
+      <mesh position={[barX, barCY + 0.12, z + 0.002]}>
+        <boxGeometry args={[0.028, 0.052, 0.028]} />
+        <meshStandardMaterial {...MC} />
       </mesh>
-      {/* Anschlussrohr → Handbrause (schräg nach vorne) */}
-      <mesh rotation={[0.40, 0, 0]} position={[0, barCY + 0.04, z + 0.050]}>
-        <cylinderGeometry args={[0.007, 0.007, 0.075, 8]} />
-        <meshStandardMaterial {...M} />
+      {/* Schlauch-Anschluss */}
+      <mesh rotation={[0.42, 0, 0]} position={[barX, barCY + 0.072, z + 0.050]}>
+        <cylinderGeometry args={[0.005, 0.005, 0.080, 10]} />
+        <meshStandardMaterial {...MC} />
       </mesh>
-      {/* Handbrause-Kopf */}
-      <mesh rotation={[Math.PI / 2 - 0.40, 0, 0]} position={[0, barCY + 0.01, z + 0.088]}>
-        <cylinderGeometry args={[0.030, 0.026, 0.018, 14]} />
-        <meshStandardMaterial {...M} />
+
+      {/* ── Handbrause (flache Premium-Scheibe) ── */}
+      {/* Äußerer Chromring */}
+      <mesh rotation={[Math.PI / 2 - 0.42, 0, 0]} position={[barX, barCY + 0.025, z + 0.090]}>
+        <cylinderGeometry args={[0.042, 0.038, 0.020, 22]} />
+        <meshStandardMaterial {...MC} />
+      </mesh>
+      {/* Düsenfläche (dunkel, quadratischer Raster angedeutet) */}
+      <mesh rotation={[Math.PI / 2 - 0.42, 0, 0]} position={[barX, barCY + 0.014, z + 0.098]}>
+        <cylinderGeometry args={[0.032, 0.032, 0.004, 22]} />
+        <meshStandardMaterial {...MCD} />
+      </mesh>
+      {/* Chromkante Innenseite */}
+      <mesh rotation={[Math.PI / 2 - 0.42, 0, 0]} position={[barX, barCY + 0.016, z + 0.097]}>
+        <torusGeometry args={[0.030, 0.003, 8, 22]} />
+        <meshStandardMaterial {...MCA} />
       </mesh>
     </group>
   );

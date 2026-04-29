@@ -1344,22 +1344,22 @@ export default function BathroomScene({ showerWidth = 1.2, showerHeight = 2.0 })
         <meshBasicMaterial color="#0a0704" transparent opacity={0.18} />
       </mesh>
 
-      {/* ═══ DEKO-VASE neben Hocker ══════════════════════════════════════ */}
-      <mesh castShadow position={[roomL + 1.65, floorY + 0.220, -0.48]}>
+      {/* ═══ DEKO-VASE neben Hocker (sicher außerhalb Dusche) ═══════════ */}
+      <mesh castShadow position={[roomL + 0.82, floorY + 0.220, 1.55]}>
         <cylinderGeometry args={[0.030, 0.052, 0.440, 24]} />
         <meshStandardMaterial color="#f0ede6" roughness={0.12} metalness={0} envMapIntensity={0.50} />
       </mesh>
-      <mesh castShadow position={[roomL + 1.65, floorY + 0.448, -0.48]}>
+      <mesh castShadow position={[roomL + 0.82, floorY + 0.448, 1.55]}>
         <cylinderGeometry args={[0.018, 0.030, 0.040, 20]} />
         <meshStandardMaterial color="#f0ede6" roughness={0.12} metalness={0} />
       </mesh>
       {[-0.008, 0, 0.010].map((dx, i) => (
-        <mesh key={i} castShadow position={[roomL + 1.65 + dx, floorY + 0.640 + i * 0.035, -0.48]}>
+        <mesh key={i} castShadow position={[roomL + 0.82 + dx, floorY + 0.640 + i * 0.035, 1.55]}>
           <cylinderGeometry args={[0.003, 0.003, 0.38 + i * 0.06, 6]} />
           <meshStandardMaterial color="#b89060" roughness={0.88} metalness={0.0} />
         </mesh>
       ))}
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[roomL + 1.65, floorY + 0.001, -0.48]}>
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[roomL + 0.82, floorY + 0.001, 1.55]}>
         <planeGeometry args={[0.14, 0.14]} />
         <meshBasicMaterial color="#0a0704" transparent opacity={0.20} />
       </mesh>
