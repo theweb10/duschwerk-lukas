@@ -272,11 +272,13 @@ function FrameProfiles({ w, h, rahmentyp, metalMat, noLeft = false, noRight = fa
 
   return (
     <>
-      {/* Oben */}
-      <mesh position={[0, h / 2 - pw / 2, 0]}>
-        <boxGeometry args={[w, pw, phe]} />
-        <primitive object={metalMat} attach="material" />
-      </mesh>
+      {/* Oben – nur vollgerahmt (teilgerahmt = kein oberes Profil) */}
+      {!partial && (
+        <mesh position={[0, h / 2 - pw / 2, 0]}>
+          <boxGeometry args={[w, pw, phe]} />
+          <primitive object={metalMat} attach="material" />
+        </mesh>
+      )}
       {/* Unten – nur vollgerahmt */}
       {!partial && (
         <mesh position={[0, -h / 2 + pw / 2, 0]}>
